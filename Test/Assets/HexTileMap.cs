@@ -8,35 +8,21 @@ public class HexTileMap : MonoBehaviour
     public GameObject PersonTileMap_object;
     public PersonTileMap PersonTileMap_script;
     public Transform PersonTileMap_transform;
-    public SphereCollider Sphere;
-    
 
     public int mapWidth,
                mapHeight;
     float tileXOffset = 1.00725f,
           tileZOffset = 0.87f;
-    float timeSpan;
     void Start()
     {
         Debug.Log("HexTileMap Start 시작");
 
-        Sphere = GetComponent<SphereCollider>();
         CreateHexTileMap();
-        timeSpan = 0.0f;
         PersonTileMap_script.CopyTag();
         
         Debug.Log("HexTileMap Start 끝");
     }
-    private void FixedUpdate()
-    {
-        Debug.Log("FixedUpdate 중");
 
-        timeSpan += Time.deltaTime;      
-        if (Sphere.radius >0)
-        {
-            Sphere.radius -= timeSpan / 3000;
-        }
-    }
     void CreateHexTileMap()
     {
 
@@ -49,7 +35,7 @@ public class HexTileMap : MonoBehaviour
         {
             for (float z = mapZMin; z < mapZMax; z++)
             {
-                GameObject TempGo = Instantiate(HexTilePrefab);
+                GameObject TempGo = Instantiate(HexTilePrefab,PersonTileMap_transform);
                 TempGo.tag = "Floor0";
                 Vector3 pos;
 
@@ -72,19 +58,9 @@ public class HexTileMap : MonoBehaviour
         
         TempGo.transform.parent = PersonTileMap_transform;
         TempGo.name = x.ToString() + "," + z.ToString();
+        yield return new WaitForSeconds(0.000001f);
         TempGo.transform.position = pos;
-        yield return new WaitForSeconds(0.00001f);
 
         Debug.Log("HexTileMap SetTileInfo 끝");
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        Debug.Log("HexTileMap OnTriggerExit 시작");
-
-        if (other.tag == this.tag)
-            Destroy(other.gameObject);
-
-        Debug.Log("HexTileMap OnTriggerExit 끝");
     }
 }

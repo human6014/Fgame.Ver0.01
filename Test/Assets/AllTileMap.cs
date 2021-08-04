@@ -5,9 +5,9 @@ using UnityEngine;
 public class AllTileMap : MonoBehaviour
 {
     public GameObject PersonTileMap_obj;
+    public PersonTileMap PersonTileMap_script;
     public Transform AllTileMap_Position;
-    public HexTileMap Hex;
-    public int TagNum=1;
+    private int TagNum=1;
     private void Start()
     {
         Debug.Log("AllTileMap Start Ω√¿€");
@@ -40,7 +40,8 @@ public class AllTileMap : MonoBehaviour
                 x = -0.5f;
                 z = 0.865f;
             }
-            GameObject AllTile = Instantiate(PersonTileMap_obj, new Vector3(x* Hex.Sphere.radius*4, 0, z * Hex.Sphere.radius*4), Quaternion.identity);
+            GameObject AllTile = Instantiate(PersonTileMap_obj, new Vector3
+                (x* PersonTileMap_script.Sphere.radius*3, 0, z * PersonTileMap_script.Sphere.radius*3),Quaternion.identity);
             AllTile.transform.parent = AllTileMap_Position;
             TagNum++;
             AllTile.tag = "Floor" + TagNum.ToString();

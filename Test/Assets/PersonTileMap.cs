@@ -4,6 +4,35 @@ using UnityEngine;
 
 public class PersonTileMap : MonoBehaviour
 {
+    float timeSpan = 0.0f;
+    public SphereCollider Sphere;
+    private void Awake()
+    {
+        Debug.Log("PersonTileMap Awake 시작");
+
+        Sphere = GetComponent<SphereCollider>();
+
+        Debug.Log("PersonTileMap Awake 끝");
+    }
+    private void FixedUpdate()
+    {
+        Debug.Log("PersonTileMap FixedUpdate 중");
+
+        timeSpan += Time.deltaTime;
+        if (Sphere.radius > 0)
+        {
+            Sphere.radius -= timeSpan / 3000;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        Debug.Log("PersonTileMap OnTriggerExit 시작");
+
+        if (other.tag == this.tag)
+            Destroy(other.gameObject);
+
+        Debug.Log("PersonTileMap OnTriggerExit 끝");
+    }
     public void CopyTag()
     {
         Debug.Log("PersonTileMap CopyTag 시작");

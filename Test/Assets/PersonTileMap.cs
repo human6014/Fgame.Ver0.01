@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class PersonTileMap : MonoBehaviour
 {
-    float timeSpan = 0.0f;
+    
     public SphereCollider Sphere;
+
+    private float timeSpan = 0.0f;
     private void Awake()
     {
         Debug.Log("PersonTileMap Awake 시작");
@@ -28,7 +30,7 @@ public class PersonTileMap : MonoBehaviour
     {
         Debug.Log("PersonTileMap OnTriggerExit 시작");
 
-        if (other.tag == this.tag)
+        if (other.CompareTag(this.tag))
             Destroy(other.gameObject);
 
         Debug.Log("PersonTileMap OnTriggerExit 끝");

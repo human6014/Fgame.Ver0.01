@@ -11,8 +11,9 @@ public class HexTileMap : MonoBehaviour
 
     public int mapWidth,
                mapHeight;
-    float tileXOffset = 1.00725f,
-          tileZOffset = 0.87f;
+
+    private float tileXOffset = 1.00725f,
+                  tileZOffset = 0.87f;
     void Start()
     {
         Debug.Log("HexTileMap Start Ω√¿€");
@@ -31,6 +32,7 @@ public class HexTileMap : MonoBehaviour
 
         float mapZMin = -mapHeight / 2;
         float mapZMax = mapHeight / 2;
+
         for (float x = mapXMin; x < mapXMax; x++)
         {
             for (float z = mapZMin; z < mapZMax; z++)

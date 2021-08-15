@@ -19,11 +19,6 @@ public class Player : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         rigid = GetComponent<Rigidbody>();
     }
-    void Start()
-    {
-
-    }
-
     void Update()
     {
         xMove = Input.GetAxisRaw("Horizontal");
@@ -75,6 +70,13 @@ public class Player : MonoBehaviour
         {
             anim.SetBool("IsJump", false);
             isJump = false;
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.name == "GameManager")
+        {
+            gameObject.transform.position = new Vector3(0, 1, 0);
         }
     }
 }

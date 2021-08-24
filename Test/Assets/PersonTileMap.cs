@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PersonTileMap : MonoBehaviour
 {
-    
+    public Player Player_script;
     public SphereCollider Sphere;
 
     private float timeSpan = 0.0f;
@@ -20,10 +21,18 @@ public class PersonTileMap : MonoBehaviour
     {
         Debug.Log("PersonTileMap FixedUpdate Сп");
 
-        timeSpan += Time.deltaTime;
-        if (Sphere.radius > 0)
+        if (Player_script.myField > 0)
         {
-            Sphere.radius -= timeSpan / 3000;
+            Player_script.myField -= (int)(Time.time * 0.125f);
+            Debug.Log(Player_script.myField);
+        }
+        else
+        {
+            timeSpan += Time.deltaTime;
+            if (Sphere.radius >= 0)
+            {
+                Sphere.radius -= timeSpan / 3000;
+            }
         }
     }
     private void OnTriggerExit(Collider other)

@@ -12,6 +12,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     void Start()
     {
         PhotonNetwork.GameVersion = "1.0";
+        PhotonNetwork.NickName = "Proto";
         PhotonNetwork.ConnectUsingSettings();
     }
     public override void OnConnectedToMaster()
@@ -21,7 +22,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = 6;
+        roomOptions.MaxPlayers = 2;
 
         PhotonNetwork.CreateRoom("room", roomOptions);
     }

@@ -1,3 +1,2 @@
-# Fgame.Ver0.01
-Unity Git Test
-Test repository
+# FirstGame.Ver0.01
+Unity Git Test Repositories

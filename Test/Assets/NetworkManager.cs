@@ -9,7 +9,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.AutomaticallySyncScene = true;
     }
-    void Start()
+    private void Start()
     {
         PhotonNetwork.GameVersion = "1.0";
         PhotonNetwork.NickName = "Proto";
@@ -24,7 +24,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 2;
 
-        PhotonNetwork.CreateRoom("room", roomOptions);
+        PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()
     {

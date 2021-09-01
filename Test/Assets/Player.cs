@@ -13,7 +13,7 @@ public class Player : MonoBehaviourPunCallbacks
          dodgeMove,
          isJump,
          isDodge;
-    public int myField=100;
+    
     [SerializeField] float speed;
     Rigidbody rigid;
     Animator anim;

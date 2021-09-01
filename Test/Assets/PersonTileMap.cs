@@ -7,42 +7,28 @@ using Photon.Realtime;
 public class PersonTileMap : MonoBehaviourPunCallbacks
 {
     public Player Player_script;
+    public GameManager GameManager_script;
     public SphereCollider Sphere;
 
     private float timeSpan = 0.0f;
-    private static int playerNum;
-    private void Awake()
-    {
-        Debug.Log("PersonTileMap Awake 시작");
-
-        playerNum = 0;
-        Sphere = GetComponent<SphereCollider>();
-
-        Debug.Log("PersonTileMap Awake 끝");
-    }
     private void Start()
     {
-        Debug.Log("PersonTileMap Start 시작");
+        Debug.Log("PersonTileMap Start시작");
 
-        playerNum++;
+        this.Sphere = this.GetComponent<SphereCollider>();
+        this.Sphere.radius = GameManager_script.myField[1, GameManager_script.i];
+        Debug.Log(this.Sphere.radius);
+        GameManager_script.i++;
 
-        Debug.Log("PersonTileMap Start 끝 playerNum : "+playerNum);
+        Debug.Log("PersonTileMap Start 끝");
     }
-    private void FixedUpdate()
+    private void Update()
     {
         Debug.Log("PersonTileMap FixedUpdate 중");
-        if (Player_script.myField > 0)
+
+        if (this.Sphere.radius >= 0)
         {
-            Player_script.myField -= (int)(Time.time * 0.125f);
-            Debug.Log(Player_script.myField);
-        }
-        else
-        {
-            timeSpan += Time.deltaTime;
-            if (Sphere.radius >= 0)
-            {
-                Sphere.radius -= timeSpan / 3000;
-            }
+            this.Sphere.radius -= Time.deltaTime *Time.time/10;
         }
     }
 
@@ -67,5 +53,5 @@ public class PersonTileMap : MonoBehaviourPunCallbacks
 
         Debug.Log("PersonTileMap CopyTag 끝");
     }
-    
+
 }

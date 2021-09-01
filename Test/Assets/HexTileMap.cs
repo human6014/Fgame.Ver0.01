@@ -9,8 +9,8 @@ public class HexTileMap : MonoBehaviour
     public PersonTileMap PersonTileMap_script;
     public Transform PersonTileMap_transform;
 
-    public int mapWidth,
-               mapHeight;
+    [SerializeField] int mapWidth,
+                         mapHeight;
 
     private float tileXOffset = 1.00725f,
                   tileZOffset = 0.87f;
@@ -29,7 +29,6 @@ public class HexTileMap : MonoBehaviour
 
     void CreateHexTileMap()
     {
-
         float mapXMin = -mapWidth / 2;
         float mapXMax = mapWidth / 2;
 
@@ -40,7 +39,7 @@ public class HexTileMap : MonoBehaviour
         {
             for (float z = mapZMin; z < mapZMax; z++)
             {
-                GameObject TempGo = Instantiate(HexTilePrefab,PersonTileMap_transform);
+                GameObject TempGo = Instantiate(HexTilePrefab,PersonTileMap_transform) as GameObject;
                 TempGo.tag = "Floor0";
                 Vector3 pos;
 
@@ -52,7 +51,6 @@ public class HexTileMap : MonoBehaviour
                 {
                     pos = new Vector3(PersonTileMap_transform.position.x+x * tileXOffset + tileXOffset / 2, 0, PersonTileMap_transform.position.z + z * tileZOffset);
                 }
-
                 StartCoroutine(SetTileInfo(TempGo, x, z, pos));
             }
         }

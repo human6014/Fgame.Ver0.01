@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public float[,] myField;
-    public int i;
+    public int playerNum;
     public void Start()
     {
         myField = new float[,] {{ 1,2,3,4,5,6 },

@@ -5,6 +5,8 @@ using Photon.Pun;
 using Photon.Realtime;
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
+    private byte maxPlayer=2;
+    public bool isFull;
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -22,12 +24,21 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = 2;
-
+        roomOptions.MaxPlayers = maxPlayer;
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()
     {
         PhotonNetwork.Instantiate("Player", new Vector3(0,2,0), Quaternion.identity);
+
+        Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount + "/" + maxPlayer);
+        Time.timeScale = 0;
+
+    }
+    void OnPhotonPlayerConnected()
+    {
+        Debug.Log(PhotonNetwork.CurrentRoom.PlayerCount + "/" + maxPlayer);
+        if (PhotonNetwork.CurrentRoom.PlayerCount == maxPlayer)
+            Time.timeScale = 1;
     }
 }

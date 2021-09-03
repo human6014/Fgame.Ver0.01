@@ -9,16 +9,14 @@ public class PersonTileMap : MonoBehaviourPunCallbacks
     public Player Player_script;
     public GameManager GameManager_script;
     public SphereCollider Sphere;
-
-    private float timeSpan = 0.0f;
     private void Start()
     {
         Debug.Log("PersonTileMap StartΩ√¿€");
 
         this.Sphere = this.GetComponent<SphereCollider>();
-        this.Sphere.radius = GameManager_script.myField[1, GameManager_script.i];
+        this.Sphere.radius = GameManager_script.myField[1, GameManager_script.playerNum];
         Debug.Log(this.Sphere.radius);
-        GameManager_script.i++;
+        GameManager_script.playerNum++;
 
         Debug.Log("PersonTileMap Start ≥°");
     }
@@ -28,7 +26,7 @@ public class PersonTileMap : MonoBehaviourPunCallbacks
 
         if (this.Sphere.radius >= 0)
         {
-            this.Sphere.radius -= Time.deltaTime *Time.time/10;
+            this.Sphere.radius -= Time.deltaTime * Time.time / 50;
         }
     }
 

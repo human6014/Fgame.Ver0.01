@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-public class PersonTileMap : MonoBehaviourPunCallbacks
+public class PersonTileMap : MonoBehaviour
 {
     public Player Player_script;
     public GameManager GameManager_script;

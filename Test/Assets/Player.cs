@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets;
+using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
-public class Player : MonoBehaviourPunCallbacks
+public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
     float xMove,
           zMove;
@@ -13,8 +14,11 @@ public class Player : MonoBehaviourPunCallbacks
          dodgeMove,
          isJump,
          isDodge;
-    
     [SerializeField] float speed;
+    [SerializeField] Image HP;
+    [SerializeField] Image MP;
+    [SerializeField] Text Name;
+    [SerializeField] PhotonView view;
     Rigidbody rigid;
     Animator anim;
     Transform tr;
@@ -39,8 +43,10 @@ public class Player : MonoBehaviourPunCallbacks
             dodgeMove = Input.GetButtonDown("Dodge");
 
             Vector3 moveVec = new Vector3(xMove, 0, zMove).normalized;
-            
+
             transform.position += moveVec * speed * (walkMove ? 1f : 1.5f) * Time.deltaTime;
+
+            if (!isJump && !isDodge) MP.fillAmount += Time.time * Time.deltaTime / 60f;
 
             anim.SetBool("IsRun", moveVec != Vector3.zero);
             anim.SetBool("IsWalk", walkMove);
@@ -52,22 +58,23 @@ public class Player : MonoBehaviourPunCallbacks
     }
     void Jump(bool jump)
     {
-        if (jump && !isJump && !isDodge)
+        if (jump && !isJump && !isDodge && MP.fillAmount >= 0.2f)
         {
             rigid.AddForce(Vector3.up * 3.5f, ForceMode.Impulse);
             anim.SetBool("IsJump", true);
             anim.SetTrigger("DoJump");
+            MP.fillAmount -= 0.2f;
             isJump = true;
         }
     }
-    void Dodge(bool dodge,Vector3 moveVec)
+    void Dodge(bool dodge, Vector3 moveVec)
     {
-        if (dodge && !isDodge && !isJump && moveVec !=Vector3.zero)
+        if (dodge && !isDodge && !isJump && moveVec != Vector3.zero && MP.fillAmount >= 0.3f)
         {
             speed *= 2.5f;
             anim.SetTrigger("DoDodge");
             isDodge = true;
-
+            MP.fillAmount -= 0.3f;
             Invoke("DodgeOut", 0.5f);
         }
     }
@@ -76,9 +83,17 @@ public class Player : MonoBehaviourPunCallbacks
         speed *= 0.4f;
         isDodge = false;
     }
+    void Hit()
+    {
+        HP.fillAmount -= 0.1f;
+        if (HP.fillAmount <= 0)
+        {
+            //respawn;
+        }
+    }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag.Substring(0,5) == "Floor" )
+        if (collision.gameObject.tag.Substring(0, 5) == "Floor")
         {
             anim.SetBool("IsJump", false);
             isJump = false;
@@ -89,6 +104,17 @@ public class Player : MonoBehaviourPunCallbacks
         if (other.gameObject.name == "GameManager")
         {
             gameObject.transform.position = new Vector3(0, 1, 0);
+        }
+    }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(MP.fillAmount);
+        }
+        else
+        {
+            MP.fillAmount = (float)stream.ReceiveNext();
         }
     }
 }

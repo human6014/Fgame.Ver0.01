@@ -941,6 +941,7 @@ GameObject:
   - component: {fileID: 4387864344120677047}
   - component: {fileID: 4387864344120677032}
   - component: {fileID: 4387864344120677033}
+  - component: {fileID: 590422961087252419}
   - component: {fileID: 4387864344120677034}
   m_Layer: 0
   m_Name: Player
@@ -1011,6 +1012,7 @@ MonoBehaviour:
   MP: {fileID: 9210114136766482009}
   Name: {fileID: 2411294687983707394}
   view: {fileID: 4387864344120677033}
+  net: {fileID: 590422961087252419}
 --- !u!114 &4387864344120677033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1036,6 +1038,25 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &590422961087252419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4387864344120677045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49cf9619074c90346a285d4bb3004fe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomSize: 2
+  playerCount: 0
+  delayCancelButton: {fileID: 0}
+  roomCountDisplay: {fileID: 0}
+  timerToStartDisplay: {fileID: 0}
+  view: {fileID: 0}
+  isFull: 0
 --- !u!114 &4387864344120677034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1162,7 +1183,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 0
+  m_Text: 1
 --- !u!1 &4805790399160207185
 GameObject:
   m_ObjectHideFlags: 0

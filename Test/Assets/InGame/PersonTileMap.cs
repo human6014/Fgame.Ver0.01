@@ -26,7 +26,7 @@ public class PersonTileMap : MonoBehaviour
 
         if (this.Sphere.radius >= 0)
         {
-            this.Sphere.radius -= Time.deltaTime * Time.time / 50;
+           // this.Sphere.radius -= Time.deltaTime * Time.time / 50;
         }
     }
 

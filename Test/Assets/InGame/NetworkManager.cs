@@ -6,8 +6,8 @@ using Photon.Pun;
 using Photon.Realtime;
 public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
 {
-    private int roomSize = 2;
-    private int playerCount;
+    public int roomSize = 3;
+    public int playerCount;
 
     [SerializeField] private GameObject delayCancelButton;
     [SerializeField] private Text roomCountDisplay;
@@ -15,7 +15,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     [SerializeField] private PhotonView view;
     public bool isFull;
 
-    
+    public NetworkManager getNet()
+    {
+        return this;
+    }
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -36,16 +39,19 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = (byte)roomSize;
+        roomOptions.MaxPlayers = 3;
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom run");
         PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
+        playerCount++;
+        Debug.Log("playerCount : " + playerCount);
         //Time.timeScale = 0;
         //view.RPC("PlayerCountUpdate", RpcTarget.All);
     }
+
     /*
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

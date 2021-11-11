@@ -7,7 +7,6 @@ using Photon.Pun;
 using Photon.Realtime;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
-    bool [] existence;
     float xMove,
           zMove;
     bool walkMove,
@@ -20,32 +19,22 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Image MP;
     [SerializeField] Text Name;
     [SerializeField] PhotonView view;
-    [SerializeField] NetworkManager net;
-    int playerC;
     Rigidbody rigid;
     Animator anim;
     Transform tr;
-    private void Awake()
-    {
-        existence = new bool[net.roomSize];
-    }
+
     private void Start()
     {
-        
-        Debug.Log(net.roomSize);
-        //existence = true;
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
         tr = GetComponent<Transform>();
         if (photonView.IsMine)
             Camera.main.GetComponent<MainCamera>().target = tr;
     }
-    void Update()
+    void FixedUpdate()
     {
         if (photonView.IsMine)
         {
-            Name.text = playerC.ToString();
-
             xMove = Input.GetAxisRaw("Horizontal");
             zMove = Input.GetAxisRaw("Vertical");
             walkMove = Input.GetButton("Walk");
@@ -123,12 +112,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(MP.fillAmount);
-            stream.SendNext(net.playerCount);
         }
         else
         {
             MP.fillAmount = (float)stream.ReceiveNext();
-            playerC += (int)stream.ReceiveNext()+1;
         }
     }
 }

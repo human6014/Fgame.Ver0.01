@@ -6,19 +6,14 @@ using Photon.Pun;
 using Photon.Realtime;
 public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
 {
-    public int roomSize = 3;
-    public int playerCount;
+    private int cMaxPlayer;
+    private int cPlayerCount;
 
     [SerializeField] private GameObject delayCancelButton;
     [SerializeField] private Text roomCountDisplay;
     [SerializeField] private Text timerToStartDisplay;
     [SerializeField] private PhotonView view;
     public bool isFull;
-
-    public NetworkManager getNet()
-    {
-        return this;
-    }
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -45,31 +40,30 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom run");
-        PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
-        playerCount++;
-        Debug.Log("playerCount : " + playerCount);
-        //Time.timeScale = 0;
-        //view.RPC("PlayerCountUpdate", RpcTarget.All);
+        cMaxPlayer = PhotonNetwork.CurrentRoom.MaxPlayers;
+        view.RPC("pUpdate", RpcTarget.AllViaServer);
     }
-
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
+    {
+        view.RPC("pUpdate", RpcTarget.AllViaServer);
+        base.OnPlayerLeftRoom(otherPlayer);
+    }
     /*
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         throw new System.NotImplementedException();
     }
     */
-    /*
-[PunRPC]
-void PlayerCountUpdate()
-{
-   Debug.Log("RPC run");
-   playerCount = PhotonNetwork.PlayerList.Length;
-   roomSize = PhotonNetwork.CurrentRoom.MaxPlayers;
-   roomCountDisplay.text = playerCount + " / " + roomSize;
-   if (playerCount == roomSize)
-   {
-       Time.timeScale = 1;
-   }
-}
-*/
+    [PunRPC]
+    void pUpdate()
+    {
+        cPlayerCount = PhotonNetwork.PlayerList.Length;
+        
+        roomCountDisplay.text = cPlayerCount + " / " + cMaxPlayer;
+        if (cPlayerCount == cMaxPlayer)
+        {
+            isFull = true;
+            PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
+        }
+    }
 }

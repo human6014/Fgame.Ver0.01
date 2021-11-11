@@ -8,6 +8,7 @@ public class PersonTileMap : MonoBehaviour
 {
     public Player Player_script;
     public GameManager GameManager_script;
+    public NetworkManager NetworkManager_script;
     public SphereCollider Sphere;
     private void Start()
     {
@@ -24,9 +25,9 @@ public class PersonTileMap : MonoBehaviour
     {
         Debug.Log("PersonTileMap FixedUpdate Сп");
 
-        if (this.Sphere.radius >= 0)
+        if (this.Sphere.radius >= 0&& NetworkManager_script.isFull==true)
         {
-           // this.Sphere.radius -= Time.deltaTime * Time.time / 50;
+            this.Sphere.radius -= Time.deltaTime * Time.time / 100;
         }
     }
 
@@ -45,9 +46,7 @@ public class PersonTileMap : MonoBehaviour
 
         Transform[] tran = GetComponentsInChildren<Transform>();
         foreach (Transform t in tran)
-        {
             t.gameObject.tag = this.tag;
-        }
 
         Debug.Log("PersonTileMap CopyTag ГЁ");
     }

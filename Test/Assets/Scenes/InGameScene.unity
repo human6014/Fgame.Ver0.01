@@ -541,8 +541,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 888231540}
-  - component: {fileID: 888231541}
   - component: {fileID: 888231542}
+  - component: {fileID: 888231541}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -748,6 +748,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player_script: {fileID: 4387864344120677032, guid: 5e035c7603b3eae4588eb64ff66c37a0, type: 3}
   GameManager_script: {fileID: 1856225484}
+  NetworkManager_script: {fileID: 888231541}
   Sphere: {fileID: 1168173663}
 --- !u!135 &1168173663
 SphereCollider:

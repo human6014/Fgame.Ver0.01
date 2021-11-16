@@ -13,7 +13,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     [SerializeField] private Text roomCountDisplay;
     [SerializeField] private Text timerToStartDisplay;
     [SerializeField] private PhotonView view;
-    public bool isFull;
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -24,7 +23,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         PhotonNetwork.NickName = "Proto";
         PhotonNetwork.ConnectUsingSettings();
         view = PhotonView.Get(this);
-        //view= GetComponent<PhotonView>();
         Debug.Log("NetworkManagerStart");
     }
     public override void OnConnectedToMaster()
@@ -34,7 +32,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = 3;
+        roomOptions.MaxPlayers = 2;
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()
@@ -46,7 +44,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         view.RPC("pUpdate", RpcTarget.AllViaServer);
-        base.OnPlayerLeftRoom(otherPlayer);
+        //base.OnPlayerLeftRoom(otherPlayer);
     }
     /*
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -60,10 +58,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         cPlayerCount = PhotonNetwork.PlayerList.Length;
         
         roomCountDisplay.text = cPlayerCount + " / " + cMaxPlayer;
-        if (cPlayerCount == cMaxPlayer)
-        {
-            isFull = true;
-            PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
-        }
+        if (cPlayerCount == cMaxPlayer) PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
     }
 }

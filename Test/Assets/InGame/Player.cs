@@ -96,11 +96,14 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             //respawn;
         }
     }
+
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("Player Floor");
         if (collision.gameObject.tag.Substring(0, 5) == "Floor")
             anim.SetBool("IsJump", false);
             isJump = false;
+            //Destroy(collision.gameObject,1f);
     }
     private void OnTriggerEnter(Collider other)
     {

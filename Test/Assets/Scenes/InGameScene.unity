@@ -800,11 +800,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49cf9619074c90346a285d4bb3004fe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isFull: 0
   delayCancelButton: {fileID: 1629746270}
   roomCountDisplay: {fileID: 447989685}
   timerToStartDisplay: {fileID: 717560876}
   view: {fileID: 888231542}
-  isFull: 0
 --- !u!114 &888231542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1375,6 +1375,9 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_CharacterLimit: 0
   m_OnEndEdit:
+    m_PersistentCalls:
+      m_Calls: []
+  m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
   m_OnValueChanged:
@@ -2078,6 +2081,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 60d00613262778e46b8837d66fd34d59, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 60d00613262778e46b8837d66fd34d59, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60d00613262778e46b8837d66fd34d59, type: 3}

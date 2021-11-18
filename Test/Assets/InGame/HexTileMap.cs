@@ -14,9 +14,6 @@ public class HexTileMap : MonoBehaviour
 
     private float tileXOffset = 1.00725f,
                   tileZOffset = 0.87f;
-    private void Awake()
-    {
-    }
     void Start()
     {
         Debug.Log("HexTileMap Start Ω√¿€");

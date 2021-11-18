@@ -8,7 +8,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
 {
     private int cMaxPlayer;
     private int cPlayerCount;
-
+    public bool isFull = false;
     [SerializeField] private GameObject delayCancelButton;
     [SerializeField] private Text roomCountDisplay;
     [SerializeField] private Text timerToStartDisplay;
@@ -32,19 +32,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = 2;
+        roomOptions.MaxPlayers = 1;
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom run");
         cMaxPlayer = PhotonNetwork.CurrentRoom.MaxPlayers;
-        view.RPC("pUpdate", RpcTarget.AllViaServer);
+        view.RPC("pUpdate", RpcTarget.All);
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        view.RPC("pUpdate", RpcTarget.AllViaServer);
-        //base.OnPlayerLeftRoom(otherPlayer);
+        view.RPC("pUpdate", RpcTarget.All);
     }
     /*
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -58,6 +57,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         cPlayerCount = PhotonNetwork.PlayerList.Length;
         
         roomCountDisplay.text = cPlayerCount + " / " + cMaxPlayer;
-        if (cPlayerCount == cMaxPlayer) PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
+        if (cPlayerCount == cMaxPlayer)
+        {
+            PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
+            isFull = true;
+        }
     }
 }

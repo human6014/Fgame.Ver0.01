@@ -8,12 +8,14 @@ using Photon.Realtime;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
     float xMove,
-          zMove;
+          zMove,
+          timer;
     bool walkMove,
          jumpMove,
          dodgeMove,
          isJump,
-         isDodge;
+         isDodge,
+         isDying;
     [SerializeField] float speed;
     [SerializeField] Image HP;
     [SerializeField] Image MP;
@@ -25,11 +27,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
     private void Start()
     {
+        timer = 0.0f;
+        isDying = false;
+
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
         tr = GetComponent<Transform>();
-        if (photonView.IsMine)
-            Camera.main.GetComponent<MainCamera>().target = tr;
+        if (photonView.IsMine) Camera.main.GetComponent<MainCamera>().target = tr;
     }
     void FixedUpdate()
     {
@@ -43,15 +47,20 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
             Vector3 moveVec = new Vector3(xMove, 0, zMove).normalized;
 
-            transform.position += moveVec * speed * (walkMove ? 1f : 1.5f) * Time.deltaTime;
-
-            if (!isJump && !isDodge)
+            if (isDying)
             {
-                if (walkMove)
-                    MP.fillAmount+= Time.time * Time.deltaTime / 30f;
-                else 
-                    MP.fillAmount += Time.time * Time.deltaTime / 50f;
+                timer += Time.deltaTime;
+                moveVec = new Vector3(0, 1, 0);
+                if (timer >= 5f)
+                {
+                    timer = 0;
+                    isDying = false;
+                }
             }
+            transform.position += moveVec * speed * (walkMove ? 1f : 1.5f) * Time.deltaTime;
+            if (!isJump && !isDodge)
+                if (walkMove) MP.fillAmount += Time.time * Time.deltaTime / 30f;
+                else          MP.fillAmount += Time.time * Time.deltaTime / 50f;
 
             anim.SetBool("IsRun", moveVec != Vector3.zero);
             anim.SetBool("IsWalk", walkMove);
@@ -63,7 +72,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Jump(bool jump)
     {
-        if (jump && !isJump && !isDodge && MP.fillAmount >= 0.2f)
+        if (jump && !isJump && !isDodge && MP.fillAmount >= 0.2f &&!isDying)
         {
             rigid.AddForce(Vector3.up * 3.5f, ForceMode.Impulse);
             anim.SetBool("IsJump", true);
@@ -74,13 +83,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Dodge(bool dodge, Vector3 moveVec)
     {
-        if (dodge && !isDodge && !isJump && moveVec != Vector3.zero && MP.fillAmount >= 0.3f)
+        if (dodge && !isDodge && !isJump && moveVec != Vector3.zero && MP.fillAmount >= 0.3f && !isDying)
         {
             speed *= 2.5f;
             anim.SetTrigger("DoDodge");
             isDodge = true;
             MP.fillAmount -= 0.3f;
-            Invoke("DodgeOut", 0.5f);
+            Invoke("DodgeOut", 0.4f);
         }
     }
     void DodgeOut()
@@ -93,31 +102,43 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount -= 0.1f;
         if (HP.fillAmount <= 0)
         {
-            //respawn;
+            isDying = true;
+            Die();
         }
     }
-
+    void Die()
+    {
+        gameObject.transform.position = new Vector3(0, 1, 0);
+        //gameObject.transform.Rotate(0, 180, 0); //¹Ì¿Ï¼º
+    }
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Player Floor");
         if (collision.gameObject.tag.Substring(0, 5) == "Floor")
+        {
             anim.SetBool("IsJump", false);
             isJump = false;
-            //Destroy(collision.gameObject,1f);
+            //Destroy(collision.gameObject,10f);
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.name == "GameManager")
-            gameObject.transform.position = new Vector3(0, 1, 0);
+        {
+            isDying = true;
+            Die();
+        }
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
+            stream.SendNext(HP.fillAmount);
             stream.SendNext(MP.fillAmount);
         }
         else
         {
+            HP.fillAmount = (float)stream.ReceiveNext();
             MP.fillAmount = (float)stream.ReceiveNext();
         }
     }

@@ -55,7 +55,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     void pUpdate()
     {
         cPlayerCount = PhotonNetwork.PlayerList.Length;
-        
         roomCountDisplay.text = cPlayerCount + " / " + cMaxPlayer;
         if (cPlayerCount == cMaxPlayer)
         {

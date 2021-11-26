@@ -17,10 +17,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
          isDodge,
          isDying;
     [SerializeField] float speed;
+    [SerializeField] bool[] hasWeapons;
+    [SerializeField] GameObject[] weapons;
     [SerializeField] Image HP;
     [SerializeField] Image MP;
     [SerializeField] Text Name;
     [SerializeField] PhotonView view;
+    GameObject child;
     Rigidbody rigid;
     Animator anim;
     Transform tr;
@@ -33,9 +36,14 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
         tr = GetComponent<Transform>();
+        child= transform.Find("GameObject").gameObject;
         if (photonView.IsMine) Camera.main.GetComponent<MainCamera>().target = tr;
+        for(int i = 0; i < hasWeapons.Length; i++)
+        {
+            if (hasWeapons[i]) weapons[i].SetActive(true);
+        }
     }
-    void FixedUpdate()
+    void Update()
     {
         if (photonView.IsMine)
         {
@@ -59,8 +67,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             }
             transform.position += moveVec * speed * (walkMove ? 1f : 1.5f) * Time.deltaTime;
             if (!isJump && !isDodge)
-                if (walkMove) MP.fillAmount += Time.time * Time.deltaTime / 30f;
-                else          MP.fillAmount += Time.time * Time.deltaTime / 50f;
+                if (walkMove || moveVec==Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
+                else                                   MP.fillAmount += Time.time * Time.deltaTime / 50f;
 
             anim.SetBool("IsRun", moveVec != Vector3.zero);
             anim.SetBool("IsWalk", walkMove);
@@ -77,7 +85,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             rigid.AddForce(Vector3.up * 3.5f, ForceMode.Impulse);
             anim.SetBool("IsJump", true);
             anim.SetTrigger("DoJump");
-            MP.fillAmount -= 0.2f;
+            MP.fillAmount -= 0.15f;
             isJump = true;
         }
     }
@@ -88,7 +96,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             speed *= 2.5f;
             anim.SetTrigger("DoDodge");
             isDodge = true;
-            MP.fillAmount -= 0.3f;
+            MP.fillAmount -= 0.25f;
             Invoke("DodgeOut", 0.4f);
         }
     }
@@ -109,7 +117,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     void Die()
     {
         gameObject.transform.position = new Vector3(0, 1, 0);
-        //gameObject.transform.Rotate(0, 180, 0); //미완성
+        child.gameObject.transform.eulerAngles = new Vector3(0, 0, 180); //미완성
+        MP.fillAmount = 100;
+        HP.fillAmount = 100;
     }
     private void OnCollisionEnter(Collision collision)
     {

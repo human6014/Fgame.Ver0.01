@@ -7,12 +7,16 @@ using Photon.Pun;
 using Photon.Realtime;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
+    int weaponIndex=-1;
     float xMove,
           zMove,
+          attackDelay,
           timer;
     bool walkMove,
          jumpMove,
          dodgeMove,
+         attack,
+         isAttackReady,
          isJump,
          isDodge,
          isDying;
@@ -23,6 +27,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Image MP;
     [SerializeField] Text Name;
     [SerializeField] PhotonView view;
+    [SerializeField] Weapon equipWeapon; //이게 되나?
     GameObject child;
     Rigidbody rigid;
     Animator anim;
@@ -40,7 +45,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (photonView.IsMine) Camera.main.GetComponent<MainCamera>().target = tr;
         for(int i = 0; i < hasWeapons.Length; i++)
         {
-            if (hasWeapons[i]) weapons[i].SetActive(true);
+            if (hasWeapons[i])
+            {
+                weapons[i].SetActive(true);
+                weaponIndex = i;
+                break;
+            }
         }
     }
     void Update()
@@ -52,6 +62,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             walkMove = Input.GetButton("Walk");
             jumpMove = Input.GetButtonDown("Jump");
             dodgeMove = Input.GetButtonDown("Dodge");
+            attack = Input.GetButtonDown("MeleeAttack");
 
             Vector3 moveVec = new Vector3(xMove, 0, zMove).normalized;
 
@@ -74,13 +85,26 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             anim.SetBool("IsWalk", walkMove);
 
             transform.LookAt(transform.position + moveVec);
-            Jump(jumpMove);
-            Dodge(dodgeMove, moveVec);
+
+            Attack();
+            Jump();
+            Dodge(moveVec);
         }
     }
-    void Jump(bool jump)
+    void Attack()
     {
-        if (jump && !isJump && !isDodge && MP.fillAmount >= 0.2f &&!isDying)
+        attackDelay += Time.deltaTime;
+        if (attack && equipWeapon.rate < attackDelay && !isDodge && !isDying)
+        {
+            Debug.Log("attack");
+            equipWeapon.UseWeapons();
+            anim.SetTrigger("doSwing");
+            attackDelay = 0;
+        }
+    }
+    void Jump()
+    {
+        if (jumpMove && !isJump && !isDodge && MP.fillAmount >= 0.2f &&!isDying)
         {
             rigid.AddForce(Vector3.up * 3.5f, ForceMode.Impulse);
             anim.SetBool("IsJump", true);
@@ -89,15 +113,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             isJump = true;
         }
     }
-    void Dodge(bool dodge, Vector3 moveVec)
+    void Dodge(Vector3 moveVec)
     {
-        if (dodge && !isDodge && !isJump && moveVec != Vector3.zero && MP.fillAmount >= 0.3f && !isDying)
+        if (dodgeMove && !isDodge && !isJump && moveVec != Vector3.zero && MP.fillAmount >= 0.3f && !isDying)
         {
             speed *= 2.5f;
             anim.SetTrigger("DoDodge");
             isDodge = true;
             MP.fillAmount -= 0.25f;
-            Invoke("DodgeOut", 0.4f);
+            Invoke(nameof(DodgeOut), 0.4f);
         }
     }
     void DodgeOut()
@@ -117,9 +141,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     void Die()
     {
         gameObject.transform.position = new Vector3(0, 1, 0);
-        child.gameObject.transform.eulerAngles = new Vector3(0, 0, 180); //미완성
-        MP.fillAmount = 100;
-        HP.fillAmount = 100;
+        child.transform.eulerAngles = new Vector3(0, 0, 180); //미완성
+        HP.fillAmount = 1;
+        MP.fillAmount = 1;
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -137,6 +161,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             isDying = true;
             Die();
+        }
+        if (other.gameObject.tag == "Melee")
+        {
+            HP.fillAmount -= 0.2f;
         }
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

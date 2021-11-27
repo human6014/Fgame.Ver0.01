@@ -15,9 +15,5 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        for(int i = 1; i < 7; i++)
-        {
-            tileCount[i] = transform.childCount;
-        }
     }
 }

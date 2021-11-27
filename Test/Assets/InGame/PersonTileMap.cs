@@ -6,7 +6,6 @@ using Photon.Pun;
 using Photon.Realtime;
 public class PersonTileMap : MonoBehaviour
 {
-    public Player Player_script;
     public GameManager GameManager_script;
     public NetworkManager NetworkManager_script;
     public SphereCollider Sphere;

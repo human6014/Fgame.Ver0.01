@@ -22,7 +22,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         PhotonNetwork.GameVersion = "1.0";
         PhotonNetwork.NickName = "Proto";
         PhotonNetwork.ConnectUsingSettings();
-        view = PhotonView.Get(this);
+        view = PhotonView.Get(this); //πª±Ó ¿Ã∞«
         Debug.Log("NetworkManagerStart");
     }
     public override void OnConnectedToMaster()
@@ -32,7 +32,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         RoomOptions roomOptions = new RoomOptions();
-        roomOptions.MaxPlayers = 1;
+        roomOptions.MaxPlayers = 2;
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()

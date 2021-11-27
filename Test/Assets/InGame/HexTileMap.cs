@@ -5,15 +5,14 @@ using UnityEngine;
 public class HexTileMap : MonoBehaviour
 {
     public GameObject HexTilePrefab;
-    public GameObject PersonTileMap_object;
     public PersonTileMap PersonTileMap_script;
     public Transform PersonTileMap_transform;
 
     [SerializeField] int mapWidth,
                          mapHeight;
 
-    private float tileXOffset = 1.00725f,
-                  tileZOffset = 0.87f;
+    private const float tileXOffset = 1.00725f,
+                        tileZOffset = 0.87f;
     void Start()
     {
         Debug.Log("HexTileMap Start Ω√¿€");

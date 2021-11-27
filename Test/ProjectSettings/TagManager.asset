@@ -12,6 +12,8 @@ TagManager:
   - Floor4
   - Floor5
   - Floor6
+  - Melee
+  - Range
   layers:
   - Default
   - TransparentFX

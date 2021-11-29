@@ -32,12 +32,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Rigidbody rigid;
     Animator anim;
     Transform tr;
-
+    Vector3 curPos ;
     private void Start()
     {
         timer = 0.0f;
         isDying = false;
-
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
         tr = GetComponent<Transform>();
@@ -78,8 +77,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             }
             transform.position += moveVec * speed * (walkMove ? 1f : 1.5f) * Time.deltaTime;
             if (!isJump && !isDodge)
-                if (walkMove || moveVec==Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
-                else                                   MP.fillAmount += Time.time * Time.deltaTime / 50f;
+                if (walkMove || moveVec == Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
+                else MP.fillAmount += Time.time * Time.deltaTime / 50f;
 
             anim.SetBool("IsRun", moveVec != Vector3.zero);
             anim.SetBool("IsWalk", walkMove);
@@ -90,6 +89,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             Jump();
             Dodge(moveVec);
         }
+        else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
+        else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
     void Attack()
     {
@@ -131,7 +132,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Hit()
     {
-        HP.fillAmount -= 0.1f;
+        if (isDying) return;
+        Debug.Log("¸ÂÀ½!!!");
+        HP.fillAmount -= 0.5f;
+        
         if (HP.fillAmount <= 0)
         {
             isDying = true;
@@ -162,22 +166,26 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             isDying = true;
             Die();
         }
-        if (other.gameObject.tag == "Melee")
+        if (other.gameObject.tag == "Melee" )
         {
-            HP.fillAmount -= 0.2f;
+            Hit();
         }
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
+            stream.SendNext(transform.position);
             stream.SendNext(HP.fillAmount);
             stream.SendNext(MP.fillAmount);
+            Debug.Log("HP : "+HP.fillAmount);
         }
         else
         {
+            curPos = (Vector3)stream.ReceiveNext();
             HP.fillAmount = (float)stream.ReceiveNext();
             MP.fillAmount = (float)stream.ReceiveNext();
+            Debug.Log("HP : "+HP.fillAmount);
         }
     }
 }

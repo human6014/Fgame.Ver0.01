@@ -39,14 +39,8 @@ public class HexTileMap : MonoBehaviour
                 TempGo.tag = "Floor0";
                 Vector3 pos;
 
-                if (z % 2 == 0)
-                {
-                    pos = new Vector3(PersonTileMap_transform.position.x+x * tileXOffset, 0, PersonTileMap_transform.position.z+z * tileZOffset);
-                }
-                else
-                {
-                    pos = new Vector3(PersonTileMap_transform.position.x+x * tileXOffset + tileXOffset / 2, 0, PersonTileMap_transform.position.z + z * tileZOffset);
-                }
+                if (z % 2 == 0) pos = new Vector3(PersonTileMap_transform.position.x+x * tileXOffset, 0, PersonTileMap_transform.position.z+z * tileZOffset);
+                else pos = new Vector3(PersonTileMap_transform.position.x+x * tileXOffset + tileXOffset / 2, 0, PersonTileMap_transform.position.z + z * tileZOffset);
                 StartCoroutine(SetTileInfo(TempGo, x, z, pos));
             }
         }

@@ -804,6 +804,7 @@ MonoBehaviour:
   delayCancelButton: {fileID: 1629746270}
   roomCountDisplay: {fileID: 447989685}
   timerToStartDisplay: {fileID: 717560876}
+  matchDoun: {fileID: 0}
   view: {fileID: 888231542}
 --- !u!114 &888231542
 MonoBehaviour:
@@ -1049,7 +1050,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 777360d237cbbef419f8fdd59002418c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player_script: {fileID: 4387864344120677032, guid: 5e035c7603b3eae4588eb64ff66c37a0, type: 3}
   GameManager_script: {fileID: 1856225484}
   NetworkManager_script: {fileID: 888231541}
   Sphere: {fileID: 1168173663}
@@ -1570,6 +1570,7 @@ GameObject:
   - component: {fileID: 1629746274}
   - component: {fileID: 1629746273}
   - component: {fileID: 1629746272}
+  - component: {fileID: 1629746275}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -1640,7 +1641,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1629746273}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1629746275}
+        m_TargetAssemblyTypeName: ExitRoom, Assembly-CSharp
+        m_MethodName: Start
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1629746273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1679,6 +1692,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1629746270}
   m_CullTransparentMesh: 1
+--- !u!114 &1629746275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629746270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28712492b99909543bb6079148e759c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1769931517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1986,7 +2011,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HexTilePrefab: {fileID: 1901911034279994, guid: 61a4f649633a1f94abeb21559df74bd4, type: 3}
-  PersonTileMap_object: {fileID: 1168173660}
   PersonTileMap_script: {fileID: 1168173662}
   PersonTileMap_transform: {fileID: 1168173661}
   mapWidth: 21

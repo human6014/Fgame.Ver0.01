@@ -46,6 +46,7 @@ public class TestPlayer : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Hit()
     {
+        if (isDying) return;
         HP.fillAmount -= 0.1f;
         if (HP.fillAmount <= 0)
         {
@@ -69,7 +70,7 @@ public class TestPlayer : MonoBehaviourPunCallbacks, IPunObservable
         }
         if (other.gameObject.tag == "Melee")
         {
-            HP.fillAmount -= 0.2f;
+            Hit();
         }
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

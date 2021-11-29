@@ -9,10 +9,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     private int cMaxPlayer;
     private int cPlayerCount;
     public bool isFull = false;
-    [SerializeField] private GameObject delayCancelButton;
-    [SerializeField] private Text roomCountDisplay;
-    [SerializeField] private Text timerToStartDisplay;
-    [SerializeField] private PhotonView view;
+    [SerializeField] GameObject delayCancelButton;
+    [SerializeField] Text roomCountDisplay;
+    [SerializeField] Text timerToStartDisplay;
+    [SerializeField] Button matchDoun;
+    [SerializeField] PhotonView view;
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;

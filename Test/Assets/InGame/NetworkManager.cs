@@ -36,12 +36,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         view.RPC("PunUpdate", RpcTarget.All);
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer) => view.RPC("PunUpdate", RpcTarget.All);
-    /*
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        throw new System.NotImplementedException();
-    }
-    */
     [PunRPC]
     void PunUpdate()
     {

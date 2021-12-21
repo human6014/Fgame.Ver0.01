@@ -10,14 +10,11 @@ public class Weapon : MonoBehaviourPunCallbacks
     public float rate;
     public BoxCollider meleeArea;
     public TrailRenderer trailEffect;
-    public PhotonView PV;
+    //public PhotonView PV;
     public void UseWeapons()
     {
         Debug.Log("UseWeapons");
-        if (type == weaponsType.Melee)
-        {
-            StartCoroutine("Swing");
-        }
+        if (type == weaponsType.Melee) StartCoroutine("Swing");
     }
     IEnumerator Swing()
     {
@@ -34,7 +31,10 @@ public class Weapon : MonoBehaviourPunCallbacks
         if (other.CompareTag("Player"))
         {
             other.GetComponent<Player>().Hit(damage);
-            Debug.Log("Weapon's Trigger");
+        }
+        else if (other.CompareTag("TPlayer"))
+        {
+            other.GetComponent<TestPlayer>().Hit(damage);
         }
     }
 }

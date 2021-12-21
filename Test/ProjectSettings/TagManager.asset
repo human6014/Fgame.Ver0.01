@@ -14,6 +14,7 @@ TagManager:
   - Floor6
   - Melee
   - Range
+  - TPlayer
   layers:
   - Default
   - TransparentFX

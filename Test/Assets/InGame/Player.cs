@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityStandardAssets;
 using UnityEngine.UI;
 using Photon.Pun;
-using Photon.Realtime;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
     int weaponIndex = -1;
@@ -56,15 +55,16 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (photonView.IsMine)
         {
-            xMove = Input.GetAxisRaw("Horizontal");
-            zMove = Input.GetAxisRaw("Vertical");
-            walkMove = Input.GetButton("Walk");
-            jumpMove = Input.GetButtonDown("Jump");
-            dodgeMove = Input.GetButtonDown("Dodge");
-            attack = Input.GetButtonDown("MeleeAttack");
+            if (isDying) return;
+            xMove       = Input.GetAxisRaw("Horizontal");
+            zMove       = Input.GetAxisRaw("Vertical");
+            walkMove    = Input.GetButton("Walk");
+            jumpMove    = Input.GetButtonDown("Jump");
+            dodgeMove   = Input.GetButtonDown("Dodge");
+            attack      = Input.GetButtonDown("MeleeAttack");
             Vector3 moveVec = new Vector3(xMove, 0, zMove).normalized;
 
-            if(!isDying) transform.position += (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * moveVec;
+            transform.position += (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * moveVec;
             if (!isJump && !isDodge)
                 if (walkMove || moveVec == Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
                 else MP.fillAmount += Time.time * Time.deltaTime / 50f;
@@ -135,14 +135,17 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Die()
     {
-        gameObject.transform.position = new Vector3(0, 1, 0); //Destroy 후 재생성 고민중
-        child.transform.eulerAngles = new Vector3(0, 0, 180); //미완성
+        gameObject.transform.position = new Vector3(0, 2, -0.5f); //Destroy 후 재생성 고민중
+        gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
         HP.fillAmount = 1;
         MP.fillAmount = 1;
-        Invoke("Respawn", 5f);
+        StartCoroutine("Respawn");
     }
-    void Respawn()
+    IEnumerator Respawn()
     {
+        yield return new WaitForSeconds(5f);
+        gameObject.transform.position = new Vector3(0, 1.05f, 0);
+        gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         isDying = false;
     }
     private void OnCollisionEnter(Collision collision)

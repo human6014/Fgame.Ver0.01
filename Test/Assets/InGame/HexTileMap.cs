@@ -8,8 +8,9 @@ public class HexTileMap : MonoBehaviour
     public PersonTileMap PersonTileMap_script;
     public Transform PersonTileMap_transform;
 
-    [SerializeField] int mapWidth,
-                         mapHeight;
+    [SerializeField]
+    int mapWidth,
+        mapHeight;
 
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f;
@@ -19,7 +20,7 @@ public class HexTileMap : MonoBehaviour
 
         CreateHexTileMap();
         PersonTileMap_script.CopyTag();
-        
+
         Debug.Log("HexTileMap Start ³¡");
     }
 
@@ -35,12 +36,12 @@ public class HexTileMap : MonoBehaviour
         {
             for (float z = mapZMin; z < mapZMax; z++)
             {
-                GameObject TempGo = Instantiate(HexTilePrefab,PersonTileMap_transform) as GameObject;
+                GameObject TempGo = Instantiate(HexTilePrefab, PersonTileMap_transform);
                 TempGo.tag = "Floor0";
                 Vector3 pos;
 
-                if (z % 2 == 0) pos = new Vector3(PersonTileMap_transform.position.x+x * tileXOffset, 0, PersonTileMap_transform.position.z+z * tileZOffset);
-                else pos = new Vector3(PersonTileMap_transform.position.x+x * tileXOffset + tileXOffset / 2, 0, PersonTileMap_transform.position.z + z * tileZOffset);
+                if (z % 2 == 0) pos = new Vector3(PersonTileMap_transform.position.x + x * tileXOffset, 0, PersonTileMap_transform.position.z + z * tileZOffset);
+                else            pos = new Vector3(PersonTileMap_transform.position.x + x * tileXOffset + tileXOffset / 2, 0, PersonTileMap_transform.position.z + z * tileZOffset);
                 StartCoroutine(SetTileInfo(TempGo, x, z, pos));
             }
         }
@@ -48,7 +49,7 @@ public class HexTileMap : MonoBehaviour
     IEnumerator SetTileInfo(GameObject TempGo, float x, float z, Vector3 pos)
     {
         Debug.Log("HexTileMap SetTileInfo ½ÃÀÛ");
-        
+
         TempGo.transform.parent = PersonTileMap_transform;
         TempGo.name = x.ToString() + "," + z.ToString();
         yield return new WaitForSeconds(0.000001f);

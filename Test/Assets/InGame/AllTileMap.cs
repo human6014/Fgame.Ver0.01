@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class AllTileMap : MonoBehaviour
 {
-    public GameObject PersonTileMap_obj;
-    public PersonTileMap PersonTileMap_script;
-    public Transform AllTileMap_Position;
+    public GameObject personTileMap_obj;
+    public PersonTileMap personTileMap_script;
+    public Transform allTileMap_Position;
 
-    private int TagNum = 1;
+    private int tagNum = 1;
     private void Start()
     {
         Debug.Log("AllTileMap Start Ω√¿€");
@@ -37,12 +37,12 @@ public class AllTileMap : MonoBehaviour
                 x = -0.5f;
                 z = 0.865f;
             }
-            GameObject AllTile = Instantiate(PersonTileMap_obj, new Vector3
-                (x * PersonTileMap_script.Sphere.radius * 3, 0, z * PersonTileMap_script.Sphere.radius * 3), Quaternion.identity) as GameObject;
-            TagNum++;
-            AllTile.transform.parent = AllTileMap_Position;
+            GameObject AllTile = Instantiate(personTileMap_obj, new Vector3
+                (x * personTileMap_script.sphere.radius * 3, 0, z * personTileMap_script.sphere.radius * 3), Quaternion.identity) as GameObject;
+            tagNum++;
+            AllTile.transform.parent = allTileMap_Position;
             AllTile.name = "PerosnTileMap" + (i+1);
-            AllTile.tag = "Floor" + TagNum.ToString();
+            AllTile.tag = "Floor" + tagNum.ToString();
         }
 
         Debug.Log("AllTileMap Start ≥°");

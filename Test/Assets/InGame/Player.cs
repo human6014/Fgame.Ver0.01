@@ -7,7 +7,7 @@ using Photon.Pun;
 using Photon.Realtime;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
-    int weaponIndex=-1;
+    int weaponIndex = -1;
     float xMove,
           zMove,
           attackDelay,
@@ -32,7 +32,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Rigidbody rigid;
     Animator anim;
     Transform tr;
-    Vector3 curPos ;
+    Vector3 curPos;
     private void Start()
     {
         timer = 0.0f;
@@ -40,9 +40,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
         tr = GetComponent<Transform>();
-        child= transform.Find("GameObject").gameObject;
+        child = transform.Find("GameObject").gameObject;
         if (photonView.IsMine) Camera.main.GetComponent<MainCamera>().target = tr;
-        for(int i = 0; i < hasWeapons.Length; i++)
+        for (int i = 0; i < hasWeapons.Length; i++)
         {
             if (hasWeapons[i])
             {
@@ -62,27 +62,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             jumpMove = Input.GetButtonDown("Jump");
             dodgeMove = Input.GetButtonDown("Dodge");
             attack = Input.GetButtonDown("MeleeAttack");
-
             Vector3 moveVec = new Vector3(xMove, 0, zMove).normalized;
 
-            if (isDying)
-            {
-                timer += Time.deltaTime;
-                moveVec = new Vector3(0, 1, 0);
-                if (timer >= 5f)
-                {
-                    timer = 0;
-                    isDying = false;
-                }
-            }
-            transform.position += moveVec * speed * (walkMove ? 1f : 1.5f) * Time.deltaTime;
+            if(!isDying) transform.position += (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * moveVec;
             if (!isJump && !isDodge)
                 if (walkMove || moveVec == Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
                 else MP.fillAmount += Time.time * Time.deltaTime / 50f;
 
             anim.SetBool("IsRun", moveVec != Vector3.zero);
             anim.SetBool("IsWalk", walkMove);
-
             transform.LookAt(transform.position + moveVec);
 
             Attack();
@@ -97,7 +85,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         attackDelay += Time.deltaTime;
         if (attack && equipWeapon.rate < attackDelay && !isDodge && !isDying)
         {
-            Debug.Log("attack");
             equipWeapon.UseWeapons();
             anim.SetTrigger("doSwing");
             attackDelay = 0;
@@ -105,7 +92,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Jump()
     {
-        if (jumpMove && !isJump && !isDodge && MP.fillAmount >= 0.2f &&!isDying)
+        if (jumpMove && !isJump && !isDodge && MP.fillAmount >= 0.2f && !isDying)
         {
             rigid.AddForce(Vector3.up * 3.5f, ForceMode.Impulse);
             anim.SetBool("IsJump", true);
@@ -130,28 +117,36 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         speed *= 0.4f;
         isDodge = false;
     }
-    void Hit()
+    public void Hit(int damage)
     {
         if (isDying) return;
-        Debug.Log("맞음!!!");
-        HP.fillAmount -= 0.5f;
-        
+        view.RPC("PunHit", RpcTarget.All,damage);
+    }
+    [PunRPC]
+    void PunHit(int damage)
+    {
+        HP.fillAmount -= damage / 100f;
         if (HP.fillAmount <= 0)
         {
+            HP.fillAmount = 0;
             isDying = true;
             Die();
         }
     }
     void Die()
     {
-        gameObject.transform.position = new Vector3(0, 1, 0);
+        gameObject.transform.position = new Vector3(0, 1, 0); //Destroy 후 재생성 고민중
         child.transform.eulerAngles = new Vector3(0, 0, 180); //미완성
         HP.fillAmount = 1;
         MP.fillAmount = 1;
+        Invoke("Respawn", 5f);
+    }
+    void Respawn()
+    {
+        isDying = false;
     }
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Player Floor");
         if (collision.gameObject.tag.Substring(0, 5) == "Floor")
         {
             anim.SetBool("IsJump", false);
@@ -161,31 +156,21 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "GameManager")
-        {
-            isDying = true;
-            Die();
-        }
-        if (other.gameObject.tag == "Melee" )
-        {
-            Hit();
-        }
+        if (other.gameObject.name == "GameManager") view.RPC("PunHit", RpcTarget.All, 1000);
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
             stream.SendNext(transform.position);
-            stream.SendNext(HP.fillAmount);
             stream.SendNext(MP.fillAmount);
-            Debug.Log("HP : "+HP.fillAmount);
+            Debug.Log("HP : " + HP.fillAmount);
         }
         else
         {
             curPos = (Vector3)stream.ReceiveNext();
-            HP.fillAmount = (float)stream.ReceiveNext();
             MP.fillAmount = (float)stream.ReceiveNext();
-            Debug.Log("HP : "+HP.fillAmount);
+            Debug.Log("HP : " + HP.fillAmount);
         }
     }
 }

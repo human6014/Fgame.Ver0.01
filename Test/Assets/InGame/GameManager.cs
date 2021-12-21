@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviour
         myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
                                { 5,6,7,8,9,10}};//플레이어 타일 크기
     }
-    private void Update()
+    public void OnTriggerEnter(Collider other)
     {
+        if (other.tag.Substring(0, 5) == "Floor") Destroy(other.gameObject);
     }
 }

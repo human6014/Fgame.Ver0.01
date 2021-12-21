@@ -339,6 +339,7 @@ MonoBehaviour:
   rate: 0.7
   meleeArea: {fileID: 3853885738758774935}
   trailEffect: {fileID: 6667572268279308053}
+  PV: {fileID: 4387864344120677033}
 --- !u!1 &805788821590486174
 GameObject:
   m_ObjectHideFlags: 0

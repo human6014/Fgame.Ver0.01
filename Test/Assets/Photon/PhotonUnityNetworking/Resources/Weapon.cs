@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Weapon : MonoBehaviour
+using Photon.Pun;
+public class Weapon : MonoBehaviourPunCallbacks
 {
     public enum weaponsType { Melee,Range };
     public weaponsType type;
@@ -10,7 +10,7 @@ public class Weapon : MonoBehaviour
     public float rate;
     public BoxCollider meleeArea;
     public TrailRenderer trailEffect;
-
+    public PhotonView PV;
     public void UseWeapons()
     {
         Debug.Log("UseWeapons");
@@ -28,5 +28,13 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(0.4f);
         meleeArea.enabled = false;
         trailEffect.enabled = false;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            other.GetComponent<Player>().Hit(damage);
+            Debug.Log("Weapon's Trigger");
+        }
     }
 }

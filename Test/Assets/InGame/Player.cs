@@ -86,7 +86,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (attack && equipWeapon.rate < attackDelay && !isDodge && !isDying)
         {
             equipWeapon.UseWeapons();
-            anim.SetTrigger("doSwing");
+            anim.SetTrigger(equipWeapon.type == Weapon.weaponsType.Melee ? "doSwing" : "doShot");
             attackDelay = 0;
         }
     }

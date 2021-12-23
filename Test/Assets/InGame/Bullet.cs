@@ -1,38 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
-public class Bullet : MonoBehaviourPunCallbacks
+
+public class Bullet : MonoBehaviour
 {
     public int damage;
-    new Rigidbody rigidbody;
-    private void Start()
-    {
-        rigidbody = GetComponent<Rigidbody>();
-        StartCoroutine("Flag");
-        Destroy(gameObject, 3f);
-    }
-    IEnumerator Flag()
-    {
-        yield return new WaitForSeconds(0.25f);
-        rigidbody.constraints = RigidbodyConstraints.None;
-    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        
-        if (collision.gameObject.CompareTag("Player") && collision.gameObject.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
+        if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log(collision.gameObject.tag);
             collision.gameObject.GetComponent<Player>().Hit(damage);
-            Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("TPlayer"))
         {
             collision.gameObject.GetComponent<TestPlayer>().Hit(damage);
         }
-        if (collision.gameObject.tag.Substring(0, 5) == "Floor")
+        if (collision.gameObject.CompareTag("Floor"))
         {
-            Destroy(gameObject);
+            Destroy(gameObject, 3);
         }
+        else
+        {
+            //Destroy(gameObject, 3);
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+
     }
 }

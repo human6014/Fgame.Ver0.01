@@ -34,6 +34,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Vector3 curPos;
     private void Start()
     {
+        timer = 0.0f;
         isDying = false;
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
@@ -55,12 +56,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (photonView.IsMine)
         {
             if (isDying) return;
-            xMove = Input.GetAxisRaw("Horizontal");
-            zMove = Input.GetAxisRaw("Vertical");
-            walkMove = Input.GetButton("Walk");
-            jumpMove = Input.GetButtonDown("Jump");
-            dodgeMove = Input.GetButtonDown("Dodge");
-            attack = Input.GetButtonDown("Attack");
+            xMove       = Input.GetAxisRaw("Horizontal");
+            zMove       = Input.GetAxisRaw("Vertical");
+            walkMove    = Input.GetButton("Walk");
+            jumpMove    = Input.GetButtonDown("Jump");
+            dodgeMove   = Input.GetButtonDown("Dodge");
+            attack      = Input.GetButtonDown("MeleeAttack");
             Vector3 moveVec = new Vector3(xMove, 0, zMove).normalized;
 
             transform.position += (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * moveVec;
@@ -84,8 +85,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         attackDelay += Time.deltaTime;
         if (attack && equipWeapon.rate < attackDelay && !isDodge && !isDying)
         {
-            anim.SetTrigger(equipWeapon.type == Weapon.weaponsType.Melee ? "doSwing" : "doShot");
             equipWeapon.UseWeapons();
+            anim.SetTrigger(equipWeapon.type == Weapon.weaponsType.Melee ? "doSwing" : "doShot");
             attackDelay = 0;
         }
     }
@@ -119,7 +120,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public void Hit(int damage)
     {
         if (isDying) return;
-        view.RPC("PunHit", RpcTarget.All, damage);
+        view.RPC("PunHit", RpcTarget.All,damage);
     }
     [PunRPC]
     void PunHit(int damage)
@@ -127,7 +128,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount -= damage / 100f;
         if (HP.fillAmount <= 0)
         {
-            Debug.Log("PunHit");
             HP.fillAmount = 0;
             isDying = true;
             Die();
@@ -167,11 +167,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             stream.SendNext(transform.position);
             stream.SendNext(MP.fillAmount);
+            Debug.Log("HP : " + HP.fillAmount);
         }
         else
         {
             curPos = (Vector3)stream.ReceiveNext();
             MP.fillAmount = (float)stream.ReceiveNext();
+            Debug.Log("HP : " + HP.fillAmount);
         }
     }
 }

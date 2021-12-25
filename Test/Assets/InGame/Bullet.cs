@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class Bullet : MonoBehaviour
+using Photon.Pun;
+public class Bullet : MonoBehaviourPunCallbacks
 {
     public int damage;
-
+    private void Start()
+    {
+        Destroy(gameObject, 3f);
+    }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && !this.gameObject)
         {
             collision.gameObject.GetComponent<Player>().Hit(damage);
         }
@@ -18,15 +21,18 @@ public class Bullet : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Floor"))
         {
-            Destroy(gameObject, 3);
+            Destroy(gameObject);
         }
         else
         {
             //Destroy(gameObject, 3);
         }
     }
-    private void OnTriggerEnter(Collider other)
+    /*
+    private void Update()
     {
-
+        Vector3 dir = Vector3.forward;
+        transform.position += dir * 5 * Time.deltaTime;
     }
+    */
 }

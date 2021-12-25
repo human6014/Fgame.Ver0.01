@@ -7,31 +7,34 @@ public class Weapon : MonoBehaviourPunCallbacks
     public enum weaponsType { Melee,Range };
     public weaponsType type;
     public int damage;
-    public float rate;
+    public float rate,speed;
     public BoxCollider meleeArea;
     public TrailRenderer trailEffect;
     public GameObject bullet;
     public GameObject bulletCase;
     public Transform bulletPos;
     public Transform bulletCasePos;
-    //public PhotonView PV;
+    public new Rigidbody rigidbody;
     public void UseWeapons()
     {
         if (type == weaponsType.Melee) StartCoroutine("Swing");
-        else if(type == weaponsType.Range)StartCoroutine("Shot");
+        else if (type == weaponsType.Range) StartCoroutine("Shot");
     }
     IEnumerator Shot()
     {
-        GameObject intantBullet = Instantiate(bullet, bulletPos.position, bulletPos.rotation);
+        rigidbody.isKinematic = true;
+        GameObject intantBullet = PhotonNetwork.Instantiate("BulletHandGun", bulletPos.position, bulletPos.rotation);
         Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
-        bulletRigid.velocity = bulletPos.forward * 50;
+        bulletRigid.velocity = bulletPos.forward * speed;
 
-        yield return null;
-        GameObject intantCase = Instantiate(bulletCase, bulletCasePos.position, bulletCasePos.rotation);
+        GameObject intantCase = PhotonNetwork.Instantiate("BulletCase", bulletCasePos.position, bulletCasePos.rotation);
         Rigidbody caseRigid = intantCase.GetComponent<Rigidbody>();
-        Vector3 caseVec = bulletCasePos.forward * Random.Range(-2, -1) + Vector3.up * Random.Range(1, 2);
+        Vector3 caseVec = bulletCasePos.forward * Random.Range(-1, -0.5f) + Vector3.up * Random.Range(0.5f, 1);
         caseRigid.AddForce(caseVec, ForceMode.Impulse);
-        caseRigid.AddTorque(Vector3.up * 10,ForceMode.Impulse);
+        caseRigid.AddTorque(Vector3.up * 2,ForceMode.Impulse);
+
+        yield return new WaitForSeconds(0.05f);
+        rigidbody.isKinematic = false;
     }
     IEnumerator Swing()
     {

@@ -15,6 +15,7 @@ TagManager:
   - Melee
   - Range
   - TPlayer
+  - Dummy
   layers:
   - Default
   - TransparentFX

@@ -22,19 +22,17 @@ public class Weapon : MonoBehaviourPunCallbacks
     }
     IEnumerator Shot()
     {
-        rigidbody.isKinematic = true;
         GameObject intantBullet = PhotonNetwork.Instantiate("BulletHandGun", bulletPos.position, bulletPos.rotation);
         Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
-        bulletRigid.velocity = bulletPos.forward * speed;
-
+        //bulletRigid.velocity = bulletPos.forward * speed;
+        bulletRigid.AddForce(bulletPos.forward * speed,ForceMode.Impulse); //speed minimum 3
         GameObject intantCase = PhotonNetwork.Instantiate("BulletCase", bulletCasePos.position, bulletCasePos.rotation);
         Rigidbody caseRigid = intantCase.GetComponent<Rigidbody>();
-        Vector3 caseVec = bulletCasePos.forward * Random.Range(-1, -0.5f) + Vector3.up * Random.Range(0.5f, 1);
+        Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
         caseRigid.AddForce(caseVec, ForceMode.Impulse);
-        caseRigid.AddTorque(Vector3.up * 2,ForceMode.Impulse);
+        caseRigid.AddTorque(Vector3.up,ForceMode.Impulse);
 
-        yield return new WaitForSeconds(0.05f);
-        rigidbody.isKinematic = false;
+        yield return null;
     }
     IEnumerator Swing()
     {

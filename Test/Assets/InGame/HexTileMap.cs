@@ -5,7 +5,6 @@ using UnityEngine;
 public class HexTileMap : MonoBehaviour
 {
     public GameObject HexTilePrefab;
-    public PersonTileMap PersonTileMap_script;
     public Transform PersonTileMap_transform;
 
     [SerializeField]
@@ -19,7 +18,7 @@ public class HexTileMap : MonoBehaviour
         Debug.Log("HexTileMap Start Ω√¿€");
 
         CreateHexTileMap();
-        PersonTileMap_script.CopyTag();
+        //PersonTileMap_script.CopyTag();
 
         Debug.Log("HexTileMap Start ≥°");
     }
@@ -52,6 +51,7 @@ public class HexTileMap : MonoBehaviour
 
         TempGo.transform.parent = PersonTileMap_transform;
         TempGo.name = x.ToString() + "," + z.ToString();
+        TempGo.tag = transform.parent.tag;
         yield return new WaitForSeconds(0.000001f);
         TempGo.transform.position = pos;
 

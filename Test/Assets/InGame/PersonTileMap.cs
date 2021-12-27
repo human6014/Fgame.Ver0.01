@@ -11,15 +11,17 @@ public class PersonTileMap : MonoBehaviour
     private new Rigidbody rigidbody;
     private new Renderer renderer;
     float initRadius;
+    char split = ',';
+    bool triggerCount = true;
     private void Start()
     {
         Debug.Log("PersonTileMap Start시작");
 
         sphere = GetComponent<SphereCollider>();
-        
-        sphere.radius = gameManager_script.myField[1, gameManager_script.playerNum];
+        if (gameObject.CompareTag("Floor7")) sphere.radius = 5;
+        else sphere.radius = gameManager_script.myField[1, gameManager_script.playerNum];
+
         initRadius = sphere.radius;
-        Debug.Log(sphere.radius);
         gameManager_script.playerNum++;
 
         Debug.Log("PersonTileMap Start 끝");
@@ -27,7 +29,7 @@ public class PersonTileMap : MonoBehaviour
     private void Update()
     {
         Debug.Log("PersonTileMap FixedUpdate 중");
-        if (sphere.radius >= 0 && networkManager_script.isFull == true) sphere.radius -= Time.deltaTime * Time.time / 1000;
+        if (sphere.radius >= 0 && networkManager_script.isFull && !gameObject.CompareTag("Floor7")) sphere.radius -= Time.deltaTime * Time.time / 1000;
     }
 
     private void OnTriggerExit(Collider other)
@@ -35,16 +37,45 @@ public class PersonTileMap : MonoBehaviour
         Debug.Log("PersonTileMap OnTriggerExit 시작");
         if (other.CompareTag(tag))
         {
-            if (sphere.radius == initRadius) Destroy(other.gameObject);
+            if (sphere.radius == initRadius)
+            {
+                Destroy(other.gameObject);
+            }
             else
             {
+                if(triggerCount) TagChanging(); //여기 아님!
                 renderer = other.GetComponent<Renderer>();
                 renderer.material.color = new Color(255 / 255f, 25 / 255f, 25 / 255f);
-
+                triggerCount = false;
                 StartCoroutine(FallWaiting(other));
             }
         }
         Debug.Log("PersonTileMap OnTriggerExit 끝");
+    }
+    void TagChanging()
+    {
+        Transform[] tran = GetComponentsInChildren<Transform>();
+        string[] tempString = { "0", "0" };
+        Debug.Log("TagChanging");
+        foreach(Transform t in tran)
+        {
+            Debug.Log(transform.GetChild(0));
+            /*
+            if (t != transform.GetChild(0))
+            {
+                tempString = t.gameObject.name.Split(split);
+
+                if (t.gameObject.CompareTag("Floor1"))
+                {
+                    if (int.Parse(tempString[1]) - int.Parse(tempString[0]) == 2)
+                    {
+                        Debug.Log(tempString[0] + "\t" + tempString[1]);
+                        t.gameObject.tag = "Floor7";
+                    }
+                }
+            }
+            */
+        }
     }
     IEnumerator FallWaiting(Collider other)
     {
@@ -57,15 +88,33 @@ public class PersonTileMap : MonoBehaviour
         rigidbody.isKinematic = false;
         rigidbody.useGravity = true;
     }
+    /*
     public void CopyTag()
     {
-        Debug.Log("PersonTileMap CopyTag 시작");
-
         Transform[] tran = GetComponentsInChildren<Transform>();
-        foreach (Transform t in tran)
+        string[] tempString = new string [2];
+        tempString = tran[3].name.Split(split);
+        Debug.Log(tempString[0] + "\t" + tempString[1]);
+        foreach (Transform t in tran) //효율 계선 필요함
+        {
+            /*
+            if (t!=transform.GetChild(0)) { 
+                tempString = t.gameObject.name.Split(split);
+                Debug.Log(tempString[0]+"\t"+tempString[1]);
+            }
             t.gameObject.tag = tag;
-
-        Debug.Log("PersonTileMap CopyTag 끝");
+            /*
+            if (t.gameObject.CompareTag("Floor1"))
+            {
+                Debug.Log("if문 걸림");
+                if (int.Parse(tempString[1]) - int.Parse(tempString[0]) == 2)
+                {
+                    Debug.Log("2중 if 걸림");
+                    Debug.Log(tempString[0] + "\t" + tempString[1]);
+                    t.gameObject.tag = "Floor7";
+                }
+            }
+        }
     }
-
+*/
 }

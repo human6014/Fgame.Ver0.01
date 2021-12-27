@@ -26,7 +26,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnConnectedToMaster() => PhotonNetwork.JoinRandomRoom();
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        RoomOptions roomOptions = new RoomOptions{MaxPlayers = 2};
+        RoomOptions roomOptions = new RoomOptions{MaxPlayers = 1};
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()
@@ -43,6 +43,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         roomCountDisplay.text = cPlayerCount + " / " + cMaxPlayer;
         if (cPlayerCount == cMaxPlayer)
         {
+            Debug.Log("플레이어 생성");
             PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
             isFull = true;
         }

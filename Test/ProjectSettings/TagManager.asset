@@ -16,6 +16,8 @@ TagManager:
   - Range
   - TPlayer
   - Dummy
+  - Bullet
+  - Floor7
   layers:
   - Default
   - TransparentFX

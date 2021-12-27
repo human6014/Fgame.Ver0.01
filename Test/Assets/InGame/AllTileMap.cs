@@ -15,7 +15,7 @@ public class AllTileMap : MonoBehaviour
 
         float x = 1,
               z = 0;
-        for (int i = 1; i < 6; i++)
+        for (int i = 1; i < 7; i++)
         {
             if (i == 2)
             {
@@ -37,11 +37,16 @@ public class AllTileMap : MonoBehaviour
                 x = -0.5f;
                 z = 0.865f;
             }
+            else if (i == 6)
+            {
+                x = 0.5f;
+                z = 0.865f;
+            }
             GameObject AllTile = Instantiate(personTileMap_obj, new Vector3
                 (x * personTileMap_script.sphere.radius * 3, 0, z * personTileMap_script.sphere.radius * 3), Quaternion.identity) as GameObject;
             tagNum++;
             AllTile.transform.parent = allTileMap_Position;
-            AllTile.name = "PerosnTileMap" + (i+1);
+            AllTile.name = "PerosnTileMap" + (i+1).ToString();
             AllTile.tag = "Floor" + tagNum.ToString();
         }
 

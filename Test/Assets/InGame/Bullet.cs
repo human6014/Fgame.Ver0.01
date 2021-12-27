@@ -20,9 +20,8 @@ public class Bullet : MonoBehaviourPunCallbacks
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log(collision.gameObject.tag);
-        if (collision.gameObject.CompareTag("Player") && collision.gameObject.GetComponent<PhotonView>().IsMine && !photonView.IsMine)//&& !this.gameObject
+        if (collision.gameObject.CompareTag("Player") && collision.gameObject.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
-            Debug.Log("Bullett's CollisionEnter");
             collision.gameObject.GetComponent<Player>().Hit(damage);
             Destroy(gameObject);
         }

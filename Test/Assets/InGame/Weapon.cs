@@ -47,12 +47,8 @@ public class Weapon : MonoBehaviourPunCallbacks
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
-        {
             other.GetComponent<Player>().Hit(damage);
-        }
         else if (other.CompareTag("TPlayer"))
-        {
             other.GetComponent<TestPlayer>().Hit(damage);
-        }
     }
 }

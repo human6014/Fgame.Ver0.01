@@ -2,29 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
+public class Bullet : MonoBehaviourPunCallbacks
 {
     public int damage;
-    bool start;
-    Vector3 curPos;
     new Rigidbody rigidbody;
     private void Start()
     {
-        rigidbody = GetComponent<Rigidbody>(); 
+        rigidbody = GetComponent<Rigidbody>();
         StartCoroutine("Flag");
         Destroy(gameObject, 3f);
     }
     IEnumerator Flag()
     {
-        yield return new WaitForSeconds(0.1f);
-        start = true;
+        yield return new WaitForSeconds(0.25f);
         rigidbody.constraints = RigidbodyConstraints.None;
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player") && !gameObject)
+        Debug.Log(collision.gameObject.tag);
+        if (collision.gameObject.CompareTag("Player") && collision.gameObject.GetComponent<PhotonView>().IsMine && !photonView.IsMine)//&& !this.gameObject
         {
+            Debug.Log("Bullett's CollisionEnter");
             collision.gameObject.GetComponent<Player>().Hit(damage);
+            Destroy(gameObject);
         }
         else if (collision.gameObject.CompareTag("TPlayer"))
         {
@@ -34,33 +34,5 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
         {
             Destroy(gameObject);
         }
-        else
-        {
-            //Destroy(gameObject, 3);
-        }
-    }
-    private void Update()
-    {
-        if (photonView.IsMine)
-        {
-            /*
-            if (rigidbody.velocity.sqrMagnitude < new Vector3(1, 0, 1).sqrMagnitude && start)
-            {
-                Destroy(gameObject);
-            }
-            */
-            
-        }
-        //Vector3 dir = Vector3.forward;
-        //transform.position += dir * 5 * Time.deltaTime;
-        else
-        {
-            if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
-            else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
-        }
-    }
-
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
     }
 }

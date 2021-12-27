@@ -128,6 +128,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount -= damage / 100f;
         if (HP.fillAmount <= 0)
         {
+            Debug.Log("PunHit");
             HP.fillAmount = 0;
             isDying = true;
             Die();
@@ -167,13 +168,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             stream.SendNext(transform.position);
             stream.SendNext(MP.fillAmount);
-            Debug.Log("HP : " + HP.fillAmount);
         }
         else
         {
             curPos = (Vector3)stream.ReceiveNext();
             MP.fillAmount = (float)stream.ReceiveNext();
-            Debug.Log("HP : " + HP.fillAmount);
         }
     }
 }

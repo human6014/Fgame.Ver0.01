@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
-                               { 9,9,9,9,9,9}};//플레이어 타일 크기
+                               { 8.5f,8.5f,8.5f,8.5f,8.5f,8.5f}};//플레이어 타일 크기
     }
     public void OnTriggerEnter(Collider other)
     {

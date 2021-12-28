@@ -43,7 +43,7 @@ public class AllTileMap : MonoBehaviour
                 z = 0.865f;
             }
             GameObject AllTile = Instantiate(personTileMap_obj, new Vector3
-                (x * personTileMap_script.sphere.radius * 3, 0, z * personTileMap_script.sphere.radius * 3), Quaternion.identity) as GameObject;
+                (x * personTileMap_script.sphere.radius * 3, 0, z * personTileMap_script.sphere.radius * 3), Quaternion.identity);
             tagNum++;
             AllTile.transform.parent = allTileMap_Position;
             AllTile.name = "PerosnTileMap" + (i+1).ToString();

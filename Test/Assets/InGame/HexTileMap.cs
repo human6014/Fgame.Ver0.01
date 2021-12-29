@@ -6,18 +6,18 @@ public class HexTileMap : MonoBehaviour
 {
     public GameObject HexTilePrefab;
     public Transform PersonTileMap_transform;
-    int count;
     [SerializeField]
     int mapWidth,  //18
         mapHeight; //22
 
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f;
-    string parentName;
+    string parentTag;
+    int count;
     void Start()
     {
         Debug.Log("HexTileMap Start 시작");
-        parentName = transform.parent.name;
+        parentTag = transform.parent.tag;
         count = 1;
         CreateHexTileMap();
         Debug.Log("HexTileMap Start 끝");
@@ -36,7 +36,6 @@ public class HexTileMap : MonoBehaviour
             for (int z = mapZMin; z < mapZMax; z++)
             {
                 GameObject TempGo = Instantiate(HexTilePrefab, PersonTileMap_transform);
-                TempGo.tag = "Floor0";
                 Vector3 pos;
 
                 if (z % 2 == 0) pos = new Vector3(PersonTileMap_transform.position.x + x * tileXOffset, 0, PersonTileMap_transform.position.z + z * tileZOffset);
@@ -59,44 +58,37 @@ public class HexTileMap : MonoBehaviour
     }
     void TagChecking(GameObject TempGo, int x, int z) //미완성
     {
-        //Debug.Log(parentName+"의 count : "+count);
-        switch (parentName)
+        switch (parentTag)
         {
-            case "PersonTileMap1" when (x == z / 2 && z == count):
-                Debug.Log("PersonTileMap1드감");
+            case "Floor1" when (x == z / 2 && z == count):
+                Debug.Log("Floor1");
                 TagChanging(TempGo);
                 break;
-            case "PersonTileMap2":
-                Debug.Log("PersonTileMap2드감");
-                break;
-            case "PersonTileMap3" when (x == -count && z == 0):
+            case "Floor2" when (x == (z + 1) / -2 && z == mapHeight / 2 - count + (count % 2 == 0 ? 1 : -1) && z > 0):
+                Debug.Log("Floor2");
                 TagChanging(TempGo);
-                Debug.Log("PersonTileMap3드감");
                 break;
-            case "PersonTileMap4":
-                Debug.Log("PersonTileMap4드감");
+            case "Floor3" when (x < 0 && z == 0):
+                Debug.Log("Floor3");
+                TagChanging(TempGo);
                 break;
-            case "PersonTileMap5":
-                Debug.Log("PersonTileMap5드감");
+            case "Floor4" when (x == (z - 1) / 2 && z == mapHeight / -2 + count && x < 0):
+                Debug.Log("Floor4");
+                TagChanging(TempGo);
                 break;
-            case "PersonTileMap6" when (x == count && z == 0):
-                Debug.Log("PersonTileMap6드감");
+            case "Floor5" when (x == z / -2 && z == -count + (count % 2 == 0 ? 2 : 0) && z >= mapHeight / -2 ): //더 좋은 식 찾기
+                Debug.Log("Floor5");
+                TagChanging(TempGo);
+                if (z == -11 || z == 0) TempGo.tag = transform.parent.tag;
+                break;
+            case "Floor6" when (x > 0 && z == 0):
+                Debug.Log("Floor6");
                 TagChanging(TempGo);
                 break;
             default:
-                Debug.Log(parentName);
                 TempGo.tag = transform.parent.tag;
                 break;
         }
-        /*
-        if (z == count && z / 2 == x && TempGo.transform.parent.name=="PersonTileMap1")
-        {
-            Debug.Log(x + "," + z);
-            TempGo.tag = "Floor7";
-            count++;
-        }
-        else TempGo.tag = transform.parent.tag;
-        */
     }
     void TagChanging(GameObject TempGo)
     {

@@ -34,7 +34,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Vector3 curPos;
     private void Start()
     {
-        timer = 0.0f;
         isDying = false;
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
@@ -61,7 +60,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             walkMove    = Input.GetButton("Walk");
             jumpMove    = Input.GetButtonDown("Jump");
             dodgeMove   = Input.GetButtonDown("Dodge");
-            attack      = Input.GetButtonDown("MeleeAttack");
+            attack      = Input.GetButtonDown("Attack");
             Vector3 moveVec = new Vector3(xMove, 0, zMove).normalized;
 
             transform.position += (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * moveVec;

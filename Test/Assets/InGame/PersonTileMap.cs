@@ -7,10 +7,12 @@ public class PersonTileMap : MonoBehaviour
     public GameManager gameManager_script;
     public NetworkManager networkManager_script;
     public SphereCollider sphere;
+
     private MeshCollider meshCollider;
     private new Rigidbody rigidbody;
     private new Renderer renderer;
     float initRadius;
+    bool outPlayer;
     private void Start()
     {
         Debug.Log("PersonTileMap Start시작");
@@ -27,27 +29,43 @@ public class PersonTileMap : MonoBehaviour
     private void Update()
     {
         Debug.Log("PersonTileMap Update 중");
-        if (sphere.radius >= 0 && networkManager_script.isFull && !gameObject.CompareTag("Floor7")) sphere.radius -= Time.deltaTime * Time.time / 1000;
-    }
+        if (sphere.radius >= 0)
+        {
+            if (networkManager_script.isFull && !gameObject.CompareTag("Floor7")) sphere.radius -= Time.deltaTime * Time.time / 1000;
+        }
+        else
+        {
+            if (outPlayer) return;
+            Transform[] child = GetComponentsInChildren<Transform>();
 
+            foreach (Transform iter in child)
+            {
+                // 부모(this.gameObject)는 삭제 하지 않기 위한 처리
+                if (iter.name != "HexTileMap")
+                {
+                    StartCoroutine(FallWaiting(iter.gameObject));
+                }
+            }
+            outPlayer = true;
+        }
+    }
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("PersonTileMap OnTriggerExit 시작");
         if (other.CompareTag(tag))
         {
             if (sphere.radius == initRadius) Destroy(other.gameObject);
             else
             {
-                renderer = other.GetComponent<Renderer>();
-                renderer.material.color = new Color(255 / 255f, 25 / 255f, 25 / 255f);
-                StartCoroutine(FallWaiting(other));
+                StartCoroutine(FallWaiting(other.gameObject));
             }
         }
-        Debug.Log("PersonTileMap OnTriggerExit 끝");
     }
-    IEnumerator FallWaiting(Collider other)
+    IEnumerator FallWaiting(GameObject other)
     {
+        renderer = other.GetComponent<Renderer>();
+        renderer.material.color = new Color(255 / 255f, 25 / 255f, 25 / 255f);
         yield return new WaitForSeconds(3f); //밑에 순서 중요함
+        if (!other) yield break;
         meshCollider = other.GetComponent<MeshCollider>();
         meshCollider.convex = true;
         meshCollider.isTrigger = true;

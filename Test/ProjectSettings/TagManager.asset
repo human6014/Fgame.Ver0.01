@@ -18,6 +18,7 @@ TagManager:
   - Dummy
   - Bullet
   - Floor7
+  - Portal
   layers:
   - Default
   - TransparentFX

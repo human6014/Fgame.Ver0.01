@@ -54,10 +54,7 @@ public class PersonTileMap : MonoBehaviour
         if (other.CompareTag(tag))
         {
             if (sphere.radius == initRadius) Destroy(other.gameObject);
-            else
-            {
-                StartCoroutine(FallWaiting(other.gameObject));
-            }
+            else StartCoroutine(FallWaiting(other.gameObject));
         }
     }
     IEnumerator FallWaiting(GameObject other)

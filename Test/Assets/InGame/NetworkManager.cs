@@ -43,7 +43,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         roomCountDisplay.text = cPlayerCount + " / " + cMaxPlayer;
         if (cPlayerCount == cMaxPlayer)
         {
-            Debug.Log("플레이어 생성");
             PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
             isFull = true;
         }

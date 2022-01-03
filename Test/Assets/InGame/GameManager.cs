@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     }
     public void OnTriggerEnter(Collider other)
     {
-        if (other.tag.Substring(0, 5) == "Floor") Destroy(other.gameObject);
+        if (other.CompareTag("Player")) { }
+        else Destroy(other);
     }
 }

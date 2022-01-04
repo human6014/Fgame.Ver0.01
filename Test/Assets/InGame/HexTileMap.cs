@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,24 +7,28 @@ public class HexTileMap : MonoBehaviour
     public GameObject HexTilePrefab;
     public GameObject PortalPrefab;
     public Transform PersonTileMap_transform;
-    public Transform AllPortal;
-    public AllTileMap AllTileMap;
+    public AllTileMap allTileMap;
     [SerializeField]
     int mapWidth,  //22 
-        mapHeight; //22 (0,0)Á¦¿Ü 10Å¸ÀÏ ±æÀÌÀÇ ±æ »ı¼º
+        mapHeight; //22 (0,0)ì œì™¸ 10íƒ€ì¼ ê¸¸ì´ì˜ ê¸¸ ìƒì„±
 
-    const float tileXOffset = 1.00725f,
+    private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f;
-    int count = 1;
-    int i, j;
-    void Start() => CreateHexTileMap();
+    int count;
+    void Start()
+    {
+        Debug.Log("HexTileMap Start ì‹œì‘");
+        count = 1;
+        CreateHexTileMap();
+    }
+
     void CreateHexTileMap()
     {
         int mapXMin = -mapWidth / 2;
-        int mapXMax =  mapWidth / 2;
+        int mapXMax = mapWidth / 2;
 
         int mapZMin = -mapHeight / 2;
-        int mapZMax =  mapHeight / 2;
+        int mapZMax = mapHeight / 2;
 
         Vector3 pos;
         GameObject TempGo;
@@ -36,7 +40,7 @@ public class HexTileMap : MonoBehaviour
 
                 if (z % 2 == 0) pos = new Vector3(PersonTileMap_transform.position.x + x * tileXOffset, 0,
                                                   PersonTileMap_transform.position.z + z * tileZOffset);
-                else            pos = new Vector3(PersonTileMap_transform.position.x + x * tileXOffset + tileXOffset / 2, 0,
+                else pos =            new Vector3(PersonTileMap_transform.position.x + x * tileXOffset + tileXOffset / 2, 0,
                                                   PersonTileMap_transform.position.z + z * tileZOffset);
                 StartCoroutine(SetTileInfo(TempGo, x, z, pos));
             }
@@ -44,7 +48,7 @@ public class HexTileMap : MonoBehaviour
     }
     IEnumerator SetTileInfo(GameObject TempGo, float x, float z, Vector3 pos)
     {
-        Debug.Log("HexTileMap SetTileInfo ½ÃÀÛ");
+        Debug.Log("HexTileMap SetTileInfo ì‹œì‘");
 
         TempGo.transform.parent = PersonTileMap_transform;
         TempGo.name = x.ToString() + "," + z.ToString();
@@ -52,34 +56,40 @@ public class HexTileMap : MonoBehaviour
 
         yield return new WaitForSeconds(0.000001f);
         TempGo.transform.position = pos;
-        Debug.Log("HexTileMap SetTileInfo ³¡");
+        Debug.Log("HexTileMap SetTileInfo ë");
     }
     void TagChecking(GameObject TempGo, float x, float z)
     {
         switch (transform.parent.tag)
         {
             case "Floor1" when x == (int)z / 2 && z == count:
+                Debug.Log("Floor1");
                 TagChanging(TempGo, x, z);
                 break;
-            case "Floor2" when x == ((int)z + 1) / -2 && z == mapHeight / 2 - count + (count % 2 == 0 ? 1 : -1) && z > 0: //ÀÔ·Â °ª¿¡µû¶ó ¾ÈµÉ °æ¿ì ÀÖÀ½
+            case "Floor2" when x == ((int)z + 1) / -2 && z == mapHeight / 2 - count + (count % 2 == 0 ? 1 : -1) && z > 0: //ì…ë ¥ ê°’ì—ë”°ë¼ ì•ˆë  ê²½ìš° ìˆìŒ
+                Debug.Log("Floor2");
                 TagChanging(TempGo, x, z + 1);
                 break;
             case "Floor3" when x < 0 && z == 0 && x > mapWidth / -2:
+                Debug.Log("Floor3");
                 TagChanging(TempGo, x, z);
                 break;
             case "Floor4" when x == ((int)z - 1) / 2 && z == mapHeight / -2 + count && x < 0:
+                Debug.Log("Floor4");
                 TagChanging(TempGo, x, z);
                 break;
-            case "Floor5" when x == (int)z / -2 && z == -count + (count % 2 == 0 ? 2 : 0) && z >= mapHeight / -2: //´õ ÁÁÀº ½Ä Ã£±â
+            case "Floor5" when x == (int)z / -2 && z == -count + (count % 2 == 0 ? 2 : 0) && z >= mapHeight / -2: //ë” ì¢‹ì€ ì‹ ì°¾ê¸°
                 TagChanging(TempGo, x + 1, z - 2);
-                if (z == mapHeight / -2 || z == 0) TempGo.tag = transform.parent.tag;
+                if (z == mapHeight / -2 | z == 0) TempGo.tag = transform.parent.tag;
+                else Debug.Log("Floor5");
                 break;
             case "Floor6" when x > 0 && z == 0:
-                TagChanging(TempGo, x, z);
+                Debug.Log("Floor6");
+                TagChanging(TempGo,x,z);
                 break;
             default:
                 TempGo.tag = transform.parent.tag;
-                if (transform.parent.CompareTag("Floor7")) CreatePortal(x,z);
+                if (transform.parent.CompareTag("Floor7")) CreatePortal(x, z);
                 break;
         }
     }
@@ -87,8 +97,8 @@ public class HexTileMap : MonoBehaviour
     {
         TempGo.tag = "Floor7";
         count++;
-        if (x >= 0 && count == mapHeight / 2)CreatePortal(x,z);
-        else if (x < 0 && count == 2)        CreatePortal(x,z);
+        if (x >= 0 && count == mapHeight / 2) CreatePortal(x, z);
+        else if (x < 0 && count == 2)         CreatePortal(x, z);
     }
     void CreatePortal(float x, float z)
     {
@@ -121,9 +131,29 @@ public class HexTileMap : MonoBehaviour
         Debug.Log("Portal Create");
         GameObject Portal = Instantiate(PortalPrefab, new Vector3(x * tileXOffset + PersonTileMap_transform.position.x, 0.5f,
                                                                   z * tileZOffset + PersonTileMap_transform.position.z), Quaternion.identity);
-        Portal.transform.parent = AllPortal;
-        Portal.name = "Portal " + (int)x + "," + z;
-        //AllTileMap.childPortal[i,j] = Portal.transform;
-        //i++;
+        //Portal.transform.parent = AllPortal;
+        /*
+        Portal.name = "Portal " + x + "," + z;
+        if (allTileMap.j > 0)
+        {
+            if (allTileMap.i % 2 == 0)
+            {
+                allTileMap.childPortal[allTileMap.top--, allTileMap.j] = Portal.transform;
+                Debug.Log("ï¿½ï¿½");
+            }
+            else
+            {
+                allTileMap.childPortal[allTileMap.bottom++, allTileMap.j] = Portal.transform;
+                Debug.Log("ï¿½Æ·ï¿½");
+            }
+        }
+        else
+        {
+            allTileMap.childPortal[allTileMap.i, allTileMap.j] = Portal.transform;
+            if (allTileMap.i == 5) allTileMap.j++;
+        }
+
+        allTileMap.i++;
+        */
     }
 }

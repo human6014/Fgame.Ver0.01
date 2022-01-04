@@ -6,7 +6,9 @@ public class AllTileMap : MonoBehaviour
 {
     public GameObject personTileMap_obj;
     public PersonTileMap personTileMap_script;
-
+    public Transform [,] childPortal = new Transform[6,2];
+    public int i, j;
+    public int top = 5, bottom = 0;
     private int tagNum = 1;
     private void Start()
     {

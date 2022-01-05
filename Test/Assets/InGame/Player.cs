@@ -55,12 +55,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (photonView.IsMine)
         {
             if (isDying) return;
-            xMove       = Input.GetAxisRaw("Horizontal");
-            zMove       = Input.GetAxisRaw("Vertical");
-            walkMove    = Input.GetButton("Walk");
-            jumpMove    = Input.GetButtonDown("Jump");
-            dodgeMove   = Input.GetButtonDown("Dodge");
-            attack      = Input.GetButtonDown("Attack");
+            xMove = Input.GetAxisRaw("Horizontal");
+            zMove = Input.GetAxisRaw("Vertical");
+            walkMove = Input.GetButton("Walk");
+            jumpMove = Input.GetButtonDown("Jump");
+            dodgeMove = Input.GetButtonDown("Dodge");
+            attack = Input.GetButtonDown("Attack");
             Vector3 moveVec = new Vector3(xMove, 0, zMove).normalized;
 
             transform.position += (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * moveVec;
@@ -119,7 +119,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public void Hit(int damage)
     {
         if (isDying) return;
-        view.RPC("PunHit", RpcTarget.All,damage);
+        view.RPC("PunHit", RpcTarget.All, damage);
     }
     [PunRPC]
     void PunHit(int damage)

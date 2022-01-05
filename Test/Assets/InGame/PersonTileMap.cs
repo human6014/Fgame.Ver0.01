@@ -31,7 +31,7 @@ public class PersonTileMap : MonoBehaviour
         Debug.Log("PersonTileMap Update 중");
         if (sphere.radius >= 0)
         {
-            if (networkManager_script.isFull && !gameObject.CompareTag("Floor7")) sphere.radius -= Time.deltaTime * Time.time / 1000;
+            if (networkManager_script.isFull && !gameObject.CompareTag("Floor7")) sphere.radius -= Time.deltaTime * Time.time / 10;
         }
         else
         {
@@ -41,7 +41,7 @@ public class PersonTileMap : MonoBehaviour
             foreach (Transform iter in child)
             {
                 // 부모(this.gameObject)는 삭제 하지 않기 위한 처리
-                if (iter.name != "HexTileMap")
+                if (iter.name != "HexTileMap" && iter!=transform)
                 {
                     StartCoroutine(FallWaiting(iter.gameObject));
                 }
@@ -54,7 +54,10 @@ public class PersonTileMap : MonoBehaviour
         if (other.CompareTag(tag))
         {
             if (sphere.radius == initRadius) Destroy(other.gameObject);
-            else StartCoroutine(FallWaiting(other.gameObject));
+            else
+            {
+                StartCoroutine(FallWaiting(other.gameObject));
+            }
         }
     }
     IEnumerator FallWaiting(GameObject other)

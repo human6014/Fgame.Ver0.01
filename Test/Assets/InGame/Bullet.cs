@@ -14,7 +14,7 @@ public class Bullet : MonoBehaviourPunCallbacks
     }
     IEnumerator Flag()
     {
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.2f);
         rigidbody.constraints = RigidbodyConstraints.None;
     }
     private void OnCollisionEnter(Collision collision)

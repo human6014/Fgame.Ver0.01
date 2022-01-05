@@ -7,13 +7,12 @@ public class AllTileMap : MonoBehaviour
     public GameObject personTileMap_obj;
     public PersonTileMap personTileMap_script;
     public Transform [,] childPortal = new Transform[6,2];
-    public int i, j;
-    public int top = 5, bottom = 0;
+    public int[] childCount = new int[6];
+    public int i, j, bottom, top = 5;
+    public int personTileCount;
     private int tagNum = 1;
     private void Start()
     {
-        Debug.Log("AllTileMap Start Ω√¿€");
-
         float x = 1,
               z = 0;
         for (int i = 1; i < 7; i++)
@@ -47,6 +46,13 @@ public class AllTileMap : MonoBehaviour
             PersonTile.transform.parent = transform;
             PersonTile.name = "PerosnTileMap" + (i + 1);
             PersonTile.tag = "Floor" + tagNum;
+        }
+    }
+    private void Update()
+    {
+        for(int i = 0; i < 6; i++)
+        {
+            Debug.Log("PersonTileMap"+i+": "+childCount[i]);
         }
     }
 }

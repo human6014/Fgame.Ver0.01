@@ -6,7 +6,9 @@ public class HexTileMap : MonoBehaviour
 {
     public GameObject HexTilePrefab;
     public GameObject PortalPrefab;
+    public GameObject CastlePrefab;
     public Transform PersonTileMap_transform;
+    public Transform AllTileMap_transform;
     public AllTileMap allTileMap;
     [SerializeField]
     int mapWidth,  //22 
@@ -21,7 +23,6 @@ public class HexTileMap : MonoBehaviour
         count = 1;
         CreateHexTileMap();
     }
-
     void CreateHexTileMap()
     {
         int mapXMin = -mapWidth / 2;
@@ -37,10 +38,9 @@ public class HexTileMap : MonoBehaviour
             for (float z = mapZMin; z < mapZMax; z++)
             {
                 TempGo = Instantiate(HexTilePrefab, PersonTileMap_transform);
-
                 if (z % 2 == 0) pos = new Vector3(PersonTileMap_transform.position.x + x * tileXOffset, 0,
                                                   PersonTileMap_transform.position.z + z * tileZOffset);
-                else pos =            new Vector3(PersonTileMap_transform.position.x + x * tileXOffset + tileXOffset / 2, 0,
+                else            pos =  new Vector3(PersonTileMap_transform.position.x + x * tileXOffset + tileXOffset / 2, 0,
                                                   PersonTileMap_transform.position.z + z * tileZOffset);
                 StartCoroutine(SetTileInfo(TempGo, x, z, pos));
             }
@@ -48,15 +48,19 @@ public class HexTileMap : MonoBehaviour
     }
     IEnumerator SetTileInfo(GameObject TempGo, float x, float z, Vector3 pos)
     {
-        Debug.Log("HexTileMap SetTileInfo 시작");
-
         TempGo.transform.parent = PersonTileMap_transform;
         TempGo.name = x.ToString() + "," + z.ToString();
+        if (x == 0 && z == 0)
+        {
+            GameObject castle = Instantiate(CastlePrefab, new Vector3(x * tileXOffset + PersonTileMap_transform.position.x, 0,
+                                                                      z * tileZOffset + PersonTileMap_transform.position.z), Quaternion.identity);
+            castle.transform.parent = PersonTileMap_transform;
+            castle.tag = transform.parent.tag;
+        }
         TagChecking(TempGo, x, z);
 
         yield return new WaitForSeconds(0.000001f);
         TempGo.transform.position = pos;
-        Debug.Log("HexTileMap SetTileInfo 끝");
     }
     void TagChecking(GameObject TempGo, float x, float z)
     {
@@ -85,7 +89,7 @@ public class HexTileMap : MonoBehaviour
                 break;
             case "Floor6" when x > 0 && z == 0:
                 Debug.Log("Floor6");
-                TagChanging(TempGo,x,z);
+                TagChanging(TempGo, x, z);
                 break;
             default:
                 TempGo.tag = transform.parent.tag;
@@ -98,7 +102,7 @@ public class HexTileMap : MonoBehaviour
         TempGo.tag = "Floor7";
         count++;
         if (x >= 0 && count == mapHeight / 2) CreatePortal(x, z);
-        else if (x < 0 && count == 2)         CreatePortal(x, z);
+        else if (x < 0 && count == 2) CreatePortal(x, z);
     }
     void CreatePortal(float x, float z)
     {
@@ -126,34 +130,29 @@ public class HexTileMap : MonoBehaviour
                     return;
             }
             count++;
-            Debug.Log(count);
         }
-        Debug.Log("Portal Create");
         GameObject Portal = Instantiate(PortalPrefab, new Vector3(x * tileXOffset + PersonTileMap_transform.position.x, 0.5f,
                                                                   z * tileZOffset + PersonTileMap_transform.position.z), Quaternion.identity);
-        //Portal.transform.parent = AllPortal;
-        /*
-        Portal.name = "Portal " + x + "," + z;
+        Portal.transform.parent = AllTileMap_transform;
         if (allTileMap.j > 0)
         {
             if (allTileMap.i % 2 == 0)
             {
+                Portal.name = allTileMap.top + "" + allTileMap.j;
                 allTileMap.childPortal[allTileMap.top--, allTileMap.j] = Portal.transform;
-                Debug.Log("��");
             }
             else
             {
+                Portal.name = allTileMap.bottom + "" + allTileMap.j;
                 allTileMap.childPortal[allTileMap.bottom++, allTileMap.j] = Portal.transform;
-                Debug.Log("�Ʒ�");
             }
         }
         else
         {
+            Portal.name = allTileMap.i + "" + allTileMap.j;
             allTileMap.childPortal[allTileMap.i, allTileMap.j] = Portal.transform;
             if (allTileMap.i == 5) allTileMap.j++;
         }
-
         allTileMap.i++;
-        */
     }
 }

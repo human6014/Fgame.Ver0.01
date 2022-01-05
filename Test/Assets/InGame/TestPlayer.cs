@@ -32,9 +32,6 @@ public class TestPlayer : MonoBehaviourPunCallbacks, IPunObservable
             if (hasWeapons[i]) weapons[i].SetActive(true);
         }
     }
-    void Update()
-    {
-    }
     public void Hit(int damage)
     {
         if (isDying) return;
@@ -53,7 +50,7 @@ public class TestPlayer : MonoBehaviourPunCallbacks, IPunObservable
     }//30,25.95
     void Die()
     {
-        gameObject.transform.position = new Vector3(0, 2, -0.5f); //Destroy 후 재생성 고민중
+        gameObject.transform.position = new Vector3(0, 2, -0.5f);
         gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
         HP.fillAmount = 1;
         MP.fillAmount = 1;

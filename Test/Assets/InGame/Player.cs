@@ -63,7 +63,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             attack = Input.GetButtonDown("Attack");
             Vector3 moveVec = new Vector3(xMove, 0, zMove).normalized;
 
-            transform.position += (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * moveVec;
+            transform.position += (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * moveVec; //∫Ø∞Ê ∞ÌπŒ¡ﬂ
             if (!isJump && !isDodge)
                 if (walkMove || moveVec == Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
                 else MP.fillAmount += Time.time * Time.deltaTime / 50f;
@@ -127,7 +127,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount -= damage / 100f;
         if (HP.fillAmount <= 0)
         {
-            Debug.Log("PunHit");
             HP.fillAmount = 0;
             isDying = true;
             Die();
@@ -160,6 +159,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.name == "GameManager") view.RPC("PunHit", RpcTarget.All, 1000);
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("Portal") && Input.GetKeyDown(KeyCode.Tab)) other.gameObject.GetComponent<Portal>().PlayerEntry(gameObject);
     }
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

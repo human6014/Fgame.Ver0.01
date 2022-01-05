@@ -15,6 +15,9 @@ TagManager:
   - Melee
   - Range
   - TPlayer
+  - Bullet
+  - Floor7
+  - Portal
   layers:
   - Default
   - TransparentFX

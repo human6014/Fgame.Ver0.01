@@ -11,13 +11,13 @@ GameObject:
   - component: {fileID: 2593434919203697021}
   - component: {fileID: 5186508098528651557}
   - component: {fileID: 5186508098528651556}
-  - component: {fileID: 8002392052723741044}
-  - component: {fileID: -222705828948842570}
-  - component: {fileID: 8175187420193970878}
-  - component: {fileID: 4300250743817944309}
+  - component: {fileID: -2047048718212210333}
+  - component: {fileID: 1322187979519761580}
+  - component: {fileID: -642237388153008322}
+  - component: {fileID: -6678834825480563229}
   m_Layer: 0
   m_Name: BulletCase
-  m_TagString: Dummy
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -66,7 +66,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.08961737, y: 0.05976391, z: 0.061595082}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8002392052723741044
+--- !u!114 &-2047048718212210333
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,14 +83,14 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 0
-  observableSearch: 0
+  observableSearch: 2
   ObservedComponents:
-  - {fileID: 8175187420193970878}
-  - {fileID: 4300250743817944309}
+  - {fileID: -642237388153008322}
+  - {fileID: -6678834825480563229}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-222705828948842570
+--- !u!114 &1322187979519761580
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -99,10 +99,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2933650942077873095}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d0a0faedc97e2a49bdb318ca1975808, type: 3}
+  m_Script: {fileID: 11500000, guid: 372cc0173a281504ba8e4ca2bccc9de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8175187420193970878
+--- !u!114 &-642237388153008322
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -118,7 +118,7 @@ MonoBehaviour:
   m_SynchronizeAngularVelocity: 0
   m_TeleportEnabled: 0
   m_TeleportIfDistanceGreaterThan: 3
---- !u!114 &4300250743817944309
+--- !u!114 &-6678834825480563229
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

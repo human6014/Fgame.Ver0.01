@@ -337,12 +337,14 @@ MonoBehaviour:
   type: 0
   damage: 20
   rate: 0.7
+  speed: 0
   meleeArea: {fileID: 3853885738758774935}
   trailEffect: {fileID: 6667572268279308053}
   bullet: {fileID: 0}
   bulletCase: {fileID: 0}
   bulletPos: {fileID: 0}
   bulletCasePos: {fileID: 0}
+  rigidbody: {fileID: 0}
 --- !u!1 &805788821590486174
 GameObject:
   m_ObjectHideFlags: 0
@@ -1801,12 +1803,14 @@ MonoBehaviour:
   type: 1
   damage: 0
   rate: 0.4
+  speed: 3
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
   bullet: {fileID: 5086712924862526819, guid: 911cbc0cec0ff93439e101d084d6641a, type: 3}
   bulletCase: {fileID: 2933650942077873095, guid: cb84450d8d9adfa439d278071bec6f84, type: 3}
   bulletPos: {fileID: 5735198156930495412}
   bulletCasePos: {fileID: 437044632949090070}
+  rigidbody: {fileID: 0}
 --- !u!1 &6630160925738515882
 GameObject:
   m_ObjectHideFlags: 0
@@ -1884,12 +1888,14 @@ MonoBehaviour:
   type: 1
   damage: 0
   rate: 0.15
+  speed: 0
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
   bullet: {fileID: 8592462005021533135, guid: d5c8fd28d870d2746ae4155033d02a2c, type: 3}
   bulletCase: {fileID: 2933650942077873095, guid: cb84450d8d9adfa439d278071bec6f84, type: 3}
   bulletPos: {fileID: 5735198156930495412}
   bulletCasePos: {fileID: 4153043253795107221}
+  rigidbody: {fileID: 0}
 --- !u!1 &8245946106927374909
 GameObject:
   m_ObjectHideFlags: 0

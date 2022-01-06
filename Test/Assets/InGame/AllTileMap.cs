@@ -52,7 +52,6 @@ public class AllTileMap : MonoBehaviour
     }
     private void Update()
     {
-        Debug.Log(transform.childCount);
         tileCount.text = "남은 타일 수\n";
         for (int i = 0; i < 6; i++)
         {

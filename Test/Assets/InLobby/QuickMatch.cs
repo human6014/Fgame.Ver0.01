@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-public class Button1 : MonoBehaviour
+public class QuickMatch : MonoBehaviour
 {
-    public void start() => SceneManager.LoadScene("InGameScene");
+    public void OnClicked() => SceneManager.LoadScene("InGameScene");
 }

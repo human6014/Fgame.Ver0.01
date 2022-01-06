@@ -23,11 +23,13 @@ public class Bullet : MonoBehaviourPunCallbacks
         if (collision.gameObject.CompareTag("Player") && collision.gameObject.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
             Debug.Log(collision.gameObject.tag);
-            collision.gameObject.GetComponent<Player>().Hit(damage);
             Destroy(gameObject);
+            collision.gameObject.GetComponent<Player>().Hit(damage);
+            
         }
         else if (collision.gameObject.CompareTag("TPlayer"))
         {
+            Destroy(gameObject);
             collision.gameObject.GetComponent<TestPlayer>().Hit(damage);
         }
         if (collision.gameObject.tag.Substring(0, 5) == "Floor")

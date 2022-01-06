@@ -18,7 +18,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     private void Start()
     {
         PhotonNetwork.GameVersion = "1.0";
-        PhotonNetwork.NickName = "Proto";
+        PhotonNetwork.NickName = "ProtoType"+cPlayerCount;
         PhotonNetwork.ConnectUsingSettings();
         view = PhotonView.Get(this); //πª±Ó ¿Ã∞«
         Debug.Log("NetworkManagerStart");
@@ -43,7 +43,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         roomCountDisplay.text = cPlayerCount + " / " + cMaxPlayer;
         if (cPlayerCount == cMaxPlayer)
         {
-            PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
+            GameObject player = PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
+            player.name = "Player " + cPlayerCount;
             isFull = true;
         }
     }

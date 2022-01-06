@@ -16,14 +16,11 @@ public class PersonTileMap : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("PersonTileMap Start시작");
-
         sphere = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphere.radius = 5;
         else sphere.radius = gameManager_script.myField[1, gameManager_script.playerNum];
         gameManager_script.playerNum++;
         initRadius = sphere.radius;
-        Debug.Log("PersonTileMap Start 끝");
     }
     private void Update()
     {
@@ -31,21 +28,18 @@ public class PersonTileMap : MonoBehaviour
         allTileMap.childCount[int.Parse(transform.name.Substring(13, 1)) - 1] = transform.childCount - 1; //위치 수정 보류
         if (sphere.radius >= 0)
         {
-            if (networkManager_script.isFull)
-            {
-                sphere.radius -= Time.deltaTime * Time.time / 100;
-            }
+            if (networkManager_script.isFull) sphere.radius -= Time.deltaTime * Time.time / 100;
         }
-        else if(!outPlayer)
+        else if (!outPlayer)
         {
             Transform[] child = GetComponentsInChildren<Transform>();
 
             foreach (Transform iter in child)
             {
-                // 부모(this.gameObject)는 삭제 하지 않기 위한 처리
-                if (iter.name != "HexTileMap" && iter!=transform)
+                if (iter.name != "HexTileMap" && iter != transform)
                     StartCoroutine(FallWaiting(iter.gameObject));
             }
+            for (int i = 0; i < 2; i++) Destroy(allTileMap.childPortal[int.Parse(transform.name.Substring(13, 1)) - 1, i].gameObject);
             outPlayer = true;
         }
     }
@@ -56,7 +50,6 @@ public class PersonTileMap : MonoBehaviour
             if (sphere.radius == initRadius) Destroy(other.gameObject);
             else
             {
-                
                 StartCoroutine(FallWaiting(other.gameObject));
             }
         }

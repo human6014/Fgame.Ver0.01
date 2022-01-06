@@ -9,8 +9,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     int weaponIndex = -1;
     float xMove,
           zMove,
-          attackDelay,
-          timer;
+          attackDelay;
     bool walkMove,
          jumpMove,
          dodgeMove,
@@ -36,7 +35,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         isDying = false;
         anim = GetComponentInChildren<Animator>();
-        if (photonView.IsMine) Camera.main.GetComponent<MainCamera>().target = transform;
+        if (photonView.IsMine)
+        {
+            Camera.main.GetComponent<MainCamera>().target = transform;
+            Name.text = PhotonNetwork.NickName;
+        }
+        else
+        {
+            Name.text = view.Owner.NickName;
+        }
         for (int i = 0; i < hasWeapons.Length; i++)
         {
             if (hasWeapons[i])

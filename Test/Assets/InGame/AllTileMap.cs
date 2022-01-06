@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class AllTileMap : MonoBehaviour
 {
     public GameObject personTileMap_obj;
+    public NetworkManager networkManager;
     public PersonTileMap personTileMap_script;
+    public Text tileCount;
     public Transform [,] childPortal = new Transform[6,2];
     public int[] childCount = new int[6];
     public int i, j, bottom, top = 5;
@@ -50,9 +52,11 @@ public class AllTileMap : MonoBehaviour
     }
     private void Update()
     {
-        for(int i = 0; i < 6; i++)
+        Debug.Log(transform.childCount);
+        tileCount.text = "남은 타일 수\n";
+        for (int i = 0; i < 6; i++)
         {
-            Debug.Log("PersonTileMap"+i+": "+childCount[i]);
+            tileCount.text += "Player" + (i + 1) + ": " + childCount[i] + "\n";
         }
     }
 }

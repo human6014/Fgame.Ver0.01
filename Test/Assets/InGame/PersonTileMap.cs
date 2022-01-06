@@ -21,21 +21,19 @@ public class PersonTileMap : MonoBehaviour
         sphere = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphere.radius = 5;
         else sphere.radius = gameManager_script.myField[1, gameManager_script.playerNum];
-
+        gameManager_script.playerNum++;
         initRadius = sphere.radius;
         Debug.Log("PersonTileMap Start 끝");
     }
     private void Update()
     {
-        
+        if (gameObject.CompareTag("Floor7")) return;
+        allTileMap.childCount[int.Parse(transform.name.Substring(13, 1)) - 1] = transform.childCount - 1; //위치 수정 보류
         if (sphere.radius >= 0)
         {
-            if (networkManager_script.isFull && !gameObject.CompareTag("Floor7"))
+            if (networkManager_script.isFull)
             {
-                //allTileMap.childCount[int.Parse(transform.name.Substring(13, 1)) - 1] = transform.childCount - 1;
-                //Debug.Log(transform.childCount - 1);
-                sphere.radius -= Time.deltaTime * Time.time / 1000;
-                
+                sphere.radius -= Time.deltaTime * Time.time / 100;
             }
         }
         else if(!outPlayer)

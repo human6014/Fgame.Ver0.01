@@ -7,7 +7,6 @@ using Photon.Pun;
 using Photon.Realtime;
 public class TestPlayer : MonoBehaviourPunCallbacks, IPunObservable
 {
-    float timer;
     bool isDying;
     [SerializeField] bool[] hasWeapons;
     [SerializeField] GameObject[] weapons;
@@ -21,7 +20,6 @@ public class TestPlayer : MonoBehaviourPunCallbacks, IPunObservable
 
     private void Start()
     {
-        timer = 0.0f;
         isDying = false;
 
         rigid = GetComponent<Rigidbody>();

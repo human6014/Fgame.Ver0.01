@@ -22,24 +22,21 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] float speed;
     [SerializeField] bool[] hasWeapons;
     [SerializeField] GameObject[] weapons;
+    [SerializeField] GameObject child;
     [SerializeField] Image HP;
     [SerializeField] Image MP;
     [SerializeField] Text Name;
     [SerializeField] PhotonView view;
     [SerializeField] Weapon equipWeapon; //이게 되나?
-    GameObject child;
-    Rigidbody rigid;
+    [SerializeField] Rigidbody rigid;
     Animator anim;
-    Transform tr;
     Vector3 curPos;
+    Vector3 moveVec;
     private void Start()
     {
         isDying = false;
-        rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
-        tr = GetComponent<Transform>();
-        child = transform.Find("GameObject").gameObject;
-        if (photonView.IsMine) Camera.main.GetComponent<MainCamera>().target = tr;
+        if (photonView.IsMine) Camera.main.GetComponent<MainCamera>().target = transform;
         for (int i = 0; i < hasWeapons.Length; i++)
         {
             if (hasWeapons[i])
@@ -61,7 +58,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             jumpMove = Input.GetButtonDown("Jump");
             dodgeMove = Input.GetButtonDown("Dodge");
             attack = Input.GetButtonDown("Attack");
-            Vector3 moveVec = new Vector3(xMove, 0, zMove).normalized;
+            moveVec = new Vector3(xMove, 0, zMove).normalized;
 
             transform.position += (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * moveVec; //변경 고민중
             if (!isJump && !isDodge)
@@ -108,7 +105,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             anim.SetTrigger("DoDodge");
             isDodge = true;
             MP.fillAmount -= 0.25f;
-            Invoke(nameof(DodgeOut), 0.4f);
+            Invoke("DodgeOut", 0.4f);
         }
     }
     void DodgeOut()

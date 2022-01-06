@@ -16,13 +16,8 @@ public class HexTileMap : MonoBehaviour
 
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f;
-    int count;
-    void Start()
-    {
-        Debug.Log("HexTileMap Start 시작");
-        count = 1;
-        CreateHexTileMap();
-    }
+    int count = 1;
+    void Start() => CreateHexTileMap();
     void CreateHexTileMap()
     {
         int mapXMin = -mapWidth / 2;

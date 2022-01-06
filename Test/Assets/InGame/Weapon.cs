@@ -18,9 +18,9 @@ public class Weapon : MonoBehaviourPunCallbacks
     public void UseWeapons()
     {
         if (type == weaponsType.Melee) StartCoroutine("Swing");
-        else if (type == weaponsType.Range) StartCoroutine("Shot");
+        else if (type == weaponsType.Range) Shot();
     }
-    IEnumerator Shot()
+    private void Shot()
     {
         GameObject intantBullet = PhotonNetwork.Instantiate("BulletHandGun", bulletPos.position, bulletPos.rotation);
         Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
@@ -31,8 +31,6 @@ public class Weapon : MonoBehaviourPunCallbacks
         Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
         caseRigid.AddForce(caseVec, ForceMode.Impulse);
         caseRigid.AddTorque(Vector3.up, ForceMode.Impulse);
-
-        yield return null;
     }
     IEnumerator Swing()
     {

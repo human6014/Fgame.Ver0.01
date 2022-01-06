@@ -19,22 +19,21 @@ public class Bullet : MonoBehaviourPunCallbacks
     }
     private void OnCollisionEnter(Collision collision)
     {
-        
         if (collision.gameObject.CompareTag("Player") && collision.gameObject.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
             Debug.Log(collision.gameObject.tag);
-            Destroy(gameObject);
-            collision.gameObject.GetComponent<Player>().Hit(damage);
             
+            collision.gameObject.GetComponent<Player>().Hit(damage);
+            Destroy(gameObject,0.1f);
         }
         else if (collision.gameObject.CompareTag("TPlayer"))
         {
-            Destroy(gameObject);
             collision.gameObject.GetComponent<TestPlayer>().Hit(damage);
+            Destroy(gameObject, 0.1f);
         }
         if (collision.gameObject.tag.Substring(0, 5) == "Floor")
         {
-            Destroy(gameObject);
+            Destroy(gameObject, 0.1f);
         }
     }
 }

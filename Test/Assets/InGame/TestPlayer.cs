@@ -39,6 +39,7 @@ public class TestPlayer : MonoBehaviourPunCallbacks, IPunObservable
     void PunHit(int damage)
     {
         HP.fillAmount -= damage / 100f;
+        Debug.Log(HP.fillAmount);
         if (HP.fillAmount <= 0)
         {
             HP.fillAmount = 0;
@@ -48,15 +49,17 @@ public class TestPlayer : MonoBehaviourPunCallbacks, IPunObservable
     }//30,25.95
     void Die()
     {
-        gameObject.transform.position = new Vector3(0, 2, -0.5f);
+        gameObject.transform.position = new Vector3(0, 1.05f, -0.5f);
         gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //¹Ì¿Ï¼º
         HP.fillAmount = 1;
         MP.fillAmount = 1;
+        rigid.isKinematic = true;
         StartCoroutine("Respawn");
     }
     IEnumerator Respawn()
     {
         yield return new WaitForSeconds(5f);
+        rigid.isKinematic = false;
         gameObject.transform.position = new Vector3(0, 1.05f, 0);
         gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         isDying = false;

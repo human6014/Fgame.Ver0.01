@@ -18,7 +18,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     private void Start()
     {
         PhotonNetwork.GameVersion = "1.0";
-        PhotonNetwork.NickName = "ProtoType"+cPlayerCount;
+        PhotonNetwork.NickName = "ProtoType"+cPlayerCount; //미완성
         PhotonNetwork.ConnectUsingSettings();
         view = PhotonView.Get(this); //뭘까 이건
         Debug.Log("NetworkManagerStart");

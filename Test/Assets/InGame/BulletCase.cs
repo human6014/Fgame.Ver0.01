@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class BulletCase : MonoBehaviour
+using Photon.Pun;
+public class BulletCase : MonoBehaviourPunCallbacks
 {
     void Start() => Destroy(gameObject, 3);
 }

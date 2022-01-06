@@ -28,7 +28,7 @@ public class PersonTileMap : MonoBehaviour
         allTileMap.childCount[int.Parse(transform.name.Substring(13, 1)) - 1] = transform.childCount - 1; //위치 수정 보류
         if (sphere.radius >= 0)
         {
-            if (networkManager_script.isFull) sphere.radius -= Time.deltaTime * Time.time / 100;
+            if (networkManager_script.isFull) sphere.radius -= Time.deltaTime * Time.time / 1000;
         }
         else if (!outPlayer)
         {

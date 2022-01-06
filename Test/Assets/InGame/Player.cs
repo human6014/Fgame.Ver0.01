@@ -138,15 +138,17 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Die()
     {
-        gameObject.transform.position = new Vector3(0, 2, -0.5f); //Destroy 후 재생성 고민중
+        gameObject.transform.position = new Vector3(0, 1.05f, -0.5f); //Destroy 후 재생성 고민중
         gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
         HP.fillAmount = 1;
         MP.fillAmount = 1;
+        rigid.isKinematic = true;
         StartCoroutine("Respawn");
     }
     IEnumerator Respawn()
     {
         yield return new WaitForSeconds(5f);
+        rigid.isKinematic = false;
         gameObject.transform.position = new Vector3(0, 1.05f, 0);
         gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         isDying = false;

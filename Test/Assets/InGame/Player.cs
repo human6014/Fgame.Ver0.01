@@ -123,7 +123,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public void Hit(int damage)
     {
         if (isDying) return;
-        view.RPC("PunHit", RpcTarget.All, damage);
+        view.RPC("PunHit", RpcTarget.AllBuffered, damage);
     }
     [PunRPC]
     void PunHit(int damage)

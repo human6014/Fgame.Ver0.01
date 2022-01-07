@@ -17,6 +17,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     private void Awake() => PhotonNetwork.AutomaticallySyncScene = true;
     private void Start()
     {
+        PhotonNetwork.IsMessageQueueRunning = true;
         PhotonNetwork.GameVersion = "1.0";
         PhotonNetwork.NickName = "ProtoType"+cPlayerCount; //¹Ì¿Ï¼º
         PhotonNetwork.ConnectUsingSettings();

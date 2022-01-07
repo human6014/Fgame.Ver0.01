@@ -1213,9 +1213,9 @@ GameObject:
   - component: {fileID: 2792768260377557250}
   - component: {fileID: 4387864344120677046}
   - component: {fileID: 4387864344120677047}
-  - component: {fileID: 4387864344120677032}
   - component: {fileID: 4387864344120677033}
   - component: {fileID: 4387864344120677034}
+  - component: {fileID: 4387864344120677032}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1269,6 +1269,47 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 3
+--- !u!114 &4387864344120677033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4387864344120677045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 2
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 4387864344120677034}
+  - {fileID: 4387864344120677032}
+  - {fileID: 8167527931874096437}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &4387864344120677034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4387864344120677045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!114 &4387864344120677032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1294,47 +1335,6 @@ MonoBehaviour:
   view: {fileID: 4387864344120677033}
   equipWeapon: {fileID: 4507545491876804602}
   rigid: {fileID: 4387864344120677047}
---- !u!114 &4387864344120677033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4387864344120677045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 2
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents:
-  - {fileID: 4387864344120677032}
-  - {fileID: 4387864344120677034}
-  - {fileID: 8167527931874096437}
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
---- !u!114 &4387864344120677034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4387864344120677045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
 --- !u!1 &4509820371631656833
 GameObject:
   m_ObjectHideFlags: 0
@@ -1653,25 +1653,25 @@ MonoBehaviour:
   ShowParameterInspector: 1
   m_SynchronizeParameters:
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: IsWalk
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: IsRun
   - Type: 4
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: IsJump
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: DoJump
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: DoDodge
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: doSwing
   - Type: 9
-    SynchronizeType: 2
+    SynchronizeType: 1
     Name: doShot
   m_SynchronizeLayers:
   - SynchronizeType: 0

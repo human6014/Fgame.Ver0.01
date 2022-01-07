@@ -75,7 +75,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             anim.SetBool("IsRun", moveVec != Vector3.zero);
             anim.SetBool("IsWalk", walkMove);
             transform.LookAt(transform.position + moveVec);
-
             Attack();
             Jump();
             Dodge(moveVec);
@@ -123,11 +122,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public void Hit(int damage)
     {
         if (isDying) return;
-        view.RPC("PunHit", RpcTarget.AllBuffered, damage);
-    }
-    [PunRPC]
-    void PunHit(int damage)
-    {
         HP.fillAmount -= damage / 100f;
         if (HP.fillAmount <= 0)
         {
@@ -136,12 +130,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             Die();
         }
     }
-    void Die()
+    void Die() //죽은 후 바로 이동 -> 죽은 위치 5초 대기 후 스폰
     {
         gameObject.transform.position = new Vector3(0, 1.05f, -0.5f); //Destroy 후 재생성 고민중
         gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
         HP.fillAmount = 1;
         MP.fillAmount = 1;
+        rigid.useGravity = false;
         rigid.isKinematic = true;
         StartCoroutine("Respawn");
     }
@@ -149,6 +144,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         yield return new WaitForSeconds(5f);
         rigid.isKinematic = false;
+        rigid.useGravity = true;
         gameObject.transform.position = new Vector3(0, 1.05f, 0);
         gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         isDying = false;
@@ -176,11 +172,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             stream.SendNext(transform.position);
             stream.SendNext(MP.fillAmount);
+            stream.SendNext(HP.fillAmount);
         }
         else
         {
             curPos = (Vector3)stream.ReceiveNext();
             MP.fillAmount = (float)stream.ReceiveNext();
+            HP.fillAmount = (float)stream.ReceiveNext();
         }
     }
 }

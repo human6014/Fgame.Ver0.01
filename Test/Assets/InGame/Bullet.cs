@@ -6,49 +6,40 @@ public class Bullet : MonoBehaviourPunCallbacks,IPunObservable
 {
     public int damage;
     public PhotonView pv;
-    new Rigidbody rigidbody;
-    private void Start()
+    Vector3 trajectory =Vector3.forward * 15;
+    private void Start()=> StartCoroutine("BallisticFall");
+    void Update() => transform.Translate(trajectory * Time.deltaTime);
+    IEnumerator BallisticFall()
     {
-        rigidbody = GetComponent<Rigidbody>();
-        StartCoroutine("Flag");
-    }
-    IEnumerator Flag()
-    {
-        yield return new WaitForSeconds(0.2f);
-        rigidbody.constraints = RigidbodyConstraints.None;
-        yield return new WaitForSeconds(3);
-        if (!gameObject) yield break;
-        pv.RPC("Destroy", RpcTarget.AllBuffered);
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!gameObject) return;
-        if (collision.gameObject.CompareTag("Player") && collision.gameObject.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
+        yield return new WaitForSeconds(0.5f);
+        while (true)
         {
-            Debug.Log(collision.gameObject.tag);
-            
-            collision.gameObject.GetComponent<Player>().Hit(damage);
-            pv.RPC("Destroy",RpcTarget.AllBuffered);
+            trajectory += Vector3.down * 0.8f + Vector3.back * 0.4f;
+            yield return new WaitForSeconds(3f);
+            Destroy(gameObject);
+            yield break;
         }
-        else if (collision.gameObject.CompareTag("TPlayer"))
+
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
-            collision.gameObject.GetComponent<TestPlayer>().Hit(damage);
+            other.GetComponent<Player>().Hit(damage);
+            pv.RPC("Destroy", RpcTarget.AllBuffered);
+            Destroy(gameObject);
+        }
+        else if (other.CompareTag("TPlayer"))
+        {
+            other.GetComponent<TestPlayer>().Hit(damage);
             pv.RPC("Destroy", RpcTarget.AllBuffered);
         }
-        if (collision.gameObject.tag.Substring(0, 5) == "Floor")
-        {
-            pv.RPC("Destroy", RpcTarget.AllBuffered);
-        }
-        if (collision.gameObject.CompareTag("GameController"))
+        if (other.tag.Substring(0, 5) == "Floor")
         {
             pv.RPC("Destroy", RpcTarget.AllBuffered);
         }
     }
     [PunRPC]
-    void Destroy()
-    {
-        if (!gameObject) return;
-        Destroy(gameObject);
-    }
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { if (!gameObject) return; }
+    void Destroy() => Destroy(gameObject);
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {  }
 }

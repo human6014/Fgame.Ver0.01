@@ -27,7 +27,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnConnectedToMaster() => PhotonNetwork.JoinRandomRoom();
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        RoomOptions roomOptions = new RoomOptions{MaxPlayers = 2};
+        RoomOptions roomOptions = new RoomOptions{MaxPlayers = 1};
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()

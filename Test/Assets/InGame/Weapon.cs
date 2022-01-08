@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-public class Weapon : MonoBehaviourPunCallbacks
+public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
 {
     public enum weaponsType { Melee, Range };
     public weaponsType type;
@@ -14,7 +14,6 @@ public class Weapon : MonoBehaviourPunCallbacks
     public GameObject bulletCase;
     public Transform bulletPos;
     public Transform bulletCasePos;
-    public new Rigidbody rigidbody;
     public void UseWeapons()
     {
         if (type == weaponsType.Melee) StartCoroutine("Swing");
@@ -22,7 +21,7 @@ public class Weapon : MonoBehaviourPunCallbacks
     }
     private void Shot()
     {
-        GameObject intantBullet = PhotonNetwork.Instantiate("BulletHandGun", bulletPos.position, bulletPos.rotation);
+        PhotonNetwork.Instantiate("BulletHandGun", bulletPos.position, bulletPos.rotation);
         //Rigidbody bulletRigid = intantBullet.GetComponent<Rigidbody>();
         //bulletRigid.velocity = bulletPos.forward * speed;
         //bulletRigid.AddForce(bulletPos.forward * speed, ForceMode.Impulse); //speed minimum 3
@@ -34,7 +33,7 @@ public class Weapon : MonoBehaviourPunCallbacks
     }
     IEnumerator Swing()
     {
-        Debug.Log("Swing");
+        yield return new WaitForSeconds(0.1f);
         meleeArea.enabled = true;
         trailEffect.enabled = true;
 
@@ -44,7 +43,16 @@ public class Weapon : MonoBehaviourPunCallbacks
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) other.GetComponent<Player>().Hit(damage);
-        else if (other.CompareTag("TPlayer")) other.GetComponent<TestPlayer>().Hit(damage);
+        if (other.CompareTag("Player"))
+        {
+            other.GetComponent<Player>().Hit(damage);
+            meleeArea.enabled = false;
+        }
+        else if (other.CompareTag("TPlayer"))
+        {
+            other.GetComponent<TestPlayer>().Hit(damage);
+            meleeArea.enabled = false;
+        }
     }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info){}
 }

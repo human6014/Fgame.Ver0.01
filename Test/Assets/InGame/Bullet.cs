@@ -15,7 +15,7 @@ public class Bullet : MonoBehaviourPunCallbacks,IPunObservable
         while (true)
         {
             trajectory += Vector3.down * 0.8f + Vector3.back * 0.4f;
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(2.5f);
             Destroy(gameObject);
             yield break;
         }

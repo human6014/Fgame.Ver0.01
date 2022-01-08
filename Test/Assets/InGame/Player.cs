@@ -28,13 +28,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] PhotonView view;
     [SerializeField] Weapon equipWeapon; //이게 되나?
     [SerializeField] Rigidbody rigid;
-    Animator anim;
+    [SerializeField] Animator anim;
     Vector3 curPos;
     Vector3 moveVec;
     private void Start()
     {
         isDying = false;
-        anim = GetComponentInChildren<Animator>();
         if (photonView.IsMine)
         {
             Camera.main.GetComponent<MainCamera>().target = transform;
@@ -72,8 +71,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 if (walkMove || moveVec == Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
                 else MP.fillAmount += Time.time * Time.deltaTime / 50f;
 
-            anim.SetBool("IsRun", moveVec != Vector3.zero);
-            anim.SetBool("IsWalk", walkMove);
+            anim.SetBool("isRun", moveVec != Vector3.zero);
+            anim.SetBool("isWalk", walkMove);
             transform.LookAt(transform.position + moveVec);
             Attack();
             Jump();
@@ -87,18 +86,26 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         attackDelay += Time.deltaTime;
         if (attack && equipWeapon.rate < attackDelay && !isDodge && !isDying)
         {
-            anim.SetTrigger(equipWeapon.type == Weapon.weaponsType.Melee ? "doSwing" : "doShot");
+            //anim.SetTrigger(equipWeapon.type == Weapon.weaponsType.Melee ? "doSwing" : "doShot");
+            if (equipWeapon.type == Weapon.weaponsType.Melee) anim.SetBool("isSwing", true);
+            else anim.SetBool("isShot", true);
             equipWeapon.UseWeapons();
             attackDelay = 0;
+            Invoke("SetAttackAnim", 0.1f);
         }
+    }
+    void SetAttackAnim()
+    {
+        if (equipWeapon.type == Weapon.weaponsType.Melee) anim.SetBool("isSwing", false);
+        else anim.SetBool("isShot", false);
     }
     void Jump()
     {
         if (jumpMove && !isJump && !isDodge && MP.fillAmount >= 0.2f && !isDying)
         {
             rigid.AddForce(Vector3.up * 3.5f, ForceMode.Impulse);
-            anim.SetBool("IsJump", true);
-            anim.SetTrigger("DoJump");
+            anim.SetBool("isJump", true);
+            //anim.SetTrigger("doJump");
             MP.fillAmount -= 0.15f;
             isJump = true;
         }
@@ -108,43 +115,42 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (dodgeMove && !isDodge && !isJump && moveVec != Vector3.zero && MP.fillAmount >= 0.3f && !isDying)
         {
             speed *= 2.5f;
-            anim.SetTrigger("DoDodge");
+            //anim.SetTrigger("doDodge");
+            anim.SetBool("isDodge",true);
             isDodge = true;
             MP.fillAmount -= 0.25f;
-            Invoke("DodgeOut", 0.4f);
+            Invoke(nameof(DodgeOut), 0.4f);
         }
     }
-    void DodgeOut()
+    public void DodgeOut()
     {
         speed *= 0.4f;
+        anim.SetBool("isDodge", false);
         isDodge = false;
     }
     public void Hit(int damage)
     {
         if (isDying) return;
+        view.RPC("PunHit", RpcTarget.AllBuffered, damage);
+    }
+    [PunRPC]
+    void PunHit(int damage)
+    {
         HP.fillAmount -= damage / 100f;
-        if (HP.fillAmount <= 0)
-        {
-            HP.fillAmount = 0;
-            isDying = true;
-            Die();
-        }
+        if (HP.fillAmount <= 0) Die();
     }
     void Die() //죽은 후 바로 이동 -> 죽은 위치 5초 대기 후 스폰
     {
+        isDying = true;
         gameObject.transform.position = new Vector3(0, 1.05f, -0.5f); //Destroy 후 재생성 고민중
         gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
         HP.fillAmount = 1;
         MP.fillAmount = 1;
-        rigid.useGravity = false;
-        rigid.isKinematic = true;
         StartCoroutine("Respawn");
     }
     IEnumerator Respawn()
     {
         yield return new WaitForSeconds(5f);
-        rigid.isKinematic = false;
-        rigid.useGravity = true;
         gameObject.transform.position = new Vector3(0, 1.05f, 0);
         gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         isDying = false;
@@ -153,7 +159,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (collision.gameObject.tag.Substring(0, 5) == "Floor")
         {
-            anim.SetBool("IsJump", false);
+            anim.SetBool("isJump", false);
             isJump = false;
             //Destroy(collision.gameObject,10f);
         }
@@ -172,13 +178,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             stream.SendNext(transform.position);
             stream.SendNext(MP.fillAmount);
-            stream.SendNext(HP.fillAmount);
         }
         else
         {
             curPos = (Vector3)stream.ReceiveNext();
             MP.fillAmount = (float)stream.ReceiveNext();
-            HP.fillAmount = (float)stream.ReceiveNext();
         }
     }
 }

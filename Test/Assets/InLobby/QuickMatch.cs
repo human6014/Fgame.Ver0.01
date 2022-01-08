@@ -5,5 +5,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class QuickMatch : MonoBehaviour
 {
-    public void OnClicked() => SceneManager.LoadScene("InGameScene");
+    [SerializeField] GameObject playerName;
+    [SerializeField] LobbyManager lobbyManager;
+    public void OnClicked()
+    {
+        lobbyManager.inGameName = playerName.GetComponent<Text>().text;
+        SceneManager.LoadScene("InGameScene");
+    }
 }

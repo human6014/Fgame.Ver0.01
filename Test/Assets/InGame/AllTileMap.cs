@@ -9,14 +9,15 @@ public class AllTileMap : MonoBehaviour
     public PersonTileMap personTileMap_script;
     public Text tileCount;
     public Transform [,] childPortal = new Transform[6,2];
+    public string [] playerName = new string[6];
     public int[] childCount = new int[6];
     public int i, j, bottom, top = 5;
     public int personTileCount;
-    private int tagNum = 1;
     private void Start()
     {
         float x = 1,
               z = 0;
+        int tagNum = 1;
         for (int i = 1; i < 7; i++)
         {
             switch (i)
@@ -52,7 +53,7 @@ public class AllTileMap : MonoBehaviour
     }
     private void Update()
     {
-        tileCount.text = "남은 타일 수\n";
+        tileCount.text = "남은 타일\n";
         for (int i = 0; i < 6; i++)
         {
             tileCount.text += "Player" + (i + 1) + ": " + childCount[i] + "\n";

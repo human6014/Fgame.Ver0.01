@@ -8,18 +8,22 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
 {
     private int cMaxPlayer;
     private int cPlayerCount;
+    private bool start;
+    public string name;
     public bool isFull = false;
     [SerializeField] GameObject delayCancelButton;
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Text timerToStartDisplay;
     [SerializeField] Button matchDoun;
     [SerializeField] PhotonView view;
+    RoomOptions roomOptions;
     private void Awake() => PhotonNetwork.AutomaticallySyncScene = true;
     private void Start()
     {
         PhotonNetwork.IsMessageQueueRunning = true;
         PhotonNetwork.GameVersion = "1.0";
-        PhotonNetwork.NickName = "ProtoType"+cPlayerCount; //미완성
+        //name = GameObject.Find("LobbyManager").GetComponent<LobbyManager>().inGameName; //Build and Run에서 정상 작동
+        PhotonNetwork.NickName = name; //미완성
         PhotonNetwork.ConnectUsingSettings();
         view = PhotonView.Get(this); //뭘까 이건
         Debug.Log("NetworkManagerStart");
@@ -27,7 +31,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnConnectedToMaster() => PhotonNetwork.JoinRandomRoom();
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        RoomOptions roomOptions = new RoomOptions{MaxPlayers = 1};
+        roomOptions = new RoomOptions{MaxPlayers = 2};
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()
@@ -44,8 +48,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         roomCountDisplay.text = cPlayerCount + " / " + cMaxPlayer;
         if (cPlayerCount == cMaxPlayer)
         {
+            //roomOptions.IsOpen = false;
             GameObject player = PhotonNetwork.Instantiate("Player", new Vector3(0, 2, 0), Quaternion.identity);
-            player.name = "Player " + cPlayerCount;
+            //player.name = "Player " + cPlayerCount;
             isFull = true;
         }
     }

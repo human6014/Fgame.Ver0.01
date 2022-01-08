@@ -66,7 +66,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             attack = Input.GetButtonDown("Attack");
             moveVec = new Vector3(xMove, 0, zMove).normalized;
 
-            transform.position += (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * moveVec; //∫Ø∞Ê ∞ÌπŒ¡ﬂ
+            if(moveVec!=Vector3.zero)
+                transform.Translate ( (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //∫Ø∞Ê ∞ÌπŒ¡ﬂ
+            
             if (!isJump && !isDodge)
                 if (walkMove || moveVec == Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
                 else MP.fillAmount += Time.time * Time.deltaTime / 50f;

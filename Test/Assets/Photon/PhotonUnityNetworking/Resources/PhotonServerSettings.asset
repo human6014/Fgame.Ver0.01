@@ -46,6 +46,7 @@ MonoBehaviour:
   - PunUpdate
   - OnPhotonSerializeView
   - Destroy
+  - ChangeEquip
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

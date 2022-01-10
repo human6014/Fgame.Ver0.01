@@ -9,7 +9,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     private int cMaxPlayer;
     private int cPlayerCount;
     private bool start;
-    public string name;
+    public new string name = string.Empty;
     public bool isFull = false;
     [SerializeField] GameObject delayCancelButton;
     [SerializeField] Text roomCountDisplay;
@@ -22,7 +22,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     {
         PhotonNetwork.IsMessageQueueRunning = true;
         PhotonNetwork.GameVersion = "1.0";
-        //name = GameObject.Find("LobbyManager").GetComponent<LobbyManager>().inGameName; //Build and Run에서 정상 작동
+        name = GameObject.Find("LobbyManager").GetComponent<LobbyManager>().inGameName; //Build and Run에서 정상 작동
         PhotonNetwork.NickName = name; //미완성
         PhotonNetwork.ConnectUsingSettings();
         view = PhotonView.Get(this); //뭘까 이건

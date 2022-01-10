@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
-    int weaponIndex = -1;
+    int curEquip;
     float xMove,
           zMove,
           attackDelay;
@@ -18,6 +18,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
          isJump,
          isDodge,
          isDying;
+    KeyCode[] keyCodes = { 
+        KeyCode.Alpha1, 
+        KeyCode.Alpha2,
+        KeyCode.Alpha3,
+        KeyCode.Alpha4 };
     [SerializeField] float speed;
     [SerializeField] bool[] hasWeapons;
     [SerializeField] GameObject[] weapons;
@@ -26,9 +31,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Image MP;
     [SerializeField] Text Name;
     [SerializeField] PhotonView view;
-    [SerializeField] Weapon equipWeapon; //이게 되나?
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
+    Weapon equipWeapon; //이게 되나?
     Vector3 curPos;
     Vector3 moveVec;
     private void Start()
@@ -47,8 +52,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (hasWeapons[i])
             {
+                curEquip = i;
                 weapons[i].SetActive(true);
-                weaponIndex = i;
+                equipWeapon = weapons[i].GetComponent<Weapon>();
                 break;
             }
         }
@@ -65,7 +71,14 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             dodgeMove = Input.GetButtonDown("Dodge");
             attack = Input.GetButtonDown("Attack");
             moveVec = new Vector3(xMove, 0, zMove).normalized;
-
+            for(int i = 0; i< keyCodes.Length;i++)
+            {
+                if (Input.GetKeyDown(keyCodes[i]))
+                {
+                    view.RPC("ChangeEquip",RpcTarget.All,i);
+                    break;
+                }
+            }
             if(moveVec!=Vector3.zero)
                 transform.Translate ( (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //변경 고민중
             
@@ -82,6 +95,14 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
+    }
+    [PunRPC]
+    void ChangeEquip(int index)
+    {
+        weapons[curEquip].SetActive(false);
+        weapons[index].SetActive(true);
+        equipWeapon = weapons[index].GetComponent<Weapon>();
+        curEquip = index;
     }
     void Attack()
     {

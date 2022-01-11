@@ -51,6 +51,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -92,9 +93,9 @@ GameObject:
   - component: {fileID: 8592462005021533131}
   - component: {fileID: 8592462005021533128}
   - component: {fileID: 8592462005021533134}
-  - component: {fileID: 8592462005021533130}
   - component: {fileID: -5344443154850734816}
   - component: {fileID: 4453993604519405548}
+  - component: {fileID: 7284263033059251862}
   m_Layer: 0
   m_Name: BulletSubMachineGun
   m_TagString: Bullet
@@ -129,6 +130,7 @@ TrailRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
@@ -237,20 +239,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8592462005021533130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8592462005021533135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 028d58228ecc98d449ef9ff68136a3f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 7
-  pv: {fileID: -5344443154850734816}
 --- !u!114 &-5344443154850734816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,8 +258,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 8592462005021533130}
   - {fileID: 4453993604519405548}
+  - {fileID: 7284263033059251862}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -291,3 +279,17 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!114 &7284263033059251862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8592462005021533135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 028d58228ecc98d449ef9ff68136a3f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 3
+  pv: {fileID: -5344443154850734816}

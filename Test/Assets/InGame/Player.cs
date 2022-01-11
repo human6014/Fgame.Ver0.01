@@ -17,7 +17,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
          isAttackReady,
          isJump,
          isDodge,
-         isDying;
+         isDying,
+         start;
     KeyCode[] keyCodes = { 
         KeyCode.Alpha1, 
         KeyCode.Alpha2,
@@ -25,6 +26,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         KeyCode.Alpha4 };
     [SerializeField] float speed;
     [SerializeField] bool[] hasWeapons;
+    [SerializeField] NetworkManager networkManager;
     [SerializeField] GameObject[] weapons;
     [SerializeField] GameObject child;
     [SerializeField] Image HP;
@@ -61,8 +63,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Update()
     {
+        if (!start && PhotonNetwork.CurrentRoom.MaxPlayers != PhotonNetwork.PlayerList.Length)
+        {
+            return;
+        }
         if (photonView.IsMine)
         {
+            start = true;
             if (isDying) return;
             xMove = Input.GetAxisRaw("Horizontal");
             zMove = Input.GetAxisRaw("Vertical");
@@ -96,14 +103,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
-    [PunRPC]
-    void ChangeEquip(int index)
-    {
-        weapons[curEquip].SetActive(false);
-        weapons[index].SetActive(true);
-        equipWeapon = weapons[index].GetComponent<Weapon>();
-        curEquip = index;
-    }
     void Attack()
     {
         attackDelay += Time.deltaTime;
@@ -114,7 +113,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             else anim.SetBool("isShot", true);
             equipWeapon.UseWeapons();
             attackDelay = 0;
-            Invoke("SetAttackAnim", 0.1f);
+            Invoke(nameof(SetAttackAnim), 0.1f);
         }
     }
     void SetAttackAnim()
@@ -128,7 +127,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             rigid.AddForce(Vector3.up * 3.5f, ForceMode.Impulse);
             anim.SetBool("isJump", true);
-            //anim.SetTrigger("doJump");
             MP.fillAmount -= 0.15f;
             isJump = true;
         }
@@ -138,7 +136,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (dodgeMove && !isDodge && !isJump && moveVec != Vector3.zero && MP.fillAmount >= 0.3f && !isDying)
         {
             speed *= 2.5f;
-            //anim.SetTrigger("doDodge");
             anim.SetBool("isDodge",true);
             isDodge = true;
             MP.fillAmount -= 0.25f;
@@ -162,10 +159,18 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount -= damage / 100f;
         if (HP.fillAmount <= 0) Die();
     }
+    [PunRPC]
+    void ChangeEquip(int index)
+    {
+        weapons[curEquip].SetActive(false);
+        weapons[index].SetActive(true);
+        equipWeapon = weapons[index].GetComponent<Weapon>();
+        curEquip = index;
+    }
     void Die() //죽은 후 바로 이동 -> 죽은 위치 5초 대기 후 스폰
     {
         isDying = true;
-        gameObject.transform.position = new Vector3(0, 1.05f, -0.5f); //Destroy 후 재생성 고민중
+        gameObject.transform.position = new Vector3(0, 1.05f, -0.5f);
         gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
         HP.fillAmount = 1;
         MP.fillAmount = 1;
@@ -174,7 +179,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Respawn()
     {
         yield return new WaitForSeconds(5f);
-        gameObject.transform.position = new Vector3(0, 1.05f, 0);
+        gameObject.transform.position = new Vector3(0, 1.05f, 0);//스포너 위치로 변경해야됨
         gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         isDying = false;
     }

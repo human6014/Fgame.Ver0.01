@@ -9,6 +9,7 @@ public class AllTileMap : MonoBehaviour
     public PersonTileMap personTileMap_script;
     public Text tileCount;
     public Transform [,] childPortal = new Transform[6,2];
+    public Transform [,] childSpawner = new Transform[1,6];
     public string [] playerName = new string[6];
     public int[] childCount = new int[6];
     public int i, j, bottom, top = 5;

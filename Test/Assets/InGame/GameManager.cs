@@ -7,7 +7,11 @@ public class GameManager : MonoBehaviour
     public float[,] myField;
     public int[] tileCount;
     public int playerNum;
-    [SerializeField] GameObject AllTileMap;
+    [SerializeField] GameObject allTileMap;
+    private void Awake()
+    {
+        //Screen.SetResolution(960, 540, false);
+    }
     private void Start()
     {
         myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
@@ -16,5 +20,9 @@ public class GameManager : MonoBehaviour
     public void OnTriggerEnter(Collider other)
     {
         if (other.tag.Substring(0, 5) == "Floor") Destroy(other.gameObject);
+    }
+    public void CreatePlayer()
+    {
+
     }
 }

@@ -45,12 +45,14 @@ public class HexTileMap : MonoBehaviour
     {
         TempGo.transform.parent = PersonTileMap_transform;
         TempGo.name = x.ToString() + "," + z.ToString();
-        if (x == 0 && z == 0)
+        if (x == 0 && z == 0 && !transform.parent.CompareTag("Floor7"))
         {
             GameObject castle = Instantiate(CastlePrefab, new Vector3(x * tileXOffset + PersonTileMap_transform.position.x, 0,
                                                                       z * tileZOffset + PersonTileMap_transform.position.z), Quaternion.identity);
+            castle.name = "Spawner" + transform.parent.tag.Substring(5, 1);
             castle.transform.parent = PersonTileMap_transform;
             castle.tag = transform.parent.tag;
+            allTileMap.childSpawner[0,int.Parse(transform.parent.tag.Substring(5,1)) - 1] = castle.transform;
         }
         TagChecking(TempGo, x, z);
 

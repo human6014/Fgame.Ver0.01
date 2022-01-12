@@ -6,7 +6,8 @@ using UnityEngine.UI;
 using Photon.Pun;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
-    int curEquip;
+    int curEquip,
+        myIndex;
     float xMove,
           zMove,
           attackDelay;
@@ -63,10 +64,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Update()
     {
-        if (!start && PhotonNetwork.CurrentRoom.MaxPlayers != PhotonNetwork.PlayerList.Length)
-        {
-            return;
-        }
+        if (!start && PhotonNetwork.CurrentRoom.MaxPlayers != PhotonNetwork.PlayerList.Length) return;
         if (photonView.IsMine)
         {
             start = true;
@@ -108,7 +106,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         attackDelay += Time.deltaTime;
         if (attack && equipWeapon.rate < attackDelay && !isDodge && !isDying)
         {
-            //anim.SetTrigger(equipWeapon.type == Weapon.weaponsType.Melee ? "doSwing" : "doShot");
             if (equipWeapon.type == Weapon.weaponsType.Melee) anim.SetBool("isSwing", true);
             else anim.SetBool("isShot", true);
             equipWeapon.UseWeapons();

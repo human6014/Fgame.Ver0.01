@@ -808,7 +808,6 @@ MonoBehaviour:
   matchDown: {fileID: 0}
   view: {fileID: 888231542}
   allTileMap: {fileID: 1299624831}
-  player: {fileID: 4387864344120677032, guid: 5e035c7603b3eae4588eb64ff66c37a0, type: 3}
 --- !u!114 &888231542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1228,7 +1227,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 777360d237cbbef419f8fdd59002418c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager_script: {fileID: 1856225484}
   networkManager_script: {fileID: 888231541}
   allTileMap: {fileID: 1299624831}
   sphere: {fileID: 1168173663}
@@ -1426,6 +1424,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1299624830}
   - component: {fileID: 1299624831}
+  - component: {fileID: 1299624832}
   m_Layer: 0
   m_Name: AllTileMap
   m_TagString: Untagged
@@ -1472,11 +1471,34 @@ MonoBehaviour:
   - 
   - 
   childCount: 000000000000000000000000000000000000000000000000
+  playerNum: 0
   i: 0
   j: 0
   bottom: 0
   top: 5
   personTileCount: 0
+--- !u!114 &1299624832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1299624829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 3
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1449297141
 GameObject:
   m_ObjectHideFlags: 0
@@ -2105,9 +2127,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a969cf4df5a5764796fc6856f3cce7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileCount: 
-  playerNum: 0
-  allTileMap: {fileID: 1299624829}
 --- !u!1 &1897926227
 GameObject:
   m_ObjectHideFlags: 0
@@ -2268,7 +2287,6 @@ MonoBehaviour:
   PortalPrefab: {fileID: 1141266841}
   CastlePrefab: {fileID: 5186748853085881575, guid: 58944259cf2764c468fc72a1ae0db6d3, type: 3}
   PersonTileMap_transform: {fileID: 1168173661}
-  AllTileMap_transform: {fileID: 1299624830}
   allTileMap: {fileID: 1299624831}
   mapWidth: 22
   mapHeight: 22

@@ -8,7 +8,6 @@ public class HexTileMap : MonoBehaviour
     public GameObject PortalPrefab;
     public GameObject CastlePrefab;
     public Transform PersonTileMap_transform;
-    public Transform AllTileMap_transform;
     public AllTileMap allTileMap;
     [SerializeField]
     int mapWidth,  //22 
@@ -130,7 +129,7 @@ public class HexTileMap : MonoBehaviour
         }
         GameObject Portal = Instantiate(PortalPrefab, new Vector3(x * tileXOffset + PersonTileMap_transform.position.x, 0.5f,
                                                                   z * tileZOffset + PersonTileMap_transform.position.z), Quaternion.identity);
-        Portal.transform.parent = AllTileMap_transform;
+        Portal.transform.parent = PersonTileMap_transform.parent;
         if (allTileMap.j > 0)
         {
             if (allTileMap.i % 2 == 0)

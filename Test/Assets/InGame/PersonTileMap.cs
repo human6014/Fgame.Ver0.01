@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 public class PersonTileMap : MonoBehaviour
 {
-    public GameManager gameManager_script;
     public NetworkManager networkManager_script;
     public AllTileMap allTileMap;
     public SphereCollider sphere;
@@ -18,8 +17,8 @@ public class PersonTileMap : MonoBehaviour
     {
         sphere = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphere.radius = 5;
-        else sphere.radius = gameManager_script.myField[1, gameManager_script.playerNum];
-        gameManager_script.playerNum++;
+        else sphere.radius = allTileMap.myField[1, allTileMap.playerNum];
+        allTileMap.playerNum++;
         initRadius = sphere.radius;
     }
     private void Update()

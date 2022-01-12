@@ -24,7 +24,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     {
         PhotonNetwork.IsMessageQueueRunning = true;
         PhotonNetwork.GameVersion = "1.0";
-        //name = GameObject.Find("LobbyManager").GetComponent<LobbyManager>().inGameName; //Build and Run에서 정상 작동
+        name = GameObject.Find("LobbyManager").GetComponent<LobbyManager>().inGameName; //Build and Run에서 정상 작동
         PhotonNetwork.NickName = name; //미완성
         PhotonNetwork.ConnectUsingSettings();
         view = PhotonView.Get(this); //뭘까 이건
@@ -33,7 +33,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnConnectedToMaster() => PhotonNetwork.JoinRandomRoom();
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        roomOptions = new RoomOptions{MaxPlayers = 2};
+        roomOptions = new RoomOptions{MaxPlayers = 1};
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()
@@ -42,6 +42,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         cMaxPlayer = PhotonNetwork.CurrentRoom.MaxPlayers;
         view.RPC("PunUpdate", RpcTarget.All);
         GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.childSpawner[0, cPlayerCount - 1].position + Vector3.up, Quaternion.identity);
+        allTileMap.SetPlayer(PhotonNetwork.NickName);
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {

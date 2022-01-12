@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class AllTileMap : MonoBehaviour
+using Photon.Pun;
+public class AllTileMap : MonoBehaviourPunCallbacks
 {
     public GameObject personTileMap_obj;
     public NetworkManager networkManager;
@@ -10,12 +11,18 @@ public class AllTileMap : MonoBehaviour
     public Text tileCount;
     public Transform [,] childPortal = new Transform[6,2];
     public Transform [,] childSpawner = new Transform[1,6];
-    public string [] playerName = new string[6];
+    public string [] playerName;
+    public float[,] myField;
     public int[] childCount = new int[6];
+    public int playerNum;
     public int i, j, bottom, top = 5;
     public int personTileCount;
+    int playerCount;
     private void Start()
     {
+        playerName = new string[]{ "Player1", "Player2", "Player3", "Player4", "Player5", "Player6" };
+        myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
+                               { 8.5f,8.5f,8.5f,8.5f,8.5f,8.5f}};//플레이어 타일 크기
         float x = 1,
               z = 0;
         int tagNum = 1;
@@ -57,7 +64,10 @@ public class AllTileMap : MonoBehaviour
         tileCount.text = "남은 타일\n";
         for (int i = 0; i < 6; i++)
         {
-            tileCount.text += "Player" + (i + 1) + ": " + childCount[i] + "\n";
+            tileCount.text += playerName[i].ToString() + " : " + childCount[i] + "\n";
         }
     }
+    public void SetPlayer(string name) => photonView.RPC("Seter", RpcTarget.AllBuffered, name);
+    [PunRPC]
+    private void Seter(string name) => playerName[playerCount++] = name;
 }

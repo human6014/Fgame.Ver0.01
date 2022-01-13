@@ -3288,7 +3288,12 @@ namespace Photon.Pun
             }
         }
 
-        #endif
+        public static void Destroy(Player otherPlayer)
+        {
+            throw new NotImplementedException();
+        }
+
+#endif
 
     }
 }

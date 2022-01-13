@@ -50,6 +50,9 @@ MonoBehaviour:
   - Go
   - CanvasUpdate
   - Seter
+  - DestroyPlayer
+  - PlayerIn
+  - PlayerOut
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

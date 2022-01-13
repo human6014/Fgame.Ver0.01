@@ -6,9 +6,12 @@ using Photon.Pun;
 public class LobbyManager : MonoBehaviour
 {
     public string inGameName;
-    private void Start()
+    private void Awake()
     {
-        PhotonNetwork.IsMessageQueueRunning = false;
-        DontDestroyOnLoad(gameObject);
+        var obj = FindObjectsOfType<LobbyManager>(); 
+        if (obj.Length == 1) DontDestroyOnLoad(gameObject); 
+        else Destroy(gameObject); 
+
+        //PhotonNetwork.IsMessageQueueRunning = false;
     }
 }

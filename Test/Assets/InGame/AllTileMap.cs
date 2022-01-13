@@ -20,7 +20,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     int playerCount;
     private void Start()
     {
-        playerName = new string[]{ "Player1", "Player2", "Player3", "Player4", "Player5", "Player6" };
+        playerName = new string[]{ "없음","없음", "없음", "없음", "없음", "없음" };
         myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
                                { 8.5f,8.5f,8.5f,8.5f,8.5f,8.5f}};//플레이어 타일 크기
         float x = 1,
@@ -67,7 +67,18 @@ public class AllTileMap : MonoBehaviourPunCallbacks
             tileCount.text += playerName[i].ToString() + " : " + childCount[i] + "\n";
         }
     }
-    public void SetPlayer(string name) => photonView.RPC("Seter", RpcTarget.AllBuffered, name);
+    public void SetPlayer(string name) => photonView.RPC(nameof(PlayerIn), RpcTarget.AllBuffered, name);
+    public void setPlayer() => photonView.RPC(nameof(PlayerOut), RpcTarget.AllBuffered);
     [PunRPC]
-    private void Seter(string name) => playerName[playerCount++] = name;
+    private void PlayerIn(string name)
+    {
+        playerName[playerCount] = name;
+        playerCount++;
+    }
+    [PunRPC]
+    private void PlayerOut()
+    {
+        playerName[playerCount] = "없음";
+        playerCount--;
+    }
 }

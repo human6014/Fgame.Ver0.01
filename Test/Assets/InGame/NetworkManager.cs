@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine.SceneManagement;
 public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
 {
     private int cMaxPlayer;
@@ -22,31 +23,40 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     private void Awake() => PhotonNetwork.AutomaticallySyncScene = true;
     private void Start()
     {
-        PhotonNetwork.IsMessageQueueRunning = true;
+        //PhotonNetwork.IsMessageQueueRunning = true;
         PhotonNetwork.GameVersion = "1.0";
         name = GameObject.Find("LobbyManager").GetComponent<LobbyManager>().inGameName; //Build and Run에서 정상 작동
         PhotonNetwork.NickName = name; //미완성
         PhotonNetwork.ConnectUsingSettings();
-        view = PhotonView.Get(this); //뭘까 이건
         Debug.Log("NetworkManagerStart");
     }
     public override void OnConnectedToMaster() => PhotonNetwork.JoinRandomRoom();
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        roomOptions = new RoomOptions{MaxPlayers = 1};
+        roomOptions = new RoomOptions{MaxPlayers = 2};
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom run");
         cMaxPlayer = PhotonNetwork.CurrentRoom.MaxPlayers;
-        view.RPC("PunUpdate", RpcTarget.All);
+        view.RPC(nameof(PunUpdate), RpcTarget.All);
         GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.childSpawner[0, cPlayerCount - 1].position + Vector3.up, Quaternion.identity);
         allTileMap.SetPlayer(PhotonNetwork.NickName);
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        view.RPC("PunUpdate", RpcTarget.All);
+        view.RPC(nameof(PunUpdate), RpcTarget.All);
+        Debug.Log("나감");
+        allTileMap.setPlayer();
+        Debug.Log("OnPlayerLeftRoom");
+    }
+    public void DisconnectPlayer() => StartCoroutine(nameof(DisconnectNetwork));
+    IEnumerator DisconnectNetwork()
+    {
+        PhotonNetwork.Disconnect();
+        yield return new WaitUntil(() => PhotonNetwork.IsConnected == false);
+        SceneManager.LoadScene(0);
     }
     [PunRPC]
     void PunUpdate()

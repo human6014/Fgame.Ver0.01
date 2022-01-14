@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Photon.Pun;
 public class LobbyManager : MonoBehaviour
 {
-    public string inGameName;
+    public string playerName = "Default";
+    public string roomCode = "Default";
+    public int stateIndex = -1;
     private void Awake()
     {
         var obj = FindObjectsOfType<LobbyManager>(); 
@@ -14,4 +15,14 @@ public class LobbyManager : MonoBehaviour
 
         //PhotonNetwork.IsMessageQueueRunning = false;
     }
+    /*
+    public void SetDefaultName()
+    {
+        playerName = "Default";
+    }
+    public void SetDefaultCode()
+    {
+        roomCode = "Default";
+    }
+    */
 }

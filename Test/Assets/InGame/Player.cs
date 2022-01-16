@@ -27,7 +27,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         KeyCode.Alpha4 };
     [SerializeField] float speed;
     [SerializeField] bool[] hasWeapons;
-    [SerializeField] NetworkManager networkManager;
     [SerializeField] GameObject[] weapons;
     [SerializeField] GameObject child;
     [SerializeField] Image HP;

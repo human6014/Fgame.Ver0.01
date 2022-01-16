@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
 {
     private int cMaxPlayer;
-    private int cPlayerCount;
+    public int cPlayerCount;
     private bool start;
     private int count;
     private int stateIndex;
@@ -45,15 +45,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnConnectedToMaster()
     {
         if (stateIndex == 0) PhotonNetwork.JoinRandomRoom();
-        else if (stateIndex == 1)
-        {
-            if(roomCode != "Default" && roomCode !="")
-            PhotonNetwork.CreateRoom(null, roomOptions);
-        }
-        else if (stateIndex == 2)
-        {
-            //만드는중
-        }
+        else if (stateIndex == 1) if(roomCode != "Default" && roomCode !="") PhotonNetwork.CreateRoom(roomCode, roomOptions);
+        else if (stateIndex == 2) if (roomCode != "Default" && roomCode != "") PhotonNetwork.JoinRoom(roomCode);
         else
         {
             Debug.LogError("서버 입장 불가");
@@ -62,6 +55,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         PhotonNetwork.CreateRoom(null, roomOptions);
+    }
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        Debug.Log("해당 방 없음");
     }
     public override void OnJoinedRoom()
     {

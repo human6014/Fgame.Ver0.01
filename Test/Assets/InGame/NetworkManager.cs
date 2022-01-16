@@ -7,6 +7,7 @@ using Photon.Realtime;
 using UnityEngine.SceneManagement;
 public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
 {
+    /*
     private int cMaxPlayer;
     public int cPlayerCount;
     private bool start;
@@ -22,13 +23,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     [SerializeField] PhotonView view;
     [SerializeField] AllTileMap allTileMap;
     RoomOptions roomOptions = new RoomOptions { MaxPlayers = 2 };
-    LobbyManager lobbyManager;
+    GameManager lobbyManager;
     
     private void Awake() => PhotonNetwork.AutomaticallySyncScene = true;
     private void Start()
     {
         //PhotonNetwork.IsMessageQueueRunning = true;
-        lobbyManager = FindObjectsOfType<LobbyManager>()[0];
+        lobbyManager = FindObjectsOfType<GameManager>()[0];
         stateIndex = lobbyManager.stateIndex;
         playerName = lobbyManager.playerName; //Build and Run에서 정상 작동
         roomCode = lobbyManager.roomCode;
@@ -93,6 +94,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
             
             isFull = true;
         }
-        
     }
+    */
 }

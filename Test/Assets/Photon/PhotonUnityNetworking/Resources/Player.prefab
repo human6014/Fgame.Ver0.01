@@ -1482,7 +1482,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   hasWeapons: 010000
-  networkManager: {fileID: 0}
   weapons:
   - {fileID: 779165039904131264}
   - {fileID: 6202484957379321734}

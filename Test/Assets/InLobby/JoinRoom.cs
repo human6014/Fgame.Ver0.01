@@ -7,19 +7,17 @@ public class JoinRoom : MonoBehaviour
 {
     [SerializeField] GameObject playerName;
     [SerializeField] GameObject roomName;
-    LobbyManager lobbyManager;
     public void Start()
     {
-        lobbyManager = FindObjectsOfType<LobbyManager>()[0];
-        lobbyManager.stateIndex = -1;
-        lobbyManager.roomCode = "Default";
-        lobbyManager.playerName = "Default";
+        GameManager.Instance().ResetInfo();
     }
     public void OnClicked()
     {
-        lobbyManager.playerName = playerName.GetComponent<Text>().text;
-        lobbyManager.roomCode = roomName.GetComponent<Text>().text;
-        lobbyManager.stateIndex = 2;
-        SceneManager.LoadScene("InGameScene");
+        if (roomName.GetComponent<Text>().text != "")
+        {
+            Debug.Log("방 코드 입력");
+            return;
+        }
+        GameManager.Instance().SceneMove(2, playerName.GetComponent<Text>().text, roomName.GetComponent<Text>().text);
     }
 }

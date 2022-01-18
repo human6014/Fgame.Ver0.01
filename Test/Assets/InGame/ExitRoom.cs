@@ -2,11 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
 public class ExitRoom : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public void Start()
-    {
-        //SceneManager.LoadScene("Lobby");
-    }
+    [SerializeField] NetworkManager networkManager;
+    public void OnClicked() => networkManager.OnPlayerLeftRoom(PhotonNetwork.LocalPlayer);
 }

@@ -767,6 +767,7 @@ GameObject:
   - component: {fileID: 888231540}
   - component: {fileID: 888231542}
   - component: {fileID: 888231541}
+  - component: {fileID: 888231542}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -800,34 +801,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49cf9619074c90346a285d4bb3004fe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFull: 0
-  delayCancelButton: {fileID: 1629746270}
-  roomCountDisplay: {fileID: 447989685}
-  timerToStartDisplay: {fileID: 717560876}
-  matchDoun: {fileID: 0}
-  view: {fileID: 888231542}
---- !u!114 &888231542
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888231539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 0
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents: []
-  sceneViewId: 1
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1703,6 +1676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28712492b99909543bb6079148e759c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkManager: {fileID: 888231541}
 --- !u!1 &1769931517
 GameObject:
   m_ObjectHideFlags: 0

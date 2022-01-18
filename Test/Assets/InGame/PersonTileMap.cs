@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 public class PersonTileMap : MonoBehaviour
 {
     public GameManager gameManager_script;
@@ -19,10 +20,10 @@ public class PersonTileMap : MonoBehaviour
 
         sphere = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphere.radius = 5;
-        else sphere.radius = gameManager_script.myField[1, gameManager_script.playerNum];
+        //else sphere.radius = GameManager.Instance().myField[1, gameManager_script.playerNum];
 
         initRadius = sphere.radius;
-        gameManager_script.playerNum++;
+        //gameManager_script.playerNum++;
 
         Debug.Log("PersonTileMap Start ГЁ");
     }
@@ -31,7 +32,7 @@ public class PersonTileMap : MonoBehaviour
         Debug.Log("PersonTileMap Update Сп");
         if (sphere.radius >= 0)
         {
-            if (networkManager_script.isFull && !gameObject.CompareTag("Floor7")) sphere.radius -= Time.deltaTime * Time.time / 10;
+            if (PhotonNetwork.CurrentRoom.MaxPlayers==PhotonNetwork.PlayerList.Length && !gameObject.CompareTag("Floor7")) sphere.radius -= Time.deltaTime * Time.time / 10;
         }
         else
         {

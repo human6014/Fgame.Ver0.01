@@ -40,7 +40,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Vector3 moveVec;
     private void Start()
     {
-        isDying = false;
+        GameManager.Instance().SetTag("loadPlayer", true);
         if (photonView.IsMine)
         {
             Camera.main.GetComponent<MainCamera>().target = transform;
@@ -63,7 +63,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Update()
     {
-        if (!start && PhotonNetwork.CurrentRoom.MaxPlayers != PhotonNetwork.PlayerList.Length) return;
         if (photonView.IsMine)
         {
             start = true;
@@ -190,7 +189,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "GameManager") view.RPC("PunHit", RpcTarget.All, 1000);
+        if (other.gameObject.name == "NetworkManager") view.RPC("PunHit", RpcTarget.All, 1000);
     }
     private void OnTriggerStay(Collider other)
     {

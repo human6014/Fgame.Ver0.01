@@ -5,8 +5,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class GameManager : MonoBehaviourPunCallbacks
 {
+    #region ½Ì±ÛÅæ
     static GameManager _instance = null;
     public static GameManager Instance()
     {
@@ -21,13 +23,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         else Destroy(this.gameObject);
     }
-
-    private int cMaxPlayer;
-    private int cPlayerCount;
+    #endregion
     public string roomCode = string.Empty;
     public string playerName = string.Empty;
     public int stateIndex = -1;
     public bool isFull = false;
+    public byte maxPlayers = 1;
     [SerializeField] GameObject delayCancelButton;
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Text timerToStartDisplay;
@@ -35,15 +36,31 @@ public class GameManager : MonoBehaviourPunCallbacks
     AllTileMap allTileMap;
     GameObject AllTileMap;
     GameObject[] list;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
+    RoomOptions roomOptions;
 
+    public bool master() => PhotonNetwork.LocalPlayer.IsMasterClient;
+    public void SetPos(Transform Tr, Vector3 target) //respawn
+    {
+        Tr.position = target;
+    }
+    public void SetTag(string key, object value, Photon.Realtime.Player player = null)
+    {
+        if (player == null) player = PhotonNetwork.LocalPlayer;
+        player.SetCustomProperties(new Hashtable { { key, value } });
+    }
+    public bool AllhasTag(string key)
+    {
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+            if (PhotonNetwork.PlayerList[i].CustomProperties[key] == null) return false;
+        return true;
+    }
     private void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.AutomaticallySyncScene = true;
         //PhotonNetwork.IsMessageQueueRunning = true;
         PhotonNetwork.GameVersion = "1.0";
-        
+
         view = photonView;
         Debug.Log("NetworkManager Start");
     }
@@ -53,6 +70,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
+        roomOptions = new RoomOptions { MaxPlayers = maxPlayers };
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
@@ -62,24 +80,24 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom run");
-        cMaxPlayer = PhotonNetwork.CurrentRoom.MaxPlayers;
-        view.RPC(nameof(PunUpdate), RpcTarget.All);
+        //view.RPC(nameof(PunUpdate), RpcTarget.All);
 
     }
+    /*
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        view.RPC(nameof(PunUpdate), RpcTarget.All);
-        SceneManager.LoadScene(0);
+        //view.RPC(nameof(PunUpdate), RpcTarget.All);
+        PhotonNetwork.LoadLevel(0);
         //allTileMap.MinusPlayer();
         Debug.Log("OnPlayerLeftRoom");
     }
+    */
     [PunRPC]
     void PunUpdate()
     {
-        cPlayerCount = PhotonNetwork.PlayerList.Length;
         //roomCountDisplay.text = cPlayerCount + " / " + cMaxPlayer;
 
-        if (cPlayerCount == cMaxPlayer)
+        if (PhotonNetwork.PlayerList.Length == PhotonNetwork.CurrentRoom.MaxPlayers)
         {
             //roomOptions.IsOpen = false;
 
@@ -98,7 +116,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         this.playerName = playerName;
         this.roomCode = roomCode;
         PhotonNetwork.NickName = playerName;
- 
+
         switch (this.stateIndex)
         {
             case 0:
@@ -113,12 +131,27 @@ public class GameManager : MonoBehaviourPunCallbacks
             default:
                 break;
         }
-        SceneManager.LoadScene(1);
+        PhotonNetwork.LoadLevel(1);
     }
+    /*
     public void SetAllTileMap(GameObject obj)
     {
         allTileMap = obj.GetComponent<AllTileMap>();
-        PhotonNetwork.Instantiate("Player", allTileMap.childSpawner[0, cPlayerCount - 1].position + Vector3.up, Quaternion.identity);
+        PhotonNetwork.Instantiate("Player", allTileMap.childSpawner[0, PhotonNetwork.PlayerList.Length].position + Vector3.up, Quaternion.identity);
         allTileMap.PlusPlayer(PhotonNetwork.NickName);
+    }
+    */
+    void OnGUI()
+    {
+        GUI.skin.label.fontSize = 20;
+        GUI.skin.button.fontSize = 20;
+        GUILayout.BeginVertical("Box", GUILayout.Width(200), GUILayout.MinHeight(100));
+
+
+        GUILayout.Label("¼­¹ö½Ã°£ : " + PhotonNetwork.Time);
+        GUILayout.Label("»óÅÂ : " + PhotonNetwork.NetworkClientState);
+        GUILayout.Label("¾À : " + SceneManager.GetActiveScene().name);
+
+        GUILayout.EndVertical();
     }
 }

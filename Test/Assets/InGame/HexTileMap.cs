@@ -16,8 +16,7 @@ public class HexTileMap : MonoBehaviour
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f;
     int count = 1;
-    void Start() => CreateHexTileMap();
-    void CreateHexTileMap()
+    public void CreateHexTileMap()
     {
         int mapXMin = -mapWidth / 2;
         int mapXMax = mapWidth / 2;
@@ -55,7 +54,7 @@ public class HexTileMap : MonoBehaviour
         }
         TagChecking(TempGo, x, z);
 
-        yield return new WaitForSeconds(0.000001f);
+        yield return null;
         TempGo.transform.position = pos;
     }
     void TagChecking(GameObject TempGo, float x, float z)

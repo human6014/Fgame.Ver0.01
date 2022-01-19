@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public string playerName = string.Empty;
     public int stateIndex = -1;
     public bool isFull = false;
-    public byte maxPlayers = 1;
+    //public byte maxPlayers = 3;
     [SerializeField] GameObject delayCancelButton;
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Text timerToStartDisplay;
@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     AllTileMap allTileMap;
     GameObject AllTileMap;
     GameObject[] list;
-    RoomOptions roomOptions;
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 2 };
 
     public bool master() => PhotonNetwork.LocalPlayer.IsMasterClient;
     public void SetPos(Transform Tr, Vector3 target) //respawn
@@ -70,8 +70,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        roomOptions = new RoomOptions { MaxPlayers = maxPlayers };
         PhotonNetwork.CreateRoom(null, roomOptions);
+        //PhotonNetwork.CurrentRoom.MaxPlayers = maxPlayers;
     }
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
@@ -151,7 +151,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         GUILayout.Label("서버시간 : " + PhotonNetwork.Time);
         GUILayout.Label("상태 : " + PhotonNetwork.NetworkClientState);
         GUILayout.Label("씬 : " + SceneManager.GetActiveScene().name);
-
+        //GUILayout.Label("최대 인원 : " + PhotonNetwork.CurrentRoom.MaxPlayers);
+        //GUILayout.Label("현재 인원 : " + PhotonNetwork.CurrentRoom.PlayerCount);
         GUILayout.EndVertical();
     }
 }

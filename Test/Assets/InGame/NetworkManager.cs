@@ -78,14 +78,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     {
         GameManager.Instance().SetTag("loadScene", true);
         while (!GameManager.Instance().AllhasTag("loadScene")) yield return null;
-        yield return new WaitUntil(() => PhotonNetwork.PlayerList.Length == GameManager.Instance().maxPlayers);
+        yield return new WaitUntil(() => PhotonNetwork.PlayerList.Length == 2);
         Debug.Log("Loading complete");
-        allTileMap.CreateTile();
+        photonView.RPC(nameof(StartTile), RpcTarget.AllViaServer);
+        
         yield return new WaitForSeconds(1);
         // 모두 씬에 있어야 생성할 수 있음, 에디터와 클라는 에디터가 마스터
         PhotonNetwork.Instantiate("Player", new Vector3(0, 1, 0), Quaternion.identity);
 
         while (!GameManager.Instance().AllhasTag("loadPlayer")) yield return null;
+    }
+    [PunRPC]
+    private void StartTile()
+    {
+        allTileMap.CreatePersonTile();
     }
     IEnumerator Start()
     {

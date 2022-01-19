@@ -6,8 +6,7 @@ using Photon.Pun;
 public class AllTileMap : MonoBehaviourPunCallbacks
 {
     public GameObject personTileMap_obj;
-    public PersonTileMap personTileMap_script;
-    public HexTileMap hexTileMap;
+    private PersonTileMap personTileMap_script;
     public Text tileCount;
     public Transform[,] childPortal = new Transform[6, 2];
     public Transform[,] childSpawner = new Transform[1, 6];
@@ -19,13 +18,15 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public int personTileCount;
     int playerCount;
     bool start;
+    public bool comp;
     private void Start()
     {
+        personTileMap_script = personTileMap_obj.GetComponent<PersonTileMap>();
         //playerName = new string[]{ "없음","없음", "없음", "없음", "없음", "없음" };
         myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
                                { 8.5f,8.5f,8.5f,8.5f,8.5f,8.5f}};//플레이어 타일 크기
     }
-    public void CreateTile()
+    public void CreatePersonTile()
     {
         float x = 1,
               z = 0;
@@ -62,7 +63,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
             PersonTile.name = "PerosnTileMap" + (i + 1);
             PersonTile.tag = "Floor" + tagNum;
         }
-        
+        comp = true;
     }
     private void Update()
     {

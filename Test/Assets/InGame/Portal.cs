@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Portal : MonoBehaviour
@@ -17,7 +15,7 @@ public class Portal : MonoBehaviour
     }
     public void PlayerEntry(GameObject player)
     {
-        if (jNum == 0) player.transform.position = allTileMap.childPortal[iNum, jNum + 1].transform.position;//out->in
-        else           player.transform.position = allTileMap.childPortal[iNum, jNum - 1].transform.position;//in->out
+        if (jNum == 0) player.transform.position = allTileMap.GetPortal(iNum, jNum + 1).position;//out->in
+        else player.transform.position = allTileMap.GetPortal(iNum, jNum - 1).position;//in->out
     }
 }

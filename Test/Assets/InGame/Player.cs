@@ -20,8 +20,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
          isDodge,
          isDying,
          start;
-    KeyCode[] keyCodes = { 
-        KeyCode.Alpha1, 
+    KeyCode[] keyCodes = {
+        KeyCode.Alpha1,
         KeyCode.Alpha2,
         KeyCode.Alpha3,
         KeyCode.Alpha4 };
@@ -40,7 +40,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Vector3 moveVec;
     private void Start()
     {
-        GameManager.Instance().SetTag("loadPlayer", true);
+        isDying = false;
         if (photonView.IsMine)
         {
             Camera.main.GetComponent<MainCamera>().target = transform;
@@ -63,6 +63,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Update()
     {
+        if (!start && PhotonNetwork.CurrentRoom.MaxPlayers != PhotonNetwork.PlayerList.Length) return;
         if (photonView.IsMine)
         {
             start = true;
@@ -74,17 +75,16 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             dodgeMove = Input.GetButtonDown("Dodge");
             attack = Input.GetButtonDown("Attack");
             moveVec = new Vector3(xMove, 0, zMove).normalized;
-            for(int i = 0; i< keyCodes.Length;i++)
+            for (int i = 0; i < keyCodes.Length; i++)
             {
                 if (Input.GetKeyDown(keyCodes[i]))
                 {
-                    view.RPC("ChangeEquip",RpcTarget.All,i);
+                    view.RPC("ChangeEquip", RpcTarget.All, i);
                     break;
                 }
             }
-            if(moveVec!=Vector3.zero)
-                transform.Translate ( (walkMove ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //변경 고민중
-            
+            if (moveVec != Vector3.zero) transform.Translate((walkMove ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //변경 고민중
+
             if (!isJump && !isDodge)
                 if (walkMove || moveVec == Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
                 else MP.fillAmount += Time.time * Time.deltaTime / 50f;
@@ -99,6 +99,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
+    #region 공격
     void Attack()
     {
         attackDelay += Time.deltaTime;
@@ -116,6 +117,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (equipWeapon.type == Weapon.weaponsType.Melee) anim.SetBool("isSwing", false);
         else anim.SetBool("isShot", false);
     }
+    #endregion
+    #region 점프
     void Jump()
     {
         if (jumpMove && !isJump && !isDodge && MP.fillAmount >= 0.2f && !isDying)
@@ -126,12 +129,23 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             isJump = true;
         }
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag.Substring(0, 5) == "Floor")
+        {
+            anim.SetBool("isJump", false);
+            isJump = false;
+            //Destroy(collision.gameObject,10f);
+        }
+    }
+    #endregion
+    #region 회피
     void Dodge(Vector3 moveVec)
     {
         if (dodgeMove && !isDodge && !isJump && moveVec != Vector3.zero && MP.fillAmount >= 0.3f && !isDying)
         {
             speed *= 2.5f;
-            anim.SetBool("isDodge",true);
+            anim.SetBool("isDodge", true);
             isDodge = true;
             MP.fillAmount -= 0.25f;
             Invoke(nameof(DodgeOut), 0.4f);
@@ -143,6 +157,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         anim.SetBool("isDodge", false);
         isDodge = false;
     }
+    #endregion
+    #region 피격
     public void Hit(int damage)
     {
         if (isDying) return;
@@ -154,6 +170,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount -= damage / 100f;
         if (HP.fillAmount <= 0) Die();
     }
+    #endregion
+    #region 무기 교체
     [PunRPC]
     void ChangeEquip(int index)
     {
@@ -162,6 +180,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         equipWeapon = weapons[index].GetComponent<Weapon>();
         curEquip = index;
     }
+    #endregion
+    #region 죽음,리스폰
     void Die() //죽은 후 바로 이동 -> 죽은 위치 5초 대기 후 스폰
     {
         isDying = true;
@@ -178,23 +198,23 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         isDying = false;
     }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag.Substring(0, 5) == "Floor")
-        {
-            anim.SetBool("isJump", false);
-            isJump = false;
-            //Destroy(collision.gameObject,10f);
-        }
-    }
+    #endregion
+    #region 낙사
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.name == "NetworkManager") view.RPC("PunHit", RpcTarget.All, 1000);
     }
+    #endregion
+    #region 포탈 이동
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag("Portal") && Input.GetKeyDown(KeyCode.Tab)) other.gameObject.GetComponent<Portal>().PlayerEntry(gameObject);
+        if (other.gameObject.CompareTag("Portal") && Input.GetKeyDown(KeyCode.Tab))
+        {
+            Debug.Log("portal");
+            other.gameObject.GetComponent<Portal>().PlayerEntry(gameObject);
+        }
     }
+    #endregion
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)

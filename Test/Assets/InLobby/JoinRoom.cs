@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-public class JoinRoom : MonoBehaviour
+using Photon.Pun;
+using Photon.Realtime;
+public class JoinRoom : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject playerName;
     [SerializeField] GameObject roomName;
     public void Start()
     {
-        GameManager.Instance().ResetInfo();
+        GameManager.Instance().stateIndex = -1;
+        GameManager.Instance().roomCode = "Default";
+        GameManager.Instance().playerName = "Default";
     }
     public void OnClicked()
     {
-        if (roomName.GetComponent<Text>().text != "")
-        {
-            Debug.Log("방 코드 입력");
-            return;
-        }
-        GameManager.Instance().SceneMove(2, playerName.GetComponent<Text>().text, roomName.GetComponent<Text>().text);
+        if (string.IsNullOrEmpty(playerName.GetComponent<Text>().text) || string.IsNullOrEmpty(roomName.GetComponent<Text>().text)) return;
+        GameManager.Instance().playerName = playerName.GetComponent<Text>().text;
+        GameManager.Instance().roomCode = roomName.GetComponent<Text>().text;
+        GameManager.Instance().stateIndex = 2;
+        SceneManager.LoadScene("InGameScene");
     }
 }

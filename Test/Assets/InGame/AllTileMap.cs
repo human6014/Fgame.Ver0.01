@@ -6,28 +6,40 @@ using Photon.Pun;
 public class AllTileMap : MonoBehaviourPunCallbacks
 {
     public GameObject personTileMap_obj;
-    private PersonTileMap personTileMap_script;
+    public NetworkManager networkManager;
+    public PersonTileMap personTileMap_script;
     public Text tileCount;
-    public Transform[,] childPortal = new Transform[6, 2];
-    public Transform[,] childSpawner = new Transform[1, 6];
+    private Transform[,] childPortal = new Transform[6, 2];
+    private Transform[,] childSpawner = new Transform[1, 6];
     public string[] playerName = new string[6];
     public float[,] myField;
     public int[] childCount = new int[6];
     public int playerNum;
     public int i, j, bottom, top = 5;
     public int personTileCount;
-    int playerCount;
-    bool start;
-    public bool comp;
+    #region Getter + Setter
+    public void SetPortal(Transform tr, int i, int j)
+    {
+        childPortal[i, j] = tr;
+    }
+    public Transform GetPortal(int i, int j)
+    {
+        return childPortal[i, j];
+    }
+    public void SetSpawner(Transform tr, int i, int j)
+    {
+        childSpawner[i, j] = tr;
+    }
+    public Transform GetSpawner(int i, int j)
+    {
+        return childSpawner[i, j];
+    }
+    #endregion
     private void Start()
     {
-        personTileMap_script = personTileMap_obj.GetComponent<PersonTileMap>();
         //playerName = new string[]{ "없음","없음", "없음", "없음", "없음", "없음" };
         myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
                                { 8.5f,8.5f,8.5f,8.5f,8.5f,8.5f}};//플레이어 타일 크기
-    }
-    public void CreatePersonTile()
-    {
         float x = 1,
               z = 0;
         int tagNum = 1;
@@ -63,29 +75,16 @@ public class AllTileMap : MonoBehaviourPunCallbacks
             PersonTile.name = "PerosnTileMap" + (i + 1);
             PersonTile.tag = "Floor" + tagNum;
         }
-        comp = true;
     }
     private void Update()
     {
-        if (!start)
-        {
-            Debug.Log("생성");
-            start = true;
-            //GameManager.Instance().SetAllTileMap(gameObject);
-
-        }
         tileCount.text = "남은 타일\n";
-        /*
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
         {
             tileCount.text += playerName[i].ToString() + " : " + childCount[i] + "\n";
         }
-        */
-        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerListOthers)
-        {
-            tileCount.text += player.NickName + " : " + childCount[player.ActorNumber-1] + "\n";
-        }
     }
+    /*
     public void PlusPlayer(string name) => photonView.RPC(nameof(PlayerIn), RpcTarget.AllBuffered, name);
     //public void MinusPlayer() => photonView.RPC(nameof(PlayerOut), RpcTarget.AllBuffered);
     [PunRPC]
@@ -95,18 +94,19 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         playerCount++;
         Debug.Log("playerCount : " + playerCount);
         Debug.Log("Debug.Log(PhotonNetwork.CountOfPlayers) : " + PhotonNetwork.CountOfPlayers);
-        Debug.Log("PhotonNetwork.PlayerList.Length : " + PhotonNetwork.PlayerList.Length);
-        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
-            Debug.Log("\nPhotonNetwork.PlayerList : " + PhotonNetwork.PlayerList[i]);
+        Debug.Log("PhotonNetwork.PlayerList.Length : "+PhotonNetwork.PlayerList.Length);
+        for(int i=0;i<PhotonNetwork.PlayerList.Length;i++)
+            Debug.Log("\nPhotonNetwork.PlayerList : "+PhotonNetwork.PlayerList[i]);
     }
     [PunRPC]
     private void PlayerOut()
     {
-        playerName[PhotonNetwork.PlayerList.Length - 1] = "없음";
+        playerName[PhotonNetwork.PlayerList.Length-1] = "없음";
         playerCount--;
-        Debug.Log("playerCount : " + playerCount);
-        Debug.Log("Debug.Log(PhotonNetwork.CountOfPlayers) : " + PhotonNetwork.CountOfPlayers);
+        Debug.Log("playerCount : "+playerCount);
+        Debug.Log("Debug.Log(PhotonNetwork.CountOfPlayers) : "+PhotonNetwork.CountOfPlayers);
         for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
             Debug.Log("\nPhotonNetwork.PlayerList : " + PhotonNetwork.PlayerList[i]);
     }
+    */
 }

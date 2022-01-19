@@ -1,14 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
-public class Bullet : MonoBehaviourPunCallbacks,IPunObservable
+public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
 {
     public int damage;
     public PhotonView pv;
-    Vector3 trajectory =Vector3.forward * 15;
-    private void Start()=> StartCoroutine("BallisticFall");
+    Vector3 trajectory = Vector3.forward * 15;
+    private void Start() => StartCoroutine("BallisticFall");
     void Update() => transform.Translate(trajectory * Time.deltaTime);
+    #region ÃÑ¾Ë ±ËÀû ¼³Á¤
     IEnumerator BallisticFall()
     {
         yield return new WaitForSeconds(0.5f);
@@ -21,6 +21,8 @@ public class Bullet : MonoBehaviourPunCallbacks,IPunObservable
         }
 
     }
+    #endregion
+    #region ÃÑ¾Ë Ãæµ¹ °Ë»ç
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
@@ -39,7 +41,8 @@ public class Bullet : MonoBehaviourPunCallbacks,IPunObservable
             pv.RPC("Destroy", RpcTarget.AllBuffered);
         }
     }
+    #endregion
     [PunRPC]
     void Destroy() => Destroy(gameObject);
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {  }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }
 }

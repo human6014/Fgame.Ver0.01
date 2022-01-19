@@ -2,11 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 public class PersonTileMap : MonoBehaviour
 {
-    private AllTileMap allTileMap;
-    //public HexTileMap hexTileMap;
+    public NetworkManager networkManager_script;
+    public AllTileMap allTileMap;
     public SphereCollider sphere;
     private MeshCollider meshCollider;
     private new Rigidbody rigidbody;
@@ -15,31 +14,22 @@ public class PersonTileMap : MonoBehaviour
     bool outPlayer;
 
 
-    [SerializeField]
-    int mapWidth,  //22 
-        mapHeight; //22 (0,0)제외 10타일 길이의 길 생성
-
-    private const float tileXOffset = 1.00725f,
-                        tileZOffset = 0.87f;
-    int count = 1;
     public GameObject HexTilePrefab;
     public GameObject PortalPrefab;
     public GameObject CastlePrefab;
+    [SerializeField]
+    int mapWidth,  //22 
+        mapHeight;
+    private const float tileXOffset = 1.00725f,
+                        tileZOffset = 0.87f;
+    int count = 1;
     private void Start()
     {
-        allTileMap = transform.parent.GetComponent<AllTileMap>();
         sphere = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphere.radius = 5;
-        else sphere.radius = 8.5f;//allTileMap.myField[1, allTileMap.playerNum];
+        else sphere.radius = allTileMap.myField[1, allTileMap.playerNum];
         allTileMap.playerNum++;
-        initRadius = sphere.radius - 0.1f;
-        Debug.Log("PersonTileMap Start");
-        StartCoroutine(nameof(Comp));
-        
-    }
-    IEnumerator Comp()
-    {
-        yield return new WaitUntil(() => allTileMap.comp);
+        initRadius = sphere.radius;
         CreateHexTileMap();
     }
     private void Update()
@@ -48,7 +38,7 @@ public class PersonTileMap : MonoBehaviour
         allTileMap.childCount[int.Parse(transform.name.Substring(13, 1)) - 1] = transform.childCount - 1; //위치 수정 보류
         if (sphere.radius >= 0)
         {
-             sphere.radius -= Time.deltaTime * Time.time / 1000;
+            if (networkManager_script.isFull) sphere.radius -= Time.deltaTime * Time.time / 1000;
         }
         else if (!outPlayer)
         {
@@ -59,27 +49,29 @@ public class PersonTileMap : MonoBehaviour
                 if (iter.name != "HexTileMap" && iter != transform)
                     StartCoroutine(FallWaiting(iter.gameObject));
             }
-            for (int i = 0; i < 2; i++) Destroy(allTileMap.childPortal[int.Parse(transform.name.Substring(13, 1)) - 1, i].gameObject);
+            for (int i = 0; i < 2; i++) Destroy(allTileMap.GetPortal(int.Parse(transform.name.Substring(13, 1)) - 1, i).gameObject);
             outPlayer = true;
         }
     }
+    #region 블럭 파괴
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag(tag))
         {
-            Debug.Log("TriggerExit");
-            if (sphere.radius > initRadius) Destroy(other.gameObject);
+            if (sphere.radius == initRadius) Destroy(other.gameObject);
             else
             {
                 StartCoroutine(FallWaiting(other.gameObject));
             }
         }
     }
+    #endregion
+    #region 블럭 떨어짐
     IEnumerator FallWaiting(GameObject other)
     {
         renderer = other.GetComponent<Renderer>();
         renderer.material.color = new Color(255 / 255f, 25 / 255f, 25 / 255f);
-        yield return new WaitForSeconds(3f); //밑에 순서 중요함, 문제 발견
+        yield return new WaitForSeconds(3f); //밑에 순서 중요함
         if (!other) yield break;
         meshCollider = other.GetComponent<MeshCollider>();
         meshCollider.convex = true;
@@ -89,9 +81,9 @@ public class PersonTileMap : MonoBehaviour
         rigidbody.isKinematic = false;
         rigidbody.useGravity = true;
     }
-
-
-    public void CreateHexTileMap()
+    #endregion
+    #region 블럭 생성
+    void CreateHexTileMap()
     {
         int mapXMin = -mapWidth / 2;
         int mapXMax = mapWidth / 2;
@@ -114,6 +106,8 @@ public class PersonTileMap : MonoBehaviour
             }
         }
     }
+    #endregion
+    #region 블럭 설정 + 스포너 생성
     IEnumerator SetTileInfo(GameObject TempGo, float x, float z, Vector3 pos)
     {
         TempGo.transform.parent = transform;
@@ -125,34 +119,42 @@ public class PersonTileMap : MonoBehaviour
             castle.name = "Spawner" + transform.tag.Substring(5, 1);
             castle.transform.parent = transform;
             castle.tag = transform.tag;
-            allTileMap.childSpawner[0, int.Parse(transform.tag.Substring(5, 1)) - 1] = castle.transform;
+            allTileMap.SetSpawner(castle.transform, 0, int.Parse(transform.tag.Substring(5, 1)) - 1);
         }
         TagChecking(TempGo, x, z);
 
-        yield return null;
+        yield return new WaitForSeconds(0.000001f);
         TempGo.transform.position = pos;
     }
+    #endregion
+    #region 포탈방향 블럭 설정
     void TagChecking(GameObject TempGo, float x, float z)
     {
         switch (transform.tag)
         {
             case "Floor1" when x == (int)z / 2 && z == count:
+                Debug.Log("Floor1");
                 TagChanging(TempGo, x, z);
                 break;
             case "Floor2" when x == ((int)z + 1) / -2 && z == mapHeight / 2 - count + (count % 2 == 0 ? 1 : -1) && z > 0: //입력 값에따라 안될 경우 있음
+                Debug.Log("Floor2");
                 TagChanging(TempGo, x, z + 1);
                 break;
             case "Floor3" when x < 0 && z == 0 && x > mapWidth / -2:
+                Debug.Log("Floor3");
                 TagChanging(TempGo, x, z);
                 break;
             case "Floor4" when x == ((int)z - 1) / 2 && z == mapHeight / -2 + count && x < 0:
+                Debug.Log("Floor4");
                 TagChanging(TempGo, x, z);
                 break;
             case "Floor5" when x == (int)z / -2 && z == -count + (count % 2 == 0 ? 2 : 0) && z >= mapHeight / -2: //더 좋은 식 찾기
                 TagChanging(TempGo, x + 1, z - 2);
-                if (z == mapHeight / -2 | z == 0) TempGo.tag = transform.parent.tag;
+                if (z == mapHeight / -2 | z == 0) TempGo.tag = transform.tag;
+                else Debug.Log("Floor5");
                 break;
             case "Floor6" when x > 0 && z == 0:
+                Debug.Log("Floor6");
                 TagChanging(TempGo, x, z);
                 break;
             default:
@@ -161,6 +163,8 @@ public class PersonTileMap : MonoBehaviour
                 break;
         }
     }
+    #endregion
+    #region 블럭 태그 설정+포탈
     void TagChanging(GameObject TempGo, float x, float z)
     {
         TempGo.tag = "Floor7";
@@ -168,6 +172,8 @@ public class PersonTileMap : MonoBehaviour
         if (x >= 0 && count == mapHeight / 2) CreatePortal(x, z);
         else if (x < 0 && count == 2) CreatePortal(x, z);
     }
+    #endregion
+    #region 포탈 생성
     void CreatePortal(float x, float z)
     {
         if (transform.CompareTag("Floor7"))
@@ -175,26 +181,20 @@ public class PersonTileMap : MonoBehaviour
             switch (count)
             {
                 case 1 when x == -5 && z == 0:
-                    Debug.Log("1");
                     break;
                 case 2 when x == -3 && z == -5:
                     x += tileXOffset / 2;
-                    Debug.Log("2");
                     break;
                 case 3 when x == -3 && z == 5:
                     x += tileXOffset / 2;
-                    Debug.Log("3");
                     break;
                 case 4 when x == 2 && z == -5:
                     x += tileXOffset / 2;
-                    Debug.Log("4");
                     break;
                 case 5 when x == 2 && z == 5:
                     x += tileXOffset / 2;
-                    Debug.Log("5");
                     break;
                 case 6 when x == 5 && z == 0:
-                    Debug.Log("6");
                     break;
                 default:
                     return;
@@ -203,28 +203,27 @@ public class PersonTileMap : MonoBehaviour
         }
         GameObject Portal = Instantiate(PortalPrefab, new Vector3(x * tileXOffset + transform.position.x, 0.5f,
                                                                   z * tileZOffset + transform.position.z), Quaternion.identity);
-        Portal.transform.parent = transform;
+        //Portal.transform.parent = transform;
         if (allTileMap.j > 0)
         {
             if (allTileMap.i % 2 == 0)
             {
-                Debug.Log(allTileMap.i);
-                Debug.Log(allTileMap.j);
                 Portal.name = allTileMap.top + "" + allTileMap.j;
-                allTileMap.childPortal[allTileMap.top--, allTileMap.j] = Portal.transform;
+                allTileMap.SetPortal(Portal.transform, allTileMap.top--, allTileMap.j);
             }
             else
             {
                 Portal.name = allTileMap.bottom + "" + allTileMap.j;
-                allTileMap.childPortal[allTileMap.bottom++, allTileMap.j] = Portal.transform;
+                allTileMap.SetPortal(Portal.transform, allTileMap.bottom++, allTileMap.j);
             }
         }
         else
         {
             Portal.name = allTileMap.i + "" + allTileMap.j;
-            allTileMap.childPortal[allTileMap.i, allTileMap.j] = Portal.transform;
+            allTileMap.SetPortal(Portal.transform, allTileMap.i, allTileMap.j);
             if (allTileMap.i == 5) allTileMap.j++;
         }
         allTileMap.i++;
     }
+    #endregion
 }

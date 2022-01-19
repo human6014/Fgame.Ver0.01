@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -8,10 +6,14 @@ public class QuickMatch : MonoBehaviour
     [SerializeField] GameObject playerName;
     public void Start()
     {
-        GameManager.Instance().ResetInfo();
+        GameManager.Instance().stateIndex = -1;
+        GameManager.Instance().playerName = "Default";
     }
     public void OnClicked()
     {
-        GameManager.Instance().SceneMove(0, playerName.GetComponent<Text>().text, "");
+        if (string.IsNullOrEmpty(playerName.GetComponent<Text>().text)) return;
+        GameManager.Instance().playerName = playerName.GetComponent<Text>().text;
+        GameManager.Instance().stateIndex = 0;
+        SceneManager.LoadScene("InGameScene");
     }
 }

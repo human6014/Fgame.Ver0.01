@@ -5,111 +5,99 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
-using ExitGames.Client.Photon;
 public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
 {
-    public AllTileMap allTileMap;
-    public List<PlayerInfo> playerInfos;
-    public PhotonView PV;
-    bool isStart;
-    private void OnTriggerEnter(Collider other)
+    private bool start;
+    private int count;
+    private int stateIndex;
+    private string roomCode = string.Empty;
+    private string playerName = string.Empty;
+    public bool isFull = false;
+    [SerializeField] GameObject delayCancelButton;
+    [SerializeField] Text roomCountDisplay;
+    [SerializeField] Text timerToStartDisplay;
+    [SerializeField] Button matchDown;
+    [SerializeField] PhotonView view;
+    [SerializeField] AllTileMap allTileMap;
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
+
+    private void Awake() => PhotonNetwork.AutomaticallySyncScene = true;
+    private void Start()
     {
-        if (other.tag.Substring(0, 5) == "Floor") Destroy(other.gameObject);
+        //PhotonNetwork.IsMessageQueueRunning = true;
+        stateIndex = GameManager.Instance().stateIndex;
+        playerName = GameManager.Instance().playerName; //Build and Run에서 정상 작동
+        roomCode = GameManager.Instance().roomCode;
+        PhotonNetwork.GameVersion = "1.0";
+        PhotonNetwork.NickName = playerName; //미완성
+        PhotonNetwork.ConnectUsingSettings();
+        Debug.Log("NetworkManagerStart");
     }
-    void MasterInitPlayerInfo()
+    public void CreateRoom()
     {
-        // 게임시작시 초기화
-        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        Debug.Log("CreateRoom");
+        //PhotonNetwork.CreateRoom(RoomInput.text == "" ? "Room" + Random.Range(0, 100) : RoomInput.text, new RoomOptions { MaxPlayers = 2 });
+    }
+    public override void OnConnectedToMaster()
+    {
+        if (stateIndex == 0) PhotonNetwork.JoinRandomRoom();
+        else if (stateIndex == 1)
         {
-            Photon.Realtime.Player player = PhotonNetwork.PlayerList[i];
-            playerInfos.Add(new PlayerInfo(player.NickName, player.ActorNumber, 0, 0, 0, PhotonNetwork.Time + 3.0));
+            PhotonNetwork.CreateRoom(roomCode, roomOptions);
         }
-        MasterSendPlayerInfo(0);
-    }
-    void MasterRemovePlayerInfo(int actorNum)
-    {
-        // OnPlayerLeftRoom으로 방을 나갈경우 플레이어 제거
-        PlayerInfo playerInfo = playerInfos.Find(x => x.actorNum == actorNum);
-        playerInfos.Remove(playerInfo);
-        MasterSendPlayerInfo(1);
-    }
-
-    [PunRPC]
-    public void MasterReceiveRPC(byte code, int actorNum, int colActorNum)
-    {
-        // 시간과 죽음여부
-        PlayerInfo playerInfo = playerInfos.Find(x => x.actorNum == actorNum);
-        double lifeTime = PhotonNetwork.Time - playerInfo.lifeTime;
-        lifeTime = System.Math.Truncate(lifeTime * 100) * 0.01;
-        playerInfo.lifeTime = lifeTime;
-
-
-        // 자기가 아닌 라인이나 플레이어 충돌시 킬데스 증가
-        /*
-        if (code == DIE)
+        else if (stateIndex == 2)
         {
-            playerInfo = null;
-            playerInfo = playerInfos.Find(x => x.actorNum == colActorNum);
-            ++playerInfo.killDeath;
+            PhotonNetwork.JoinRoom(roomCode);
+            roomOptions.IsVisible = false;
         }
-        */
-        MasterSendPlayerInfo(code);
-    }
-    void MasterSendPlayerInfo(byte code)
-    {
-        // 방장은 PlayerInfo 정렬 후 보내기
-        playerInfos.Sort((p1, p2) => p2.lifeTime.CompareTo(p1.lifeTime));
-
-        string jdata = JsonUtility.ToJson(new Serialization<PlayerInfo>(playerInfos));
-        PV.RPC("OtherReceivePlayerInfoRPC", RpcTarget.Others, code, jdata);
-    }
-    [PunRPC]
-    void OtherReceivePlayerInfoRPC(byte code, string jdata)
-    {
-        // 다른 사람은 PlayerInfo 받기
-        playerInfos = JsonUtility.FromJson<Serialization<PlayerInfo>>(jdata).target;
-    }
-    [PunRPC]
-    void StartSyncRPC()
-    {
-        isStart = true;
-    }
-    IEnumerator Loading()
-    {
-        GameManager.Instance().SetTag("loadScene", true);
-        while (!GameManager.Instance().AllhasTag("loadScene")) yield return null;
-        yield return new WaitUntil(() => PhotonNetwork.PlayerList.Length == 2);
-        Debug.Log("Loading complete");
-        photonView.RPC(nameof(StartTile), RpcTarget.AllViaServer);
-        
-        yield return new WaitForSeconds(1);
-        // 모두 씬에 있어야 생성할 수 있음, 에디터와 클라는 에디터가 마스터
-        PhotonNetwork.Instantiate("Player", new Vector3(0, 1, 0), Quaternion.identity);
-
-        while (!GameManager.Instance().AllhasTag("loadPlayer")) yield return null;
-    }
-    [PunRPC]
-    private void StartTile()
-    {
-        allTileMap.CreatePersonTile();
-    }
-    IEnumerator Start()
-    {
-        yield return Loading();
-
-        if (GameManager.Instance().master())
+        else
         {
-            MasterInitPlayerInfo();
-            yield return new WaitForSeconds(3);
-            PV.RPC(nameof(StartSyncRPC), RpcTarget.AllViaServer);
+            Debug.LogError("서버 입장 불가");
         }
+    }
+    public override void OnJoinRandomFailed(short returnCode, string message)
+    {
+        PhotonNetwork.CreateRoom(null, roomOptions);
+    }
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        Debug.Log("JoinRoom Failed");
+        DisconnectPlayer();
+    }
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("OnJoinedRoom run");
+        view.RPC(nameof(PunUpdate), RpcTarget.All);
+        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(0, PhotonNetwork.PlayerList.Length - 1).position + Vector3.up, Quaternion.identity);
+        //allTileMap.PlusPlayer(PhotonNetwork.NickName);
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        // 마스터가 나가면 바뀐 마스터가 호출되서 성공
-        if (GameManager.Instance().master())
+        view.RPC(nameof(PunUpdate), RpcTarget.All);
+        //allTileMap.MinusPlayer();
+        Debug.Log("OnPlayerLeftRoom");
+    }
+    public void DisconnectPlayer() => StartCoroutine(nameof(DisconnectNetwork));
+    IEnumerator DisconnectNetwork()
+    {
+        PhotonNetwork.Disconnect();
+        yield return new WaitUntil(() => PhotonNetwork.IsConnected == false);
+        SceneManager.LoadScene(0);
+    }
+    [PunRPC]
+    void PunUpdate()
+    {
+        roomCountDisplay.text = PhotonNetwork.PlayerList.Length + " / " + PhotonNetwork.CurrentRoom.MaxPlayers;
+        if (PhotonNetwork.PlayerList.Length == PhotonNetwork.CurrentRoom.MaxPlayers)
         {
-            MasterRemovePlayerInfo(otherPlayer.ActorNumber);
+            //roomOptions.IsOpen = false;
+            roomOptions.IsVisible = false;
+            isFull = true;
         }
+
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag.Substring(0, 5) == "Floor") Destroy(other.gameObject);
     }
 }

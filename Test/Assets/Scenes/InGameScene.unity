@@ -806,7 +806,6 @@ MonoBehaviour:
   roomCountDisplay: {fileID: 447989685}
   timerToStartDisplay: {fileID: 0}
   matchDown: {fileID: 1629746272}
-  view: {fileID: 888231543}
   allTileMap: {fileID: 1299624831}
 --- !u!65 &888231542
 BoxCollider:
@@ -1129,8 +1128,8 @@ GameObject:
   - component: {fileID: 1168173662}
   - component: {fileID: 1168173663}
   m_Layer: 0
-  m_Name: PersonTileMap1
-  m_TagString: Floor1
+  m_Name: Sample
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

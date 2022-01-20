@@ -17,7 +17,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Text timerToStartDisplay;
     [SerializeField] Button matchDown;
-    [SerializeField] PhotonView view;
+    PhotonView view;
     [SerializeField] AllTileMap allTileMap;
     RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
 
@@ -28,6 +28,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
         stateIndex = GameManager.Instance().stateIndex;
         playerName = GameManager.Instance().playerName; //Build and Run에서 정상 작동
         roomCode = GameManager.Instance().roomCode;
+        view = photonView;
         PhotonNetwork.GameVersion = "1.0";
         PhotonNetwork.NickName = playerName; //미완성
         PhotonNetwork.ConnectUsingSettings();

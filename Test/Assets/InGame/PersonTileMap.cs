@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 public class PersonTileMap : MonoBehaviour
 {
     public NetworkManager networkManager_script;
@@ -14,23 +15,23 @@ public class PersonTileMap : MonoBehaviour
     bool outPlayer;
 
 
-    public GameObject HexTilePrefab;
-    public GameObject PortalPrefab;
-    public GameObject CastlePrefab;
-    [SerializeField]
-    int mapWidth,  //22 
-        mapHeight;
+    [SerializeField] GameObject HexTilePrefab;
+    [SerializeField] GameObject PortalPrefab;
+    [SerializeField] GameObject CastlePrefab;
+    [SerializeField] int mapWidth,  //22 
+                           mapHeight;
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f;
     int count = 1;
-    private void Start()
+    void Start()
     {
+        if (gameObject.name == "Sample") Destroy(gameObject);
         sphere = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphere.radius = 5;
         else sphere.radius = allTileMap.myField[1, allTileMap.playerNum];
-        allTileMap.playerNum++;
+        //else sphere.radius = 8.5f;
+        //allTileMap.playerNum++;
         initRadius = sphere.radius;
-        CreateHexTileMap();
     }
     private void Update()
     {
@@ -83,7 +84,7 @@ public class PersonTileMap : MonoBehaviour
     }
     #endregion
     #region 블럭 생성
-    void CreateHexTileMap()
+    public void CreateHexTileMap()
     {
         int mapXMin = -mapWidth / 2;
         int mapXMax = mapWidth / 2;

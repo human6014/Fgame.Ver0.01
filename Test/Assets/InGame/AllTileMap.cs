@@ -18,35 +18,41 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public int i, j, bottom, top = 5;
     public int personTileCount;
     #region Getter + Setter
-    public void SetPortal(Transform tr, int i, int j)
-    {
-        childPortal[i, j] = tr;
-    }
+    public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;
+    public void SetSpawner(Transform tr, int i, int j) => childSpawner[i, j] = tr;
     public Transform GetPortal(int i, int j)
     {
         return childPortal[i, j];
-    }
-    public void SetSpawner(Transform tr, int i, int j)
-    {
-        childSpawner[i, j] = tr;
     }
     public Transform GetSpawner(int i, int j)
     {
         return childSpawner[i, j];
     }
     #endregion
-    private void Start()
+    void Start()
     {
-        //playerName = new string[]{ "없음","없음", "없음", "없음", "없음", "없음" };
         myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
                                { 8.5f,8.5f,8.5f,8.5f,8.5f,8.5f}};//플레이어 타일 크기
-        float x = 1,
+        CreatePersonTile();
+    }
+    void CreatePersonTile()
+    {
+        GameObject[] PersonTile = new GameObject[7];
+        float x = 0,
               z = 0;
-        int tagNum = 1;
-        for (int i = 1; i < 7; i++)
+        int tagNum = 0;
+        for (int i = 0; i < 7; i++)
         {
             switch (i)
             {
+                case 0:
+                    x = 0;
+                    z = 0;
+                    break;
+                case 1:
+                    x = 1;
+                    z = 0;
+                    break;
                 case 2:
                     x = 1.5f;
                     z = 0.865f;
@@ -68,12 +74,16 @@ public class AllTileMap : MonoBehaviourPunCallbacks
                     z = 0.865f;
                     break;
             }
-            GameObject PersonTile = Instantiate(personTileMap_obj, new Vector3
+            PersonTile[i] = Instantiate(personTileMap_obj, new Vector3
             (x * personTileMap_script.sphere.radius * 3, 0, z * personTileMap_script.sphere.radius * 3), Quaternion.identity);
             tagNum++;
-            PersonTile.transform.parent = transform;
-            PersonTile.name = "PerosnTileMap" + (i + 1);
-            PersonTile.tag = "Floor" + tagNum;
+            PersonTile[i].transform.parent = transform;
+            PersonTile[i].name = "PerosnTileMap" + (i + 1);
+            PersonTile[i].tag = "Floor" + tagNum;
+        }
+        for(int i = 0; i < 7; i++)
+        {
+            PersonTile[i].GetComponent<PersonTileMap>().CreateHexTileMap();
         }
     }
     private void Update()

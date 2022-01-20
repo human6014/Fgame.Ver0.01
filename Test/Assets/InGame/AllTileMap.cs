@@ -11,15 +11,18 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public Text tileCount;
     private Transform[,] childPortal = new Transform[6, 2];
     private Transform[,] childSpawner = new Transform[1, 6];
+    private GameObject[] PersonTile = new GameObject[7];
     public string[] playerName = new string[6];
     public float[,] myField;
     public int[] childCount = new int[6];
     public int playerNum;
     public int i, j, bottom, top = 5;
     public int personTileCount;
+    public bool start;
     #region Getter + Setter
     public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;
     public void SetSpawner(Transform tr, int i, int j) => childSpawner[i, j] = tr;
+    public void SetPersonTile(int i, float radius) => PersonTile[i].GetComponent<SphereCollider>().radius = radius; //최적화 대기중
     public Transform GetPortal(int i, int j)
     {
         return childPortal[i, j];
@@ -28,16 +31,25 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     {
         return childSpawner[i, j];
     }
+    public float GetPersonTile(int i)
+    {
+        return PersonTile[i].GetComponent<SphereCollider>().radius;
+    }
+    
     #endregion
-    void Start()
+    IEnumerator Start()
     {
         myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
                                { 8.5f,8.5f,8.5f,8.5f,8.5f,8.5f}};//플레이어 타일 크기
+
+        yield return new WaitUntil(()=> PhotonNetwork.PlayerList.Length == 4);
         CreatePersonTile();
+        yield return new WaitForSeconds(3);
+        networkManager.CreatePlayer();
+        start = true;
     }
     void CreatePersonTile()
     {
-        GameObject[] PersonTile = new GameObject[7];
         float x = 0,
               z = 0;
         int tagNum = 0;
@@ -81,10 +93,8 @@ public class AllTileMap : MonoBehaviourPunCallbacks
             PersonTile[i].name = "PerosnTileMap" + (i + 1);
             PersonTile[i].tag = "Floor" + tagNum;
         }
-        for(int i = 0; i < 7; i++)
-        {
-            PersonTile[i].GetComponent<PersonTileMap>().CreateHexTileMap();
-        }
+        for(int i = 0; i < 7; i++) PersonTile[i].GetComponent<PersonTileMap>().CreateHexTileMap();
+        Destroy(personTileMap_obj);
     }
     private void Update()
     {

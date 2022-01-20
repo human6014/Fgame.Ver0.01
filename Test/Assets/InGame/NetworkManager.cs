@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
-public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
+public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
 {
     private bool start;
     private int count;
@@ -19,7 +19,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     [SerializeField] Button matchDown;
     PhotonView view;
     [SerializeField] AllTileMap allTileMap;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 4 };
 
     private void Awake() => PhotonNetwork.AutomaticallySyncScene = true;
     private void Start()
@@ -37,7 +37,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     public void CreateRoom()
     {
         Debug.Log("CreateRoom");
-        //PhotonNetwork.CreateRoom(RoomInput.text == "" ? "Room" + Random.Range(0, 100) : RoomInput.text, new RoomOptions { MaxPlayers = 2 });
     }
     public override void OnConnectedToMaster()
     {
@@ -69,8 +68,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     {
         Debug.Log("OnJoinedRoom run");
         view.RPC(nameof(PunUpdate), RpcTarget.All);
-        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(0, PhotonNetwork.PlayerList.Length - 1).position + Vector3.up, Quaternion.identity);
+        
         //allTileMap.PlusPlayer(PhotonNetwork.NickName);
+    }
+    public void CreatePlayer()
+    {
+        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(0, PhotonNetwork.LocalPlayer.ActorNumber - 1).position + Vector3.up, Quaternion.identity);
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
@@ -101,4 +104,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks//,IPunObservable
     {
         if (other.tag.Substring(0, 5) == "Floor") Destroy(other.gameObject);
     }
+    #region 블럭 동기화
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (!isFull) return;
+        if (stream.IsWriting)
+        {
+            for(int i = 0; i < 6; i++)
+                stream.SendNext(allTileMap.GetPersonTile(i));
+        }
+        else
+        {
+            for (int i = 0; i < 6; i++)
+                allTileMap.SetPersonTile(i,(float)stream.ReceiveNext());
+        }
+    }
+    #endregion
 }

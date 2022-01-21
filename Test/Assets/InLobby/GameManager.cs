@@ -5,9 +5,11 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 public class GameManager : MonoBehaviour
 {
-    public string playerName = "Default";
-    public string roomCode = "Default";
-    public int stateIndex = -1;
+    private string playerName = "Default";
+    private string roomCode = "Default";
+    private int stateIndex = -1;
+
+    #region 싱글톤
     static GameManager _instance = null;
     public static GameManager Instance()
     {
@@ -22,6 +24,34 @@ public class GameManager : MonoBehaviour
         }
         else Destroy(gameObject);
     }
+    #endregion
+    #region Setter+Getter
+    public void SetDefaultInformation()
+    {
+        playerName = "Default";
+        roomCode = "Default";
+        stateIndex = -1;
+    }
+    public void SetPlayerName(string pn) => playerName = pn;
+    public void SetRoomCode(string rc) => roomCode = rc;
+    public void SetStateIndex(int si) => stateIndex = si;
+    public string GetPlayerName()
+    {
+        return playerName;
+    }
+    public string GetRoomCode()
+    {
+        return roomCode;
+    }
+    public int GetStateIndex()
+    {
+        return stateIndex;
+    }
+    #endregion
+    public void Start()
+    {
+        //PhotonNetwork.ConnectUsingSettings();
+    }
     void OnGUI()
     {
         GUI.skin.label.fontSize = 20;
@@ -33,5 +63,9 @@ public class GameManager : MonoBehaviour
         GUILayout.Label("씬 : " + SceneManager.GetActiveScene().name);
 
         GUILayout.EndVertical();
+    }
+    private void OnApplicationQuit()
+    {
+        PhotonNetwork.Disconnect();
     }
 }

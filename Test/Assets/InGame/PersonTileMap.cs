@@ -7,11 +7,11 @@ public class PersonTileMap : MonoBehaviour
 {
     public NetworkManager networkManager_script;
     public AllTileMap allTileMap;
-    private SphereCollider sphere;
+    private SphereCollider sphereCollider;
     private MeshCollider meshCollider;
     private new Rigidbody rigidbody;
     private new Renderer renderer;
-    float initRadius;
+    private float initRadius;
     bool outPlayer;
 
     [SerializeField] GameObject HexTilePrefab;
@@ -20,26 +20,26 @@ public class PersonTileMap : MonoBehaviour
     [SerializeField] int mapWidth,  //22 
                          mapHeight;
     private const float tileXOffset = 1.00725f,
-                        tileZOffset = 0.87f;
-    private const float tileRadius = 8.5f;
+                        tileZOffset = 0.87f,
+                        tileRadius  = 8.5f;
     int count = 1;
     void Start()
     {
         if (gameObject.name == "Sample") return;
-        sphere = GetComponent<SphereCollider>();
-        if (gameObject.CompareTag("Floor7")) sphere.radius = 5;
-        else sphere.radius = tileRadius;
-        //else sphere.radius = 8.5f;
-        //allTileMap.playerNum++;
-        initRadius = sphere.radius - 0.1f;
+        sphereCollider = GetComponent<SphereCollider>();
+        if (gameObject.CompareTag("Floor7")) sphereCollider.radius = 5;
+        //else sphereCollider.radius = tileRadius;
+        else sphereCollider.radius = allTileMap.myField[1, allTileMap.playerNum++];
+        
+        initRadius = sphereCollider.radius - 0.1f;
     }
     private void Update()
     {
         if (gameObject.CompareTag("Floor7") || gameObject.name == "Sample") return;
-        allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount - 1); //위치 수정 보류
-        if (sphere.radius >= 0)
+        allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
+        if (sphereCollider.radius >= 0)
         {
-            if (allTileMap.start) sphere.radius -= Time.deltaTime * Time.time / 500;
+            if (allTileMap.start) sphereCollider.radius -= Time.deltaTime * Time.time / 500;
         }
         else if (!outPlayer)
         {
@@ -58,7 +58,7 @@ public class PersonTileMap : MonoBehaviour
     {
         if (other.CompareTag(tag))
         {
-            if (sphere.radius > initRadius) Destroy(other.gameObject);
+            if (sphereCollider.radius > initRadius) Destroy(other.gameObject);
             else StartCoroutine(FallWaiting(other.gameObject));
         }
     }
@@ -200,7 +200,7 @@ public class PersonTileMap : MonoBehaviour
         }
         GameObject Portal = Instantiate(PortalPrefab, new Vector3(x * tileXOffset + transform.position.x, 0.5f,
                                                                   z * tileZOffset + transform.position.z), Quaternion.identity);
-        //Portal.transform.parent = transform;
+        Portal.transform.parent = transform.parent;
         if (allTileMap.j > 0)
         {
             if (allTileMap.i % 2 == 0)

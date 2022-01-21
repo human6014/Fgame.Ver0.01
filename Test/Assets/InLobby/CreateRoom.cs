@@ -7,18 +7,14 @@ public class CreateRoom : MonoBehaviour
 {
     [SerializeField] GameObject playerName;
     [SerializeField] GameObject roomName;
-    public void Start()
-    {
-        GameManager.Instance().stateIndex = -1;
-        GameManager.Instance().roomCode = "Default";
-        GameManager.Instance().playerName = "Default";
-    }
     public void OnClicked()
     {
-        if (string.IsNullOrEmpty(playerName.GetComponent<Text>().text) || string.IsNullOrEmpty(roomName.GetComponent<Text>().text)) return;
-        GameManager.Instance().playerName = playerName.GetComponent<Text>().text;
-        GameManager.Instance().roomCode = roomName.GetComponent<Text>().text;
-        GameManager.Instance().stateIndex = 1;
-        SceneManager.LoadScene("InGameScene");
+        string tempPlayerName = playerName.GetComponent<Text>().text,
+               tempRoomCode = roomName.GetComponent<Text>().text;
+        if (string.IsNullOrEmpty(tempPlayerName) || string.IsNullOrEmpty(tempRoomCode)) return;
+        GameManager.Instance().SetPlayerName(tempPlayerName);
+        GameManager.Instance().SetRoomCode(tempRoomCode);
+        GameManager.Instance().SetStateIndex(1);
+        SceneManager.LoadScene(1);
     }
 }

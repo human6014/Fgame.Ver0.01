@@ -4,16 +4,12 @@ using UnityEngine.SceneManagement;
 public class QuickMatch : MonoBehaviour
 {
     [SerializeField] GameObject playerName;
-    public void Start()
-    {
-        GameManager.Instance().stateIndex = -1;
-        GameManager.Instance().playerName = "Default";
-    }
     public void OnClicked()
     {
-        if (string.IsNullOrEmpty(playerName.GetComponent<Text>().text)) return;
-        GameManager.Instance().playerName = playerName.GetComponent<Text>().text;
-        GameManager.Instance().stateIndex = 0;
-        SceneManager.LoadScene("InGameScene");
+        string tempPlayerName = playerName.GetComponent<Text>().text;
+        if (string.IsNullOrEmpty(tempPlayerName)) return;
+        GameManager.Instance().SetPlayerName(tempPlayerName);
+        GameManager.Instance().SetStateIndex(0);
+        SceneManager.LoadScene(1);
     }
 }

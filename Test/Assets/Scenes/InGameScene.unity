@@ -1162,7 +1162,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkManager_script: {fileID: 888231541}
   allTileMap: {fileID: 1299624831}
-  sphere: {fileID: 1168173663}
   HexTilePrefab: {fileID: 8947162319999397965, guid: 4c2da82ea0342dc40953ff1361f7e2f6, type: 3}
   PortalPrefab: {fileID: 3943723532987962653}
   CastlePrefab: {fileID: 5186748853085881575, guid: 58944259cf2764c468fc72a1ae0db6d3, type: 3}
@@ -1398,22 +1397,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   personTileMap_obj: {fileID: 1168173660}
   networkManager: {fileID: 888231541}
-  personTileMap_script: {fileID: 1168173662}
   tileCount: {fileID: 1449297143}
-  playerName:
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  childCount: 000000000000000000000000000000000000000000000000
-  playerNum: 0
   i: 0
   j: 0
   bottom: 0
   top: 5
-  personTileCount: 0
+  start: 0
+  playerNum: 0
 --- !u!1 &1449297141
 GameObject:
   m_ObjectHideFlags: 0
@@ -1446,11 +1436,11 @@ RectTransform:
   m_Father: {fileID: 1274377205}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -11.174011}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 84.2943}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1449297143
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,8 +7,6 @@ using Photon.Realtime;
 using UnityEngine.SceneManagement;
 public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
 {
-    private bool start;
-    private int count;
     private int stateIndex;
     private string roomCode = string.Empty;
     private string playerName = string.Empty;
@@ -17,27 +15,22 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Text timerToStartDisplay;
     [SerializeField] Button matchDown;
-    PhotonView view;
     [SerializeField] AllTileMap allTileMap;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
+    PhotonView view;
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 6 };
 
     private void Awake() => PhotonNetwork.AutomaticallySyncScene = true;
     private void Start()
     {
-        //PhotonNetwork.IsMessageQueueRunning = true;
-        stateIndex = GameManager.Instance().stateIndex;
-        playerName = GameManager.Instance().playerName; //Build and Run에서 정상 작동
-        PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().playerName;
-        roomCode = GameManager.Instance().roomCode;
+        PhotonNetwork.ConnectUsingSettings();
+        stateIndex = GameManager.Instance().GetStateIndex();
+        roomCode = GameManager.Instance().GetRoomCode();
+        //playerName = GameManager.Instance().GetPlayerName(); //Build and Run에서 정상 작동
+        PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().GetPlayerName();
         view = photonView;
         PhotonNetwork.GameVersion = "1.0";
-        PhotonNetwork.NickName = playerName; //미완성
-        PhotonNetwork.ConnectUsingSettings();
+        
         Debug.Log("NetworkManagerStart");
-    }
-    public void CreateRoom()
-    {
-        Debug.Log("CreateRoom");
     }
     public override void OnConnectedToMaster()
     {
@@ -87,7 +80,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
     {
         PhotonNetwork.Disconnect();
         yield return new WaitUntil(() => PhotonNetwork.IsConnected == false);
+        GameManager.Instance().SetDefaultInformation();
         SceneManager.LoadScene(0);
+        
     }
     [PunRPC]
     void PunUpdate()

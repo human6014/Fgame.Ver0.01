@@ -6,18 +6,17 @@ using UnityEngine.UI;
 using Photon.Pun;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
-    int curEquip,
-        myIndex;
+    int curEquip;
     float xMove,
           zMove,
           attackDelay;
-    bool walkMove,
-         jumpMove,
-         dodgeMove,
-         attack,
-         isAttackReady,
+    bool isWalk,
          isJump,
          isDodge,
+         isAttack,
+         isAttackReady,
+         isJumping,
+         isDodging,
          isDying,
          start;
     KeyCode[] keyCodes = {
@@ -70,10 +69,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             if (isDying) return;
             xMove = Input.GetAxisRaw("Horizontal");
             zMove = Input.GetAxisRaw("Vertical");
-            walkMove = Input.GetButton("Walk");
-            jumpMove = Input.GetButtonDown("Jump");
-            dodgeMove = Input.GetButtonDown("Dodge");
-            attack = Input.GetButtonDown("Attack");
+            isWalk = Input.GetButton("Walk");
+            isJump = Input.GetButtonDown("Jump");
+            isDodge = Input.GetButtonDown("Dodge");
+            isAttack = Input.GetButtonDown("Attack");
             moveVec = new Vector3(xMove, 0, zMove).normalized;
             for (int i = 0; i < keyCodes.Length; i++)
             {
@@ -83,14 +82,14 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                     break;
                 }
             }
-            if (moveVec != Vector3.zero) transform.Translate((walkMove ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //변경 고민중
+            if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //변경 고민중
 
-            if (!isJump && !isDodge)
-                if (walkMove || moveVec == Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
+            if (!isJumping && !isDodging)
+                if (isWalk || moveVec == Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
                 else MP.fillAmount += Time.time * Time.deltaTime / 50f;
 
             anim.SetBool("isRun", moveVec != Vector3.zero);
-            anim.SetBool("isWalk", walkMove);
+            anim.SetBool("isWalk", isWalk);
             transform.LookAt(transform.position + moveVec);
             Attack();
             Jump();
@@ -103,7 +102,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     void Attack()
     {
         attackDelay += Time.deltaTime;
-        if (attack && equipWeapon.rate < attackDelay && !isDodge && !isDying)
+        if (isAttack && equipWeapon.rate < attackDelay && !isDodging && !isDying)
         {
             if (equipWeapon.type == Weapon.weaponsType.Melee) anim.SetBool("isSwing", true);
             else anim.SetBool("isShot", true);
@@ -121,12 +120,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 점프
     void Jump()
     {
-        if (jumpMove && !isJump && !isDodge && MP.fillAmount >= 0.2f && !isDying)
+        if (isJump && !isJumping && !isDodging && MP.fillAmount >= 0.2f && !isDying)
         {
             rigid.AddForce(Vector3.up * 3.5f, ForceMode.Impulse);
             anim.SetBool("isJump", true);
             MP.fillAmount -= 0.15f;
-            isJump = true;
+            isJumping = true;
         }
     }
     private void OnCollisionEnter(Collision collision)
@@ -134,7 +133,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (collision.gameObject.tag.Substring(0, 5) == "Floor")
         {
             anim.SetBool("isJump", false);
-            isJump = false;
+            isJumping = false;
             //Destroy(collision.gameObject,10f);
         }
     }
@@ -142,11 +141,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 회피
     void Dodge(Vector3 moveVec)
     {
-        if (dodgeMove && !isDodge && !isJump && moveVec != Vector3.zero && MP.fillAmount >= 0.3f && !isDying)
+        if (isDodge && !isDodging && !isJumping && moveVec != Vector3.zero && MP.fillAmount >= 0.3f && !isDying)
         {
             speed *= 2.5f;
             anim.SetBool("isDodge", true);
-            isDodge = true;
+            isDodging = true;
             MP.fillAmount -= 0.25f;
             Invoke(nameof(DodgeOut), 0.4f);
         }
@@ -155,7 +154,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         speed *= 0.4f;
         anim.SetBool("isDodge", false);
-        isDodge = false;
+        isDodging = false;
     }
     #endregion
     #region 피격
@@ -215,6 +214,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     #endregion
+    #region 위치,체력 동기화
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
@@ -228,4 +228,5 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             MP.fillAmount = (float)stream.ReceiveNext();
         }
     }
+    #endregion
 }

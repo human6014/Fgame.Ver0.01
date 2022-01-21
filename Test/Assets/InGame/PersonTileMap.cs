@@ -7,7 +7,7 @@ public class PersonTileMap : MonoBehaviour
 {
     public NetworkManager networkManager_script;
     public AllTileMap allTileMap;
-    public SphereCollider sphere;
+    private SphereCollider sphere;
     private MeshCollider meshCollider;
     private new Rigidbody rigidbody;
     private new Renderer renderer;
@@ -21,13 +21,14 @@ public class PersonTileMap : MonoBehaviour
                          mapHeight;
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f;
+    private const float tileRadius = 8.5f;
     int count = 1;
     void Start()
     {
         if (gameObject.name == "Sample") return;
         sphere = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphere.radius = 5;
-        else sphere.radius = allTileMap.myField[1, allTileMap.playerNum];
+        else sphere.radius = tileRadius;
         //else sphere.radius = 8.5f;
         //allTileMap.playerNum++;
         initRadius = sphere.radius - 0.1f;
@@ -35,7 +36,7 @@ public class PersonTileMap : MonoBehaviour
     private void Update()
     {
         if (gameObject.CompareTag("Floor7") || gameObject.name == "Sample") return;
-        allTileMap.childCount[int.Parse(name.Substring(13, 1)) - 1] = transform.childCount - 1; //위치 수정 보류
+        allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount - 1); //위치 수정 보류
         if (sphere.radius >= 0)
         {
             if (allTileMap.start) sphere.radius -= Time.deltaTime * Time.time / 500;
@@ -46,8 +47,7 @@ public class PersonTileMap : MonoBehaviour
 
             foreach (Transform iter in child)
             {
-                if (iter != transform)
-                    StartCoroutine(FallWaiting(iter.gameObject));
+                if (iter != transform) StartCoroutine(FallWaiting(iter.gameObject));
             }
             for (int i = 0; i < 2; i++) Destroy(allTileMap.GetPortal(int.Parse(transform.name.Substring(13, 1)) - 1, i).gameObject);
             outPlayer = true;
@@ -59,10 +59,7 @@ public class PersonTileMap : MonoBehaviour
         if (other.CompareTag(tag))
         {
             if (sphere.radius > initRadius) Destroy(other.gameObject);
-            else
-            {
-                StartCoroutine(FallWaiting(other.gameObject));
-            }
+            else StartCoroutine(FallWaiting(other.gameObject));
         }
     }
     #endregion

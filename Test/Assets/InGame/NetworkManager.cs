@@ -19,7 +19,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
     [SerializeField] Button matchDown;
     PhotonView view;
     [SerializeField] AllTileMap allTileMap;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 4 };
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
 
     private void Awake() => PhotonNetwork.AutomaticallySyncScene = true;
     private void Start()
@@ -27,6 +27,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
         //PhotonNetwork.IsMessageQueueRunning = true;
         stateIndex = GameManager.Instance().stateIndex;
         playerName = GameManager.Instance().playerName; //Build and Run에서 정상 작동
+        PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().playerName;
         roomCode = GameManager.Instance().roomCode;
         view = photonView;
         PhotonNetwork.GameVersion = "1.0";
@@ -110,13 +111,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
         if (!isFull) return;
         if (stream.IsWriting)
         {
-            for(int i = 0; i < 6; i++)
-                stream.SendNext(allTileMap.GetPersonTile(i));
+            for(int i = 0; i < 6; i++) stream.SendNext(allTileMap.GetPersonTileRadius(i));
         }
         else
         {
-            for (int i = 0; i < 6; i++)
-                allTileMap.SetPersonTile(i,(float)stream.ReceiveNext());
+            for (int i = 0; i < 6; i++) allTileMap.SetPersonTileRadius(i,(float)stream.ReceiveNext());
         }
     }
     #endregion

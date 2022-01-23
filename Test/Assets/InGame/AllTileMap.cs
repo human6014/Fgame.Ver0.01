@@ -23,30 +23,17 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;
     public void SetSpawner(Transform tr, int i, int j) => childSpawner[i, j] = tr;
     public void SetPersonTileRadius(int i, float radius) => childSphereColliders[i].radius = radius;
-    public void SetChildTileCount(int i,int count)
-    {
-        childTileCount[i] = count;
-    }
-    public Transform GetPortal(int i, int j)
-    {
-        return childPortal[i, j];
-    }
-    public Transform GetSpawner(int i, int j)
-    {
-        return childSpawner[i, j];
-    }
-    public float GetPersonTileRadius(int i)
-    {
-        return childSphereColliders[i].radius;
-    }
-    
+    public void SetChildTileCount(int i,int count) => childTileCount[i] = count;
+    public Transform GetPortal(int i, int j) => childPortal[i, j];
+    public Transform GetSpawner(int i, int j) => childSpawner[i, j];
+    public float GetPersonTileRadius(int i) => childSphereColliders[i].radius;
     #endregion
     IEnumerator Start()
     {
         myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
                                { 8.5f,7.5f,6.5f,5.5f,4.5f,3.5f}};//플레이어 타일 크기
 
-        yield return new WaitUntil(()=> PhotonNetwork.PlayerList.Length == 6);
+        yield return new WaitUntil(()=> PhotonNetwork.PlayerList.Length == 2);
         CreatePersonTile();
         yield return new WaitForSeconds(3);
         networkManager.CreatePlayer();
@@ -116,29 +103,4 @@ public class AllTileMap : MonoBehaviourPunCallbacks
             tileCount.text += player.NickName + " : " + childTileCount[player.ActorNumber - 1] + "\n";
         }
     }
-    /*
-    public void PlusPlayer(string name) => photonView.RPC(nameof(PlayerIn), RpcTarget.AllBuffered, name);
-    //public void MinusPlayer() => photonView.RPC(nameof(PlayerOut), RpcTarget.AllBuffered);
-    [PunRPC]
-    private void PlayerIn(string name)
-    {
-        playerName[playerCount] = name;
-        playerCount++;
-        Debug.Log("playerCount : " + playerCount);
-        Debug.Log("Debug.Log(PhotonNetwork.CountOfPlayers) : " + PhotonNetwork.CountOfPlayers);
-        Debug.Log("PhotonNetwork.PlayerList.Length : "+PhotonNetwork.PlayerList.Length);
-        for(int i=0;i<PhotonNetwork.PlayerList.Length;i++)
-            Debug.Log("\nPhotonNetwork.PlayerList : "+PhotonNetwork.PlayerList[i]);
-    }
-    [PunRPC]
-    private void PlayerOut()
-    {
-        playerName[PhotonNetwork.PlayerList.Length-1] = "없음";
-        playerCount--;
-        Debug.Log("playerCount : "+playerCount);
-        Debug.Log("Debug.Log(PhotonNetwork.CountOfPlayers) : "+PhotonNetwork.CountOfPlayers);
-        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
-            Debug.Log("\nPhotonNetwork.PlayerList : " + PhotonNetwork.PlayerList[i]);
-    }
-    */
 }

@@ -11,10 +11,7 @@ public class GameManager : MonoBehaviour
 
     #region 싱글톤
     static GameManager _instance = null;
-    public static GameManager Instance()
-    {
-        return _instance;
-    }
+    public static GameManager Instance() => _instance;
     private void Awake()
     {
         if (_instance == null)
@@ -35,18 +32,9 @@ public class GameManager : MonoBehaviour
     public void SetPlayerName(string pn) => playerName = pn;
     public void SetRoomCode(string rc) => roomCode = rc;
     public void SetStateIndex(int si) => stateIndex = si;
-    public string GetPlayerName()
-    {
-        return playerName;
-    }
-    public string GetRoomCode()
-    {
-        return roomCode;
-    }
-    public int GetStateIndex()
-    {
-        return stateIndex;
-    }
+    public string GetPlayerName() => playerName;
+    public string GetRoomCode() => roomCode;
+    public int GetStateIndex() => stateIndex;
     #endregion
     public void Start()
     {

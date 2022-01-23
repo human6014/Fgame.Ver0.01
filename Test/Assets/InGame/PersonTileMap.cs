@@ -31,7 +31,7 @@ public class PersonTileMap : MonoBehaviour
         //else sphereCollider.radius = tileRadius;
         else sphereCollider.radius = allTileMap.myField[1, allTileMap.playerNum++];
         
-        initRadius = sphereCollider.radius - 0.1f;
+        initRadius = sphereCollider.radius - 0.05f;
     }
     private void Update()
     {

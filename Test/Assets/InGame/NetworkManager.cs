@@ -17,19 +17,20 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
     [SerializeField] Button matchDown;
     [SerializeField] AllTileMap allTileMap;
     PhotonView view;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 6 };
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 2 };
 
     private void Awake() => PhotonNetwork.AutomaticallySyncScene = true;
     private void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
+
         stateIndex = GameManager.Instance().GetStateIndex();
         roomCode = GameManager.Instance().GetRoomCode();
         //playerName = GameManager.Instance().GetPlayerName(); //Build and Run에서 정상 작동
         PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().GetPlayerName();
-        view = photonView;
         PhotonNetwork.GameVersion = "1.0";
-        
+        view = photonView;
+
         Debug.Log("NetworkManagerStart");
     }
     public override void OnConnectedToMaster()
@@ -62,8 +63,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
     {
         Debug.Log("OnJoinedRoom run");
         view.RPC(nameof(PunUpdate), RpcTarget.All);
-        
-        //allTileMap.PlusPlayer(PhotonNetwork.NickName);
     }
     public void CreatePlayer()
     {
@@ -72,7 +71,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         view.RPC(nameof(PunUpdate), RpcTarget.All);
-        //allTileMap.MinusPlayer();
         Debug.Log("OnPlayerLeftRoom");
     }
     public void DisconnectPlayer() => StartCoroutine(nameof(DisconnectNetwork));
@@ -82,7 +80,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
         yield return new WaitUntil(() => PhotonNetwork.IsConnected == false);
         GameManager.Instance().SetDefaultInformation();
         SceneManager.LoadScene(0);
-        
     }
     [PunRPC]
     void PunUpdate()
@@ -90,7 +87,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
         roomCountDisplay.text = PhotonNetwork.PlayerList.Length + " / " + PhotonNetwork.CurrentRoom.MaxPlayers;
         if (PhotonNetwork.PlayerList.Length == PhotonNetwork.CurrentRoom.MaxPlayers)
         {
-            //roomOptions.IsOpen = false;
+            roomOptions.IsOpen = false;
             roomOptions.IsVisible = false;
             isFull = true;
         }

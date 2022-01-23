@@ -17,6 +17,6 @@ public class JoinRoom : MonoBehaviourPunCallbacks
         GameManager.Instance().SetPlayerName(tempPlayerName);
         GameManager.Instance().SetRoomCode(tempRoomCode);
         GameManager.Instance().SetStateIndex(2);
-        SceneManager.LoadScene(1);
+        GameManager.Instance().OnStartGame();
     }
 }

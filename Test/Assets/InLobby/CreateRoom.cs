@@ -15,6 +15,6 @@ public class CreateRoom : MonoBehaviour
         GameManager.Instance().SetPlayerName(tempPlayerName);
         GameManager.Instance().SetRoomCode(tempRoomCode);
         GameManager.Instance().SetStateIndex(1);
-        SceneManager.LoadScene(1);
+        GameManager.Instance().OnStartGame();
     }
 }

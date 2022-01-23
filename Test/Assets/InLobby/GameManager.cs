@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
-public class GameManager : MonoBehaviour
+using Photon.Realtime;
+using Photon.Pun.UtilityScripts;
+public class GameManager : MonoBehaviourPunCallbacks
 {
     private string playerName = "Default";
     private string roomCode = "Default";
     private int stateIndex = -1;
-
+    byte maxPlayers = 2;
+    RoomOptions roomOptions;
     #region 싱글톤
     static GameManager _instance = null;
     public static GameManager Instance() => _instance;
@@ -36,9 +39,69 @@ public class GameManager : MonoBehaviour
     public string GetRoomCode() => roomCode;
     public int GetStateIndex() => stateIndex;
     #endregion
-    public void Start()
+    private void Start()
     {
-        //PhotonNetwork.ConnectUsingSettings();
+        PhotonNetwork.ConnectUsingSettings();
+        roomOptions = new RoomOptions { MaxPlayers = maxPlayers };
+    }
+    public override void OnConnectedToMaster()
+    {
+        PhotonNetwork.AutomaticallySyncScene = true;
+        PhotonNetwork.GameVersion = "1.0";
+    }
+    public override void OnJoinedLobby()
+    {
+        Debug.Log("OnJoinedLobby");
+    }
+    public override void OnLeftLobby()
+    {
+        Debug.Log("OnLeftLobby");
+    }
+    public void OnStartGame()
+    {
+        switch (stateIndex)
+        {
+            case -1:
+                Debug.Log("Error");
+                break;
+            case 0:
+                PhotonNetwork.JoinRandomRoom();
+                break;
+            case 1:
+                PhotonNetwork.CreateRoom(roomCode, roomOptions);
+                break;
+            case 2:
+                PhotonNetwork.JoinRoom(roomCode);
+                break;
+        }
+    }
+    public override void OnCreatedRoom()
+    {
+        Debug.Log("OnCreatedRoom");
+    }
+    public override void OnJoinedRoom()
+    {
+        Debug.Log("OnJoinedRoom");
+        PhotonNetwork.LoadLevel("InGameScene");
+    }
+    public override void OnJoinRandomFailed(short returnCode, string message)
+    {
+        Debug.Log("OnJoinRandomFailed");
+        PhotonNetwork.CreateRoom(null, roomOptions);
+    }
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        Debug.Log("OnCreateRoomFailed");
+    }
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        Debug.Log("OnJoinRoomFailed");
+    }
+    public override void OnLeftRoom()
+    {
+        Debug.Log("OnLeftRoom");
+        SetDefaultInformation();
+        PhotonNetwork.LoadLevel("Lobby");
     }
     void OnGUI()
     {

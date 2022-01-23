@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 public class AllTileMap : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject personTileMap_obj;
@@ -14,8 +15,9 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private GameObject[] PersonTile = new GameObject[7]; //임시용
     private SphereCollider[] childSphereColliders= new SphereCollider[6];
     private int[] childTileCount = new int[6];
+    private bool isCreateTile;
     public int i, j, bottom, top = 5;
-    public bool start;
+    
 
     public float[,] myField = new float[6, 2];
     public int playerNum;
@@ -27,6 +29,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public Transform GetPortal(int i, int j) => childPortal[i, j];
     public Transform GetSpawner(int i, int j) => childSpawner[i, j];
     public float GetPersonTileRadius(int i) => childSphereColliders[i].radius;
+    public bool GetIsCreateTile() => isCreateTile;
     #endregion
     IEnumerator Start()
     {
@@ -37,7 +40,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         CreatePersonTile();
         yield return new WaitForSeconds(3);
         networkManager.CreatePlayer();
-        start = true;
+        isCreateTile = true;
     }
     void CreatePersonTile()
     {
@@ -87,11 +90,6 @@ public class AllTileMap : MonoBehaviourPunCallbacks
             PersonTile[i].GetComponent<PersonTileMap>().CreateHexTileMap();
             if (i != 6) childSphereColliders[i] = PersonTile[i].GetComponent<SphereCollider>();
         }
-        for (int i = 0; i < 7; i++)
-        {
-            
-            //위 for문으로 옮기고 PersonTile[] => PersonTile변경 보류
-        }
         Destroy(personTileMap_obj);
     }
     private void Update()
@@ -100,7 +98,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         if (!networkManager.isFull) return;
         foreach(Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
-            tileCount.text += player.NickName + " : " + childTileCount[player.ActorNumber - 1] + "\n";
+            tileCount.text += player.NickName + " : " + childTileCount[player.GetPlayerNumber()] + "\n";
         }
     }
 }

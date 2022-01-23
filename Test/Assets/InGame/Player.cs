@@ -17,8 +17,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
          isAttackReady,
          isJumping,
          isDodging,
-         isDying,
-         start;
+         isDying;
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
@@ -62,10 +61,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Update()
     {
-        if (!start && PhotonNetwork.CurrentRoom.MaxPlayers != PhotonNetwork.PlayerList.Length) return;
+        if (PhotonNetwork.CurrentRoom.MaxPlayers != PhotonNetwork.PlayerList.Length) return;
         if (photonView.IsMine)
         {
-            start = true;
             if (isDying) return;
             xMove = Input.GetAxisRaw("Horizontal");
             zMove = Input.GetAxisRaw("Vertical");

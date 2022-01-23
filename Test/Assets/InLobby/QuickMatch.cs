@@ -10,6 +10,6 @@ public class QuickMatch : MonoBehaviour
         if (string.IsNullOrEmpty(tempPlayerName)) return;
         GameManager.Instance().SetPlayerName(tempPlayerName);
         GameManager.Instance().SetStateIndex(0);
-        SceneManager.LoadScene(1);
+        GameManager.Instance().OnStartGame();
     }
 }

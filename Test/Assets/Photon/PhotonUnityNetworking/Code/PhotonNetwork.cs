@@ -3293,6 +3293,11 @@ namespace Photon.Pun
             throw new NotImplementedException();
         }
 
+        public static void OnCreatedRoom()
+        {
+            throw new NotImplementedException();
+        }
+
 #endif
 
     }

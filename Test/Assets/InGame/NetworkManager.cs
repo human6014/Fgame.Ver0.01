@@ -15,33 +15,36 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
     public int playerNumber;
     public bool isFull = false;
     [SerializeField] GameObject delayCancelButton;
+    [SerializeField] GameObject beforeStartCanvas;
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Text timerToStartDisplay;
     [SerializeField] Button matchDown;
     [SerializeField] AllTileMap allTileMap;
+
     PhotonView view;
-    
-    private void Awake() { }
     private void Start()
     {
+        view = photonView;
         stateIndex = GameManager.Instance().GetStateIndex();
         roomCode = GameManager.Instance().GetRoomCode();
         //playerName = GameManager.Instance().GetPlayerName(); //Build and Run에서 정상 작동
         PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().GetPlayerName();
-        view = photonView;
+        Debug.Log(PhotonNetwork.LocalPlayer.GetPlayerNumber());
+        Debug.Log("NetworkManager Start");
+        view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
     }
     public void CreatePlayer()
     {
-        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(0, PhotonNetwork.LocalPlayer.ActorNumber - 1).position + Vector3.up, Quaternion.identity);
+        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.ActorNumber - 1).position + Vector3.up, Quaternion.identity);
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
-        PhotonNetwork.LocalPlayer.SetPlayerNumber(playerNumber++);
-        view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
+        //PhotonNetwork.LocalPlayer.SetPlayerNumber(playerNumber++);
+        //view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        PhotonNetwork.LocalPlayer.SetPlayerNumber(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1);
+        //PhotonNetwork.LocalPlayer.SetPlayerNumber(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1);
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
     }
     [PunRPC]
@@ -52,6 +55,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
         {
             PhotonNetwork.CurrentRoom.IsOpen = false;
             PhotonNetwork.CurrentRoom.IsVisible = false;
+            beforeStartCanvas.SetActive(false);
             isFull = true;
         }
 
@@ -59,6 +63,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag.Substring(0, 5) == "Floor") Destroy(other.gameObject);
+        /*
+        if (other.CompareTag("Player"))
+        {
+            Player player = other.GetComponent<Player>();
+            player.Hit(100);
+            player.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.ActorNumber - 1).position + Vector3.up;
+            
+        }
+        */
     }
     #region 블럭 동기화
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

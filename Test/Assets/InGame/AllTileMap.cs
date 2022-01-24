@@ -11,32 +11,31 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     [SerializeField] Text tileCount;
 
     private Transform[,] childPortal = new Transform[6, 2];
-    private Transform[,] childSpawner = new Transform[1, 6];
-    private GameObject[] PersonTile = new GameObject[7]; //임시용
+    private Transform[] childSpawner = new Transform[6];
+    private GameObject[] PersonTile = new GameObject[7]; //임시용 (배열 -> 일반으로 변경)
     private SphereCollider[] childSphereColliders= new SphereCollider[6];
     private int[] childTileCount = new int[6];
     private bool isCreateTile;
     public int i, j, bottom, top = 5;
-    
+    public int catleRotation = 90;
 
-    public float[,] myField = new float[6, 2];
+    public float[] myField = new float[6];
     public int playerNum;
     #region Getter + Setter
     public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;
-    public void SetSpawner(Transform tr, int i, int j) => childSpawner[i, j] = tr;
+    public void SetSpawner(Transform tr, int i) => childSpawner[i] = tr;
     public void SetPersonTileRadius(int i, float radius) => childSphereColliders[i].radius = radius;
     public void SetChildTileCount(int i,int count) => childTileCount[i] = count;
     public Transform GetPortal(int i, int j) => childPortal[i, j];
-    public Transform GetSpawner(int i, int j) => childSpawner[i, j];
+    public Transform GetSpawner(int i) => childSpawner[i];
     public float GetPersonTileRadius(int i) => childSphereColliders[i].radius;
     public bool GetIsCreateTile() => isCreateTile;
     #endregion
     IEnumerator Start()
     {
-        myField = new float[,] {{ 1,2,3,4,5,6 },//플레이어 넘버
-                               { 8.5f,7.5f,6.5f,5.5f,4.5f,3.5f}};//플레이어 타일 크기
+        myField = new float[] { 8.5f,7.5f,6.5f,5.5f,4.5f,3.5f};//플레이어 타일 크기
 
-        yield return new WaitUntil(()=> PhotonNetwork.PlayerList.Length == 2);
+        yield return new WaitUntil(()=> networkManager.isFull);
         CreatePersonTile();
         yield return new WaitForSeconds(3);
         networkManager.CreatePlayer();
@@ -98,7 +97,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         if (!networkManager.isFull) return;
         foreach(Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
-            tileCount.text += player.NickName + " : " + childTileCount[player.GetPlayerNumber()] + "\n";
+            tileCount.text += player.NickName + " : " + childTileCount[player.ActorNumber - 1] + "\n";
         }
     }
 }

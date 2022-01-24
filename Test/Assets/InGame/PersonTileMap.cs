@@ -29,7 +29,7 @@ public class PersonTileMap : MonoBehaviour
         sphereCollider = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphereCollider.radius = 5;
         //else sphereCollider.radius = tileRadius;
-        else sphereCollider.radius = allTileMap.myField[1, allTileMap.playerNum++];
+        else sphereCollider.radius = allTileMap.myField[allTileMap.playerNum++];
         
         initRadius = sphereCollider.radius - 0.05f;
     }
@@ -113,10 +113,12 @@ public class PersonTileMap : MonoBehaviour
         {
             GameObject castle = Instantiate(CastlePrefab, new Vector3(x * tileXOffset + transform.position.x, 0,
                                                                       z * tileZOffset + transform.position.z), Quaternion.identity);
+            allTileMap.catleRotation -= 60;
+            castle.transform.rotation = Quaternion.Euler(0, allTileMap.catleRotation ,0);
             castle.name = "Spawner" + transform.tag.Substring(5, 1);
             castle.transform.parent = transform;
             castle.tag = transform.tag;
-            allTileMap.SetSpawner(castle.transform, 0, int.Parse(transform.tag.Substring(5, 1)) - 1);
+            allTileMap.SetSpawner(castle.transform, int.Parse(transform.tag.Substring(5, 1)) - 1);
         }
         TagChecking(TempGo, x, z);
 

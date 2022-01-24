@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private string roomCode = "Default";
     private int stateIndex = -1;
     byte maxPlayers = 2;
-    RoomOptions roomOptions;
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
     #region 싱글톤
     static GameManager _instance = null;
     public static GameManager Instance() => _instance;
@@ -42,12 +42,12 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
-        roomOptions = new RoomOptions { MaxPlayers = maxPlayers };
+        PhotonNetwork.AutomaticallySyncScene = false;
+        PhotonNetwork.GameVersion = "1.0";
     }
     public override void OnConnectedToMaster()
     {
-        PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.GameVersion = "1.0";
+
     }
     public override void OnJoinedLobby()
     {
@@ -78,6 +78,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnCreatedRoom()
     {
         Debug.Log("OnCreatedRoom");
+        if (stateIndex == 1) PhotonNetwork.CurrentRoom.IsVisible = false;
     }
     public override void OnJoinedRoom()
     {

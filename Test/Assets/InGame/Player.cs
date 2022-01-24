@@ -159,7 +159,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public void Hit(int damage)
     {
         if (isDying) return;
-        view.RPC("PunHit", RpcTarget.AllBuffered, damage);
+        view.RPC(nameof(PunHit), RpcTarget.AllBuffered, damage);
     }
     [PunRPC]
     void PunHit(int damage)
@@ -186,7 +186,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //¹Ì¿Ï¼º
         HP.fillAmount = 1;
         MP.fillAmount = 1;
-        StartCoroutine("Respawn");
+        StartCoroutine(nameof(Respawn));
     }
     IEnumerator Respawn()
     {
@@ -199,7 +199,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region ³«»ç
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "NetworkManager") view.RPC("PunHit", RpcTarget.All, 1000);
+        if (other.gameObject.name == "NetworkManager") view.RPC(nameof(PunHit), RpcTarget.All, 1000);
     }
     #endregion
     #region Æ÷Å» ÀÌµ¿

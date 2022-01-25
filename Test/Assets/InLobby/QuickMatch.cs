@@ -8,8 +8,6 @@ public class QuickMatch : MonoBehaviour
     {
         string tempPlayerName = playerName.GetComponent<Text>().text;
         if (string.IsNullOrEmpty(tempPlayerName)) return;
-        GameManager.Instance().SetPlayerName(tempPlayerName);
-        GameManager.Instance().SetStateIndex(0);
-        GameManager.Instance().OnStartGame();
+        GameManager.Instance().OnStartGame(0,tempPlayerName,"");
     }
 }

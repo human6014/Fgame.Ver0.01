@@ -5,6 +5,6 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 public class ExitRoom : MonoBehaviour
 {
-    [SerializeField] NetworkManager networkManager;
+    [SerializeField] GeneralManager generalManager;
     public void OnClicked() => PhotonNetwork.LeaveRoom();
 }

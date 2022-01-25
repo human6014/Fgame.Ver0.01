@@ -12,9 +12,6 @@ public class CreateRoom : MonoBehaviour
         string tempPlayerName = playerName.GetComponent<Text>().text,
                tempRoomCode = roomName.GetComponent<Text>().text;
         if (string.IsNullOrEmpty(tempPlayerName) || string.IsNullOrEmpty(tempRoomCode)) return;
-        GameManager.Instance().SetPlayerName(tempPlayerName);
-        GameManager.Instance().SetRoomCode(tempRoomCode);
-        GameManager.Instance().SetStateIndex(1);
-        GameManager.Instance().OnStartGame();
+        GameManager.Instance().OnStartGame(1, tempPlayerName, tempRoomCode);
     }
 }

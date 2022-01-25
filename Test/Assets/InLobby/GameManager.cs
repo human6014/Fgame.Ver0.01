@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private string roomCode = "Default";
     private int stateIndex = -1;
     byte maxPlayers = 2;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 2 };
     #region 싱글톤
     static GameManager _instance = null;
     public static GameManager Instance() => _instance;
@@ -32,9 +32,9 @@ public class GameManager : MonoBehaviourPunCallbacks
         roomCode = "Default";
         stateIndex = -1;
     }
-    public void SetPlayerName(string pn) => playerName = pn;
-    public void SetRoomCode(string rc) => roomCode = rc;
-    public void SetStateIndex(int si) => stateIndex = si;
+    //public void SetPlayerName(string pn) => playerName = pn;
+    //public void SetRoomCode(string rc) => roomCode = rc;
+    //public void SetStateIndex(int si) => stateIndex = si;
     public string GetPlayerName() => playerName;
     public string GetRoomCode() => roomCode;
     public int GetStateIndex() => stateIndex;
@@ -57,8 +57,11 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("OnLeftLobby");
     }
-    public void OnStartGame()
+    public void OnStartGame(int _stateIndex, string _playerName, string _roomCode)
     {
+        stateIndex = _stateIndex;
+        roomCode = _roomCode;
+        playerName = _playerName;
         switch (stateIndex)
         {
             case -1:

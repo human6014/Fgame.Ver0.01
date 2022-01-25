@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityStandardAssets;
 using UnityEngine.UI;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
     int curEquip;
@@ -17,7 +18,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
          isAttackReady,
          isJumping,
          isDodging,
-         isDying;
+         isDying,
+         isEnd;
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
@@ -33,21 +35,19 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] PhotonView view;
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
+    AllTileMap allTileMap;
     Weapon equipWeapon; //이게 되나?
     Vector3 curPos;
     Vector3 moveVec;
     private void Start()
     {
-        isDying = false;
         if (photonView.IsMine)
         {
             Camera.main.GetComponent<MainCamera>().target = transform;
             Name.text = PhotonNetwork.NickName;
+            allTileMap = FindObjectOfType<AllTileMap>();
         }
-        else
-        {
-            Name.text = view.Owner.NickName;
-        }
+        else Name.text = view.Owner.NickName;
         for (int i = 0; i < hasWeapons.Length; i++)
         {
             if (hasWeapons[i])
@@ -61,7 +61,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void Update()
     {
-        if (PhotonNetwork.CurrentRoom.MaxPlayers != PhotonNetwork.PlayerList.Length) return;
         if (photonView.IsMine)
         {
             if (isDying) return;
@@ -182,7 +181,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     void Die() //죽은 후 바로 이동 -> 죽은 위치 5초 대기 후 스폰
     {
         isDying = true;
-        gameObject.transform.position = new Vector3(0, 1.05f, -0.5f);
+        gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;
         gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
         HP.fillAmount = 1;
         MP.fillAmount = 1;
@@ -191,7 +190,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Respawn()
     {
         yield return new WaitForSeconds(5f);
-        gameObject.transform.position = new Vector3(0, 1.05f, 0);//스포너 위치로 변경해야됨
+        gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;//스포너 위치로 변경해야됨
         gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         isDying = false;
     }
@@ -199,17 +198,14 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 낙사
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "NetworkManager") view.RPC(nameof(PunHit), RpcTarget.All, 1000);
+        if (other.gameObject.name == "GeneralManager") view.RPC(nameof(PunHit), RpcTarget.All, 1000);
     }
     #endregion
     #region 포탈 이동
     private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.CompareTag("Portal") && Input.GetKeyDown(KeyCode.Tab))
-        {
-            Debug.Log("portal");
             other.gameObject.GetComponent<Portal>().PlayerEntry(gameObject);
-        }
     }
     #endregion
     #region 위치,체력 동기화
@@ -218,11 +214,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(transform.position);
+            stream.SendNext(HP.fillAmount);
             stream.SendNext(MP.fillAmount);
         }
         else
         {
             curPos = (Vector3)stream.ReceiveNext();
+            HP.fillAmount = (float)stream.ReceiveNext();
             MP.fillAmount = (float)stream.ReceiveNext();
         }
     }

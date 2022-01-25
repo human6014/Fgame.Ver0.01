@@ -5,7 +5,7 @@ using UnityEngine;
 using Photon.Pun;
 public class PersonTileMap : MonoBehaviour
 {
-    public NetworkManager networkManager_script;
+    public GeneralManager generalManager;
     public AllTileMap allTileMap;
     private SphereCollider sphereCollider;
     private MeshCollider meshCollider;

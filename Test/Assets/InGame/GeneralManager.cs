@@ -7,7 +7,7 @@ using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using Photon.Pun.UtilityScripts;
 
-public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
+public class GeneralManager : MonoBehaviourPunCallbacks,IPunObservable
 {
     private int stateIndex;
     private string roomCode = string.Empty;
@@ -21,7 +21,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
     [SerializeField] Button matchDown;
     [SerializeField] AllTileMap allTileMap;
 
+
+
     PhotonView view;
+    public bool GetIsFull() => isFull;
     private void Start()
     {
         view = photonView;
@@ -29,13 +32,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks,IPunObservable
         roomCode = GameManager.Instance().GetRoomCode();
         //playerName = GameManager.Instance().GetPlayerName(); //Build and Run에서 정상 작동
         PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().GetPlayerName();
-        Debug.Log(PhotonNetwork.LocalPlayer.GetPlayerNumber());
-        Debug.Log("NetworkManager Start");
+        PhotonNetwork.LocalPlayer.SetPlayerNumber(PhotonNetwork.PlayerList.Length);
+        
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
     }
     public void CreatePlayer()
     {
-        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.ActorNumber - 1).position + Vector3.up, Quaternion.identity);
+        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {

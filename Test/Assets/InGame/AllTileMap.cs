@@ -6,15 +6,16 @@ using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 public class AllTileMap : MonoBehaviourPunCallbacks
 {
-    [SerializeField] GameObject personTileMap_obj;
-    [SerializeField] NetworkManager networkManager;
+    [SerializeField] GameObject personTileMap;
+    [SerializeField] GeneralManager generalManager;
     [SerializeField] Text tileCount;
 
     private Transform[,] childPortal = new Transform[6, 2];
     private Transform[] childSpawner = new Transform[6];
-    private GameObject[] PersonTile = new GameObject[7]; //임시용 (배열 -> 일반으로 변경)
+    private GameObject PersonTile;
     private SphereCollider[] childSphereColliders= new SphereCollider[6];
     private int[] childTileCount = new int[6];
+
     private bool isCreateTile;
     public int i, j, bottom, top = 5;
     public int catleRotation = 90;
@@ -35,10 +36,10 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     {
         myField = new float[] { 8.5f,7.5f,6.5f,5.5f,4.5f,3.5f};//플레이어 타일 크기
 
-        yield return new WaitUntil(()=> networkManager.isFull);
+        yield return new WaitUntil(()=> generalManager.isFull);
         CreatePersonTile();
         yield return new WaitForSeconds(3);
-        networkManager.CreatePlayer();
+        generalManager.CreatePlayer();
         isCreateTile = true;
     }
     void CreatePersonTile()
@@ -46,7 +47,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         float x = 0,
               z = 0;
         int tagNum = 0;
-        float _radius = personTileMap_obj.GetComponent<SphereCollider>().radius;
+        float _radius = personTileMap.GetComponent<SphereCollider>().radius;
         for (int i = 0; i < 7; i++)
         {
             switch (i)
@@ -80,21 +81,21 @@ public class AllTileMap : MonoBehaviourPunCallbacks
                     z = 0.865f;
                     break;
             }
-            PersonTile[i] = Instantiate(personTileMap_obj, new Vector3
+            PersonTile = Instantiate(personTileMap, new Vector3
             (x * _radius * 3, 0, z * _radius * 3), Quaternion.identity);
             tagNum++;
-            PersonTile[i].transform.parent = transform;
-            PersonTile[i].name = "PerosnTileMap" + (i + 1);
-            PersonTile[i].tag = "Floor" + tagNum;
-            PersonTile[i].GetComponent<PersonTileMap>().CreateHexTileMap();
-            if (i != 6) childSphereColliders[i] = PersonTile[i].GetComponent<SphereCollider>();
+            PersonTile.transform.parent = transform;
+            PersonTile.name = "PerosnTileMap" + (i + 1);
+            PersonTile.tag = "Floor" + tagNum;
+            PersonTile.GetComponent<PersonTileMap>().CreateHexTileMap();
+            if (i != 6) childSphereColliders[i] = PersonTile.GetComponent<SphereCollider>();
         }
-        Destroy(personTileMap_obj);
+        Destroy(personTileMap);
     }
     private void Update()
     {
         tileCount.text = "남은 타일\n";
-        if (!networkManager.isFull) return;
+        if (!generalManager.isFull) return;
         foreach(Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
             tileCount.text += player.NickName + " : " + childTileCount[player.ActorNumber - 1] + "\n";

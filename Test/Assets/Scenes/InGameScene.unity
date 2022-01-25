@@ -769,7 +769,7 @@ GameObject:
   - component: {fileID: 888231541}
   - component: {fileID: 888231543}
   m_Layer: 0
-  m_Name: NetworkManager
+  m_Name: GeneralManager
   m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1264,7 +1264,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 777360d237cbbef419f8fdd59002418c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkManager_script: {fileID: 888231541}
+  generalManager: {fileID: 888231541}
   allTileMap: {fileID: 1299624831}
   HexTilePrefab: {fileID: 8947162319999397965, guid: 4c2da82ea0342dc40953ff1361f7e2f6, type: 3}
   PortalPrefab: {fileID: 3943723532987962653}
@@ -1464,7 +1464,7 @@ GameObject:
   - component: {fileID: 1299624830}
   - component: {fileID: 1299624831}
   m_Layer: 0
-  m_Name: AllTileMap
+  m_Name: GeneralManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1497,13 +1497,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00cd7c07a8c0b5a4ebe1215a43ddd37f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  personTileMap_obj: {fileID: 1168173660}
-  networkManager: {fileID: 888231541}
+  personTileMap: {fileID: 1168173660}
+  generalManager: {fileID: 888231541}
   tileCount: {fileID: 1449297143}
   i: 0
   j: 0
   bottom: 0
   top: 5
+  catleRotation: 90
   myField:
   - 0
   - 0
@@ -1993,7 +1994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28712492b99909543bb6079148e759c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkManager: {fileID: 888231541}
+  generalManager: {fileID: 0}
 --- !u!1 &1769931517
 GameObject:
   m_ObjectHideFlags: 0

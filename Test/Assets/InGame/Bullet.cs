@@ -19,7 +19,6 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
             Destroy(gameObject);
             yield break;
         }
-
     }
     #endregion
     #region 총알 충돌 검사
@@ -27,9 +26,9 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
-            other.GetComponent<Player>().Hit(damage);
+            other.GetComponent<Player>().Hit(damage,0);
             pv.RPC("Destroy", RpcTarget.AllBuffered);
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
         else if (other.CompareTag("TPlayer"))
         {

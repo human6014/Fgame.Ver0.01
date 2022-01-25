@@ -49,7 +49,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<Player>().Hit(damage);
+            other.GetComponent<Player>().Hit(damage,0);
             meleeArea.enabled = false;
         }
         else if (other.CompareTag("TPlayer"))

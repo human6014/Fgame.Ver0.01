@@ -155,16 +155,16 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 피격
-    public void Hit(int damage)
+    public void Hit(int damage,int cause)//casuse == 0 피격, == 1 낙사 //최적화 대기중
     {
         if (isDying) return;
-        view.RPC(nameof(PunHit), RpcTarget.AllBuffered, damage);
+        view.RPC(nameof(PunHit), RpcTarget.All, damage,cause);
     }
     [PunRPC]
-    void PunHit(int damage)
+    public void PunHit(int damage, int cause) 
     {
         HP.fillAmount -= damage / 100f;
-        if (HP.fillAmount <= 0) Die();
+        if (HP.fillAmount <= 0) Die(cause);
     }
     #endregion
     #region 무기 교체
@@ -178,27 +178,35 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 죽음,리스폰
-    void Die() //죽은 후 바로 이동 -> 죽은 위치 5초 대기 후 스폰
+    [PunRPC]
+    void Recovery()
     {
-        isDying = true;
-        gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;
-        gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
         HP.fillAmount = 1;
         MP.fillAmount = 1;
-        StartCoroutine(nameof(Respawn));
     }
-    IEnumerator Respawn()
+
+    void Die(int cause)
+    {
+        isDying = true;
+        if(cause==1)
+            gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;
+            gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
+        StartCoroutine(nameof(Respawn),cause);
+    }
+    IEnumerator Respawn(int cause)
     {
         yield return new WaitForSeconds(5f);
-        gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;//스포너 위치로 변경해야됨
-        gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
+        if(cause==0)
+            gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;//스포너 위치로 변경해야됨
+            gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
+        view.RPC(nameof(Recovery), RpcTarget.All);
         isDying = false;
     }
     #endregion
     #region 낙사
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "GeneralManager") view.RPC(nameof(PunHit), RpcTarget.All, 1000);
+        if (other.gameObject.CompareTag("GameController")) view.RPC(nameof(PunHit), RpcTarget.All,1000,1);
     }
     #endregion
     #region 포탈 이동
@@ -214,13 +222,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(transform.position);
-            stream.SendNext(HP.fillAmount);
+            //stream.SendNext(HP.fillAmount);
             stream.SendNext(MP.fillAmount);
         }
         else
         {
             curPos = (Vector3)stream.ReceiveNext();
-            HP.fillAmount = (float)stream.ReceiveNext();
+            //HP.fillAmount = (float)stream.ReceiveNext();
             MP.fillAmount = (float)stream.ReceiveNext();
         }
     }

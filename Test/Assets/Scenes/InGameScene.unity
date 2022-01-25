@@ -1464,7 +1464,7 @@ GameObject:
   - component: {fileID: 1299624830}
   - component: {fileID: 1299624831}
   m_Layer: 0
-  m_Name: GeneralManager
+  m_Name: AllTileMap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -39,7 +39,7 @@ public class PersonTileMap : MonoBehaviour
         allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
         if (sphereCollider.radius >= 0)
         {
-            if (allTileMap.GetIsCreateTile()) sphereCollider.radius -= Time.deltaTime * Time.time / 500;
+            if (generalManager.GetIsCreateTile()) sphereCollider.radius -= Time.deltaTime * Time.time / 500;
         }
         else if (!outPlayer)
         {
@@ -113,8 +113,8 @@ public class PersonTileMap : MonoBehaviour
         {
             GameObject castle = Instantiate(CastlePrefab, new Vector3(x * tileXOffset + transform.position.x, 0,
                                                                       z * tileZOffset + transform.position.z), Quaternion.identity);
-            allTileMap.catleRotation -= 60;
-            castle.transform.rotation = Quaternion.Euler(0, allTileMap.catleRotation ,0);
+            allTileMap.spawnerRotation -= 60;
+            castle.transform.rotation = Quaternion.Euler(0, allTileMap.spawnerRotation, 0);
             castle.name = "Spawner" + transform.tag.Substring(5, 1);
             castle.transform.parent = transform;
             castle.tag = transform.tag;

@@ -37,8 +37,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Animator anim;
     AllTileMap allTileMap;
     Weapon equipWeapon; //이게 되나?
-    Vector3 curPos;
-    Vector3 moveVec;
+
     private void Start()
     {
         if (photonView.IsMine)
@@ -59,6 +58,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
     }
+    Vector3 curPos;
+    Vector3 moveVec;
     void Update()
     {
         if (photonView.IsMine)
@@ -95,8 +96,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
-    #region 공격
-    void Attack()
+
+    #region 공격 
+    void Attack() //오브젝트 폴링 활용할 것
     {
         attackDelay += Time.deltaTime;
         if (isAttack && equipWeapon.rate < attackDelay && !isDodging && !isDying)
@@ -164,7 +166,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public void PunHit(int damage, int cause) 
     {
         HP.fillAmount -= damage / 100f;
-        if (HP.fillAmount <= 0) Die(cause);
+        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn), cause);
     }
     #endregion
     #region 무기 교체
@@ -184,19 +186,14 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount = 1;
         MP.fillAmount = 1;
     }
-
-    void Die(int cause)
-    {
-        isDying = true;
-        if(cause==1)
-            gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;
-            gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
-        StartCoroutine(nameof(Respawn),cause);
-    }
     IEnumerator Respawn(int cause)
     {
+        isDying = true;
+        if (cause == 1)
+            gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;
+            gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
         yield return new WaitForSeconds(5f);
-        if(cause==0)
+        if (cause == 0)
             gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;//스포너 위치로 변경해야됨
             gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         view.RPC(nameof(Recovery), RpcTarget.All);
@@ -222,13 +219,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(transform.position);
-            //stream.SendNext(HP.fillAmount);
             stream.SendNext(MP.fillAmount);
         }
         else
         {
             curPos = (Vector3)stream.ReceiveNext();
-            //HP.fillAmount = (float)stream.ReceiveNext();
             MP.fillAmount = (float)stream.ReceiveNext();
         }
     }

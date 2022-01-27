@@ -38,14 +38,15 @@ public class AllTileMap : MonoBehaviourPunCallbacks
 
         yield return new WaitUntil(()=> generalManager.GetIsRoomFull());
         CreatePersonTile();
-        for(int i = 3; i >= 1; i--)
+        //generalManager.SetIsCreateTile(true);
+        for (int i = 3; i >= 1; i--)
         {
             startTimer.text = i.ToString();
             yield return new WaitForSeconds(1);
         }
         startTimer.text = "! 시작 !";
         generalManager.CreatePlayer();
-        generalManager.SetIsCreateTile(true);
+        generalManager.SetIsCreatePlayer(true);
         yield return new WaitForSeconds(0.5f);
         beforeStartCanvas.SetActive(false);
     }
@@ -102,7 +103,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private void Update()
     {
         tileCount.text = "남은 타일\n";
-        if (!generalManager.GetIsRoomFull()) return;
+        if (!generalManager.GetIsCreatePlayer()) return;
         foreach(Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
             tileCount.text += player.NickName + " : " + childTileCount[player.GetPlayerNumber() - 1] + "\n";

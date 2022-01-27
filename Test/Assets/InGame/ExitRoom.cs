@@ -6,5 +6,9 @@ using Photon.Pun;
 public class ExitRoom : MonoBehaviour
 {
     [SerializeField] GeneralManager generalManager;
-    public void OnClicked() => PhotonNetwork.LeaveRoom();
+    public void OnClicked()
+    {
+        PhotonNetwork.LeaveRoom();
+        generalManager.ExitChat();
+    }
 }

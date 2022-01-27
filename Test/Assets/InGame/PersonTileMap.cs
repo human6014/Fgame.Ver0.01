@@ -12,7 +12,7 @@ public class PersonTileMap : MonoBehaviour
     private new Rigidbody rigidbody;
     private new Renderer renderer;
     private float initRadius;
-    bool outPlayer;
+    private bool tryOnce;
 
     [SerializeField] GameObject HexTilePrefab;
     [SerializeField] GameObject PortalPrefab;
@@ -39,9 +39,9 @@ public class PersonTileMap : MonoBehaviour
         allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
         if (sphereCollider.radius >= 0)
         {
-            if (generalManager.GetIsCreateTile()) sphereCollider.radius -= Time.deltaTime * Time.time / 500;
+            if (generalManager.GetIsCreatePlayer()) sphereCollider.radius -= Time.deltaTime * Time.time / 500;
         }
-        else if (!outPlayer)
+        else if (!tryOnce)
         {
             Transform[] child = GetComponentsInChildren<Transform>();
 
@@ -50,7 +50,7 @@ public class PersonTileMap : MonoBehaviour
                 if (iter != transform) StartCoroutine(FallWaiting(iter.gameObject));
             }
             for (int i = 0; i < 2; i++) Destroy(allTileMap.GetPortal(int.Parse(transform.name.Substring(13, 1)) - 1, i).gameObject);
-            outPlayer = true;
+            tryOnce = true;
         }
     }
     #region 블럭 파괴

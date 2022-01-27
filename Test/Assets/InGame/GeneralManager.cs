@@ -8,8 +8,9 @@ using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using Photon.Pun.UtilityScripts;
 using ExitGames.Client.Photon;
+using System.Linq;
 
-public class GeneralManager : MonoBehaviourPunCallbacks,IPunObservable, IChatClientListener
+public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable, IChatClientListener
 {
     private int stateIndex;
     private string roomCode = string.Empty;
@@ -17,6 +18,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks,IPunObservable, IChatCli
 
     private bool isRoomFull = false;
     private bool isCreateTile = false;
+    private bool isCreatePlayer = false;
 
     [SerializeField] GameObject delayCancelButton;
     [SerializeField] Text roomCountDisplay;
@@ -32,7 +34,9 @@ public class GeneralManager : MonoBehaviourPunCallbacks,IPunObservable, IChatCli
 
     public bool GetIsRoomFull() => isRoomFull;
     public bool GetIsCreateTile() => isCreateTile;
+    public bool GetIsCreatePlayer() => isCreatePlayer;
     public void SetIsCreateTile(bool _isCreateTile) => isCreateTile = _isCreateTile;
+    public void SetIsCreatePlayer(bool _isCreatePlayer) => isCreatePlayer = _isCreatePlayer;
     private void Start()
     {
         view = photonView;
@@ -43,13 +47,14 @@ public class GeneralManager : MonoBehaviourPunCallbacks,IPunObservable, IChatCli
 
         chatClient = new ChatClient(this);
         channelName = "test";
-        chatClient.Connect("1225a90f-4d35-49e8-9a03-40d8f1a0f2ec", "1.0", new Photon.Chat.AuthenticationValues(PhotonNetwork.LocalPlayer.NickName));
-        AddLine(string.Format("연결", PhotonNetwork.LocalPlayer.NickName));
+        chatClient.Connect("99bf5d40-3f94-4f42-b896-4d0c651e9188", "1.0", new Photon.Chat.AuthenticationValues(PhotonNetwork.LocalPlayer.NickName));
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
     }
+
     public void CreatePlayer()
     {
         GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
+        
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
@@ -82,14 +87,11 @@ public class GeneralManager : MonoBehaviourPunCallbacks,IPunObservable, IChatCli
         if (!isRoomFull || !isCreateTile) return;
         if (stream.IsWriting)
         {
-            for(int i = 0; i < 6; i++) stream.SendNext(allTileMap.GetPersonTileRadius(i));
+            for (int i = 0; i < 6; i++) stream.SendNext(allTileMap.GetPersonTileRadius(i));
         }
         else
         {
-            for (int i = 0; i < 6; i++)
-            {
-                allTileMap.SetPersonTileRadius(i, (float)stream.ReceiveNext());
-            }
+            for (int i = 0; i < 6; i++) allTileMap.SetPersonTileRadius(i, (float)stream.ReceiveNext());
         }
     }
     #endregion
@@ -98,24 +100,24 @@ public class GeneralManager : MonoBehaviourPunCallbacks,IPunObservable, IChatCli
     void Update()
     {
         chatClient.Service();
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            if(!string.IsNullOrEmpty(inputField.text)) Input_OnEndEdit();
+            inputField.Select();
+        }
     }
-    void AddLine(string lineString)
-    {
-        outputText.text += lineString + "\r\n";
-    }
+    void AddLine(string lineString) => outputText.text += lineString + "\r\n";
     void IChatClientListener.DebugReturn(DebugLevel level, string message)
     {
-        if (level == DebugLevel.ERROR)
+        switch (level)
         {
-            Debug.LogError(message);
-        }
-        else if (level == DebugLevel.WARNING)
-        {
-            Debug.LogWarning(message);
-        }
-        else
-        {
-            Debug.Log(message);
+            case DebugLevel.ERROR: Debug.LogError(message);
+                break;
+            case DebugLevel.WARNING: Debug.LogWarning(message);
+                break;
+            default: Debug.Log(message);
+                break;
         }
     }
     void IChatClientListener.OnConnected()
@@ -128,41 +130,48 @@ public class GeneralManager : MonoBehaviourPunCallbacks,IPunObservable, IChatCli
     {
         AddLine("서버에 연결이 끊어졌습니다.");
     }
-
-    void IChatClientListener.OnChatStateChange(ChatState state)
-    {
-        Debug.Log("OnChatStateChange = " + state);
-    }
-
     void IChatClientListener.OnGetMessages(string channelName, string[] senders, object[] messages)
     {
         for (int i = 0; i < messages.Length; i++)
         {
-            AddLine(string.Format("{0} : {1}", senders[i], messages[i].ToString()));
+            AddLine(string.Format("{0}\t: {1}", senders[i], messages[i].ToString()));
         }
     }
-
-    void IChatClientListener.OnPrivateMessage(string sender, object message, string channelName)
-    {
-        Debug.Log("OnPrivateMessage : " + message);
-    }
-
     void IChatClientListener.OnSubscribed(string[] channels, bool[] results)
     {
-        AddLine(string.Format("채널 입장 ({0})", string.Join(",", channels)));
+        chatClient.PublishMessage(channelName, string.Format("채널 입장 ({0})", string.Join(",", PhotonNetwork.LocalPlayer.NickName)));
     }
 
     void IChatClientListener.OnUnsubscribed(string[] channels)
     {
-        AddLine(string.Format("채널 퇴장 ({0})", string.Join(",", channels)));
+        //AddLine(string.Format("채널 퇴장 ({0})", string.Join(",", PhotonNetwork.LocalPlayer.NickName)));
+        chatClient.PublishMessage(channelName, string.Format("채널 퇴장 ({0})", string.Join(",", PhotonNetwork.LocalPlayer.NickName)));
     }
-
-    void IChatClientListener.OnStatusUpdate(string user, int status, bool gotMessage, object message)
+    
+    public void Input_OnEndEdit()
     {
-        Debug.Log("status : " + string.Format("{0} is {1}, Msg : {2} ", user, status, message));
+        if (chatClient.State == ChatState.ConnectedToFrontEnd)
+        {
+            chatClient.PublishMessage(channelName, inputField.text);
+            inputField.text = "";
+        }
     }
-
+    void IChatClientListener.OnChatStateChange(ChatState state) { }
+    void IChatClientListener.OnPrivateMessage(string sender, object message, string channelName) { }
+    void IChatClientListener.OnStatusUpdate(string user, int status, bool gotMessage, object message) { }
     void IChatClientListener.OnUserSubscribed(string channel, string user) { }
     void IChatClientListener.OnUserUnsubscribed(string channel, string user) { }
+    private void OnApplicationQuit()
+    {
+        PhotonNetwork.Disconnect();
+        ExitChat();
+    }
+    public void ExitChat()
+    {
+        if (chatClient != null)
+        {
+            chatClient.Disconnect();
+        }
+    }
     #endregion
 }

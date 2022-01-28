@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
-using Photon.Pun.UtilityScripts;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     private string playerName = "Default";
@@ -44,18 +43,8 @@ public class GameManager : MonoBehaviourPunCallbacks
         PhotonNetwork.AutomaticallySyncScene = false;
         PhotonNetwork.GameVersion = "1.0";
     }
-    public override void OnConnectedToMaster()
-    {
+    public override void OnConnectedToMaster() { }
 
-    }
-    public override void OnJoinedLobby()
-    {
-        Debug.Log("OnJoinedLobby");
-    }
-    public override void OnLeftLobby()
-    {
-        Debug.Log("OnLeftLobby");
-    }
     public void OnStartGame(int _stateIndex, string _playerName, string _roomCode)
     {
         stateIndex = _stateIndex;
@@ -77,35 +66,19 @@ public class GameManager : MonoBehaviourPunCallbacks
                 break;
         }
     }
-    public override void OnCreatedRoom()
-    {
-        Debug.Log("OnCreatedRoom");
-        if (stateIndex == 1) PhotonNetwork.CurrentRoom.IsVisible = false;
-    }
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("OnJoinedRoom");
-        PhotonNetwork.LoadLevel("InGameScene");
-    }
-    public override void OnJoinRandomFailed(short returnCode, string message)
-    {
-        Debug.Log("OnJoinRandomFailed");
-        PhotonNetwork.CreateRoom(null, roomOptions);
-    }
-    public override void OnCreateRoomFailed(short returnCode, string message)
-    {
-        Debug.Log("OnCreateRoomFailed");
-    }
-    public override void OnJoinRoomFailed(short returnCode, string message)
-    {
-        Debug.Log("OnJoinRoomFailed");
-    }
+    public override void OnJoinedLobby() => Debug.Log("OnJoinedLobby");
+    public override void OnLeftLobby() => Debug.Log("OnLeftLobby");
+    public override void OnCreatedRoom(){ if (stateIndex == 1) PhotonNetwork.CurrentRoom.IsVisible = false; }
+    public override void OnJoinedRoom() => PhotonNetwork.LoadLevel("InGameScene");
+    public override void OnCreateRoomFailed(short returnCode, string message) => Debug.Log("OnCreateRoomFailed");
+    public override void OnJoinRandomFailed(short returnCode, string message) => PhotonNetwork.CreateRoom(null, roomOptions);
+    public override void OnJoinRoomFailed(short returnCode, string message) => Debug.Log("OnJoinRoomFailed");
     public override void OnLeftRoom()
     {
-        Debug.Log("OnLeftRoom");
         SetDefaultInformation();
         PhotonNetwork.LoadLevel("Lobby");
     }
+    /*
     void OnGUI()
     {
         GUI.skin.label.fontSize = 20;
@@ -118,8 +91,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         GUILayout.EndVertical();
     }
-    private void OnApplicationQuit()
-    {
-        PhotonNetwork.Disconnect();
-    }
+    */
+    private void OnApplicationQuit() => PhotonNetwork.Disconnect();
 }

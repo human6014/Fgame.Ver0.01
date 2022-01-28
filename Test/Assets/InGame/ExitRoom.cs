@@ -9,6 +9,6 @@ public class ExitRoom : MonoBehaviour
     public void OnClicked()
     {
         PhotonNetwork.LeaveRoom();
-        generalManager.ExitChat();
+        generalManager.SetChatClear();
     }
 }

@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
-using Photon.Chat;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
 using Photon.Pun.UtilityScripts;
 using ExitGames.Client.Photon;
-using System.Linq;
 
-public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable, IChatClientListener
+public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     private int stateIndex;
     private string roomCode = string.Empty;
@@ -25,12 +23,9 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable, IChatCl
     [SerializeField] Button matchDown;
     [SerializeField] InputField inputField;
     [SerializeField] Text outputText;
-
+    [SerializeField] GameObject content;
     [SerializeField] AllTileMap allTileMap;
     PhotonView view;
-
-    ChatClient chatClient;
-    private string channelName;
 
     public bool GetIsRoomFull() => isRoomFull;
     public bool GetIsCreateTile() => isCreateTile;
@@ -42,29 +37,26 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable, IChatCl
         view = photonView;
         stateIndex = GameManager.Instance().GetStateIndex();
         roomCode = GameManager.Instance().GetRoomCode();
+        playerName = GameManager.Instance().GetPlayerName();
         PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().GetPlayerName();
         PhotonNetwork.LocalPlayer.SetPlayerNumber(PhotonNetwork.PlayerList.Length);
 
-        chatClient = new ChatClient(this);
-        channelName = "test";
-        chatClient.Connect("99bf5d40-3f94-4f42-b896-4d0c651e9188", "1.0", new Photon.Chat.AuthenticationValues(PhotonNetwork.LocalPlayer.NickName));
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
+        OnMasterChatting("연결 성공");
+        view.RPC(nameof(OnMasterChatting), RpcTarget.Others, "님이 입장하였습니다", playerName);
     }
-
     public void CreatePlayer()
     {
         GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
-        
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
-        //PhotonNetwork.LocalPlayer.SetPlayerNumber(playerNumber++);
-        //view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
+        //OnMasterChatting("님이 입장하였습니다", newPlayer.NickName);
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        //PhotonNetwork.LocalPlayer.SetPlayerNumber(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1);
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
+        OnMasterChatting("님이 퇴장하였습니다", otherPlayer.NickName);
     }
     [PunRPC]
     void PunUpdate()
@@ -99,79 +91,38 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable, IChatCl
     #region 채팅
     void Update()
     {
-        chatClient.Service();
-
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            if(!string.IsNullOrEmpty(inputField.text)) Input_OnEndEdit();
+            if (!string.IsNullOrEmpty(inputField.text)) Input_OnEndEdit();
             inputField.Select();
         }
     }
-    void AddLine(string lineString) => outputText.text += lineString + "\r\n";
-    void IChatClientListener.DebugReturn(DebugLevel level, string message)
+    public void SetChatClear()
     {
-        switch (level)
-        {
-            case DebugLevel.ERROR: Debug.LogError(message);
-                break;
-            case DebugLevel.WARNING: Debug.LogWarning(message);
-                break;
-            default: Debug.Log(message);
-                break;
-        }
+        inputField.text = string.Empty;
     }
-    void IChatClientListener.OnConnected()
+    [PunRPC]
+    void OnPlayerChatting(string message,string sender)
     {
-        AddLine("서버에 연결되었습니다.");
-
-        chatClient.Subscribe(new string[] { channelName }, 10);
+        outputText.text += sender + " : " + message + "\r\n";
     }
-    void IChatClientListener.OnDisconnected()
+    [PunRPC]
+    void OnMasterChatting(string message, string target = "")
     {
-        AddLine("서버에 연결이 끊어졌습니다.");
+        outputText.text += target + message + "\r\n";
     }
-    void IChatClientListener.OnGetMessages(string channelName, string[] senders, object[] messages)
-    {
-        for (int i = 0; i < messages.Length; i++)
-        {
-            AddLine(string.Format("{0}\t: {1}", senders[i], messages[i].ToString()));
-        }
-    }
-    void IChatClientListener.OnSubscribed(string[] channels, bool[] results)
-    {
-        chatClient.PublishMessage(channelName, string.Format("채널 입장 ({0})", string.Join(",", PhotonNetwork.LocalPlayer.NickName)));
-    }
-
-    void IChatClientListener.OnUnsubscribed(string[] channels)
-    {
-        //AddLine(string.Format("채널 퇴장 ({0})", string.Join(",", PhotonNetwork.LocalPlayer.NickName)));
-        chatClient.PublishMessage(channelName, string.Format("채널 퇴장 ({0})", string.Join(",", PhotonNetwork.LocalPlayer.NickName)));
-    }
-    
     public void Input_OnEndEdit()
     {
-        if (chatClient.State == ChatState.ConnectedToFrontEnd)
+        if (PhotonNetwork.IsConnected)
         {
-            chatClient.PublishMessage(channelName, inputField.text);
+            if (inputField.text.Length > 50) outputText.text += "최대 50글자까지 입력 가능합니다.\r\n";
+            else view.RPC(nameof(OnPlayerChatting), RpcTarget.All, inputField.text, PhotonNetwork.LocalPlayer.NickName);
             inputField.text = "";
         }
     }
-    void IChatClientListener.OnChatStateChange(ChatState state) { }
-    void IChatClientListener.OnPrivateMessage(string sender, object message, string channelName) { }
-    void IChatClientListener.OnStatusUpdate(string user, int status, bool gotMessage, object message) { }
-    void IChatClientListener.OnUserSubscribed(string channel, string user) { }
-    void IChatClientListener.OnUserUnsubscribed(string channel, string user) { }
     private void OnApplicationQuit()
     {
         PhotonNetwork.Disconnect();
-        ExitChat();
-    }
-    public void ExitChat()
-    {
-        if (chatClient != null)
-        {
-            chatClient.Disconnect();
-        }
     }
     #endregion
 }

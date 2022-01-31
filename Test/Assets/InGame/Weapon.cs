@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
 {
-    public enum weaponsType { Melee, Range };
+    public enum weaponsType { Melee, Range, Destroyer};
     public weaponsType type;
     public int damage;
     public float rate, speed;
@@ -19,6 +19,8 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (type == weaponsType.Melee) StartCoroutine("Swing");
         else if (type == weaponsType.Range) Shot();
+        else if (type == weaponsType.Destroyer) Launch();
+        else Debug.LogError("NonUseWeapons");
     }
     #endregion
     #region 총 발사
@@ -30,6 +32,10 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
         caseRigid.AddForce(caseVec, ForceMode.Impulse);
         caseRigid.AddTorque(Vector3.up, ForceMode.Impulse);
+    }
+    private void Launch()
+    {
+        PhotonNetwork.Instantiate("Rocket", bulletPos.position, bulletPos.rotation);
     }
     #endregion
     #region 근접 무기 사용

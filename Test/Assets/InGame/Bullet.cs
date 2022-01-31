@@ -4,6 +4,7 @@ using Photon.Pun;
 public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
 {
     public int damage;
+    public int speed;
     public PhotonView pv;
     Vector3 trajectory = Vector3.forward * 15;
     private void Start() => StartCoroutine("BallisticFall");

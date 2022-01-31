@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private string playerName = "Default";
     private string roomCode = "Default";
     private int stateIndex = -1;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 2 };
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
     #region 싱글톤
     static GameManager _instance = null;
     public static GameManager Instance() => _instance;
@@ -44,11 +44,10 @@ public class GameManager : MonoBehaviourPunCallbacks
         PhotonNetwork.GameVersion = "1.0";
     }
     public override void OnConnectedToMaster() { }
-
     public void OnStartGame(int _stateIndex, string _playerName, string _roomCode)
     {
         stateIndex = _stateIndex;
-        roomCode = _roomCode;
+        roomCode   = _roomCode;
         playerName = _playerName;
         switch (stateIndex)
         {

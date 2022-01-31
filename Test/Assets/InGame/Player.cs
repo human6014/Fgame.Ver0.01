@@ -104,7 +104,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (isAttack && equipWeapon.rate < attackDelay && !isDodging && !isDying)
         {
             if (equipWeapon.type == Weapon.weaponsType.Melee) anim.SetBool("isSwing", true);
-            else anim.SetBool("isShot", true);
+            else if (equipWeapon.type == Weapon.weaponsType.Range) anim.SetBool("isShot", true);
+            else if(equipWeapon.type == Weapon.weaponsType.Destroyer) anim.SetBool("isShot", true);
             equipWeapon.UseWeapons();
             attackDelay = 0;
             Invoke(nameof(SetAttackAnim), 0.1f);
@@ -113,6 +114,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     void SetAttackAnim()
     {
         if (equipWeapon.type == Weapon.weaponsType.Melee) anim.SetBool("isSwing", false);
+        else if (equipWeapon.type == Weapon.weaponsType.Range) anim.SetBool("isShot", false);
         else anim.SetBool("isShot", false);
     }
     #endregion
@@ -121,7 +123,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (isJump && !isJumping && !isDodging && MP.fillAmount >= 0.2f && !isDying)
         {
-            rigid.AddForce(Vector3.up * 3.5f, ForceMode.Impulse);
+            rigid.AddForce(Vector3.up * 4f, ForceMode.Impulse);
             anim.SetBool("isJump", true);
             MP.fillAmount -= 0.15f;
             isJumping = true;
@@ -194,7 +196,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
         yield return new WaitForSeconds(5f);
         if (cause == 0)
-            gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;//스포너 위치로 변경해야됨
+            gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;
             gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         view.RPC(nameof(Recovery), RpcTarget.All);
         isDying = false;

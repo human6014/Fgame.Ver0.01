@@ -292,4 +292,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 3
+  speed: 0
   pv: {fileID: -5344443154850734816}

@@ -17,6 +17,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private Transform[] childSpawner = new Transform[6];
     private SphereCollider[] childSphereColliders= new SphereCollider[6];
     private int[] childTileCount = new int[6];
+    private int[] hasTileNum = new int[6];
 
     public int i, j, bottom, top = 5;
     public int spawnerRotation = 90;
@@ -28,9 +29,11 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetSpawner(Transform tr, int i) => childSpawner[i] = tr;
     public void SetPersonTileRadius(int i, float radius) => childSphereColliders[i].radius = radius;
     public void SetChildTileCount(int i,int count) => childTileCount[i] = count;
+    public void SetHasTileNum(int i, int j) => hasTileNum[i] = j;
     public Transform GetPortal(int i, int j) => childPortal[i, j];
     public Transform GetSpawner(int i) => childSpawner[i];
     public float GetPersonTileRadius(int i) => childSphereColliders[i].radius;
+    public int GetHasTileNum(int i) => hasTileNum[i];
     #endregion
     IEnumerator Start()
     {

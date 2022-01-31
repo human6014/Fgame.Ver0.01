@@ -13,7 +13,6 @@ public class PersonTileMap : MonoBehaviour
     private new Renderer renderer;
     private float initRadius;
     private bool tryOnce;
-
     [SerializeField] GameObject HexTilePrefab;
     [SerializeField] GameObject PortalPrefab;
     [SerializeField] GameObject CastlePrefab;
@@ -22,6 +21,7 @@ public class PersonTileMap : MonoBehaviour
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f,
                         tileRadius  = 8.5f;
+    int myIndex;
     int count = 1;
     void Start()
     {
@@ -29,8 +29,12 @@ public class PersonTileMap : MonoBehaviour
         sphereCollider = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphereCollider.radius = 5;
         //else sphereCollider.radius = tileRadius;
-        else sphereCollider.radius = allTileMap.myField[allTileMap.playerNum++];
-        
+        else
+        {
+            sphereCollider.radius = allTileMap.myField[allTileMap.playerNum++];
+            myIndex = int.Parse(transform.tag.Substring(5));
+        }
+        Debug.Log(myIndex);
         initRadius = sphereCollider.radius - 0.05f;
     }
     private void Update()
@@ -39,7 +43,18 @@ public class PersonTileMap : MonoBehaviour
         allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
         if (sphereCollider.radius >= 0)
         {
-            if (generalManager.GetIsCreatePlayer()) sphereCollider.radius -= Time.deltaTime * Time.time / 500;
+            if (generalManager.GetIsCreatePlayer())
+            {
+                //if (allTileMap.GetPersonTileRadius(myIndex) > 0)
+                {
+
+                }
+                //else
+                {
+
+                }
+                sphereCollider.radius -= Time.deltaTime * Time.time / 1000;
+            }
         }
         else if (!tryOnce)
         {

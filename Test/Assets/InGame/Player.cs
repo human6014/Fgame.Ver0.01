@@ -83,7 +83,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //∫Ø∞Ê ∞ÌπŒ¡ﬂ
 
             if (!isJumping && !isDodging)
-                if (isWalk || moveVec == Vector3.zero) MP.fillAmount += Time.time * Time.deltaTime / 25f;
+                if (isWalk || (moveVec == Vector3.zero)) MP.fillAmount += Time.time * Time.deltaTime / 25f;
                 else MP.fillAmount += Time.time * Time.deltaTime / 50f;
 
             anim.SetBool("isRun", moveVec != Vector3.zero);

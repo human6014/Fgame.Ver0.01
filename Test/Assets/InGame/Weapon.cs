@@ -35,7 +35,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     }
     private void Launch()
     {
-        PhotonNetwork.Instantiate("Rocket", bulletPos.position, bulletPos.rotation);
+        PhotonNetwork.Instantiate("Rocket", bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 0, 0)));
     }
     #endregion
     #region 근접 무기 사용

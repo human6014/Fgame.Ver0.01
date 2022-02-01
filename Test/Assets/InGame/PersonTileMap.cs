@@ -34,7 +34,7 @@ public class PersonTileMap : MonoBehaviour
             sphereCollider.radius = allTileMap.myField[allTileMap.playerNum++];
             myIndex = int.Parse(transform.tag.Substring(5));
         }
-        Debug.Log(myIndex);
+        //Debug.Log(myIndex);
         initRadius = sphereCollider.radius - 0.05f;
     }
     private void Update()

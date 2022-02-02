@@ -64,6 +64,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (photonView.IsMine)
         {
+            if (allTileMap.GetIsOutPlayer(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1)) Destroy(gameObject,3f);
             if (isDying) return;
             xMove = Input.GetAxisRaw("Horizontal");
             zMove = Input.GetAxisRaw("Vertical");
@@ -191,14 +192,16 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Respawn(int cause)
     {
         isDying = true;
+        anim.SetBool("isWalk",true);
         if (cause == 1)
-            gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;
+            gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up * 2f;
             gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //¹Ì¿Ï¼º
         yield return new WaitForSeconds(5f);
         if (cause == 0)
             gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;
             gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         view.RPC(nameof(Recovery), RpcTarget.All);
+        anim.SetBool("isWalk", false);
         isDying = false;
     }
     #endregion

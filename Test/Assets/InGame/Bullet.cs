@@ -3,22 +3,29 @@ using UnityEngine;
 using Photon.Pun;
 public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
 {
+    private bool isCollison;
     public int damage;
     public int speed;
     public PhotonView pv;
     Vector3 trajectory = Vector3.forward * 15;
-    private void Start() => StartCoroutine("BallisticFall");
-    void Update() => transform.Translate(trajectory * Time.deltaTime);
+    private void Start()
+    {
+        StartCoroutine("BallisticFall");
+        Destroy(gameObject, 3);
+    }
+    void Update()
+    {
+        if (isCollison) return;
+        transform.Translate(trajectory * Time.deltaTime);
+    }
     #region ÃÑ¾Ë ±ËÀû ¼³Á¤
     IEnumerator BallisticFall()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.4f);
         while (true)
         {
-            trajectory += Vector3.down * 0.8f + Vector3.back * 0.4f;
-            yield return new WaitForSeconds(2.5f);
-            Destroy(gameObject);
-            yield break;
+            trajectory += Vector3.down * 0.08f + Vector3.back * 0.04f;
+            yield return null;
         }
     }
     #endregion
@@ -28,17 +35,19 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
             other.GetComponent<Player>().Hit(damage,0);
-            pv.RPC("Destroy", RpcTarget.AllBuffered);
-            //Destroy(gameObject);
+            isCollison = true;
+            pv.RPC(nameof(Destroy), RpcTarget.All);
         }
         else if (other.CompareTag("TPlayer"))
         {
             other.GetComponent<TestPlayer>().Hit(damage);
-            pv.RPC("Destroy", RpcTarget.AllBuffered);
+            isCollison = true;
+            pv.RPC(nameof(Destroy), RpcTarget.All);
         }
         if (other.tag.Substring(0, 5) == "Floor")
         {
-            pv.RPC("Destroy", RpcTarget.AllBuffered);
+            isCollison = true;
+            pv.RPC(nameof(Destroy), RpcTarget.All);
         }
     }
     #endregion

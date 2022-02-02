@@ -68,6 +68,7 @@ MonoBehaviour:
   - OnChatting
   - OnMasterChatting
   - OnPlayerChatting
+  - Effect
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -31,10 +31,10 @@ public class PersonTileMap : MonoBehaviour
         //else sphereCollider.radius = tileRadius;
         else
         {
-            sphereCollider.radius = allTileMap.myField[allTileMap.playerNum++];
+            sphereCollider.radius = 8.5f;//allTileMap.myField[allTileMap.playerNum++];
             myIndex = int.Parse(transform.tag.Substring(5));
+            Debug.Log(myIndex);
         }
-        //Debug.Log(myIndex);
         initRadius = sphereCollider.radius - 0.05f;
     }
     private void Update()
@@ -43,17 +43,9 @@ public class PersonTileMap : MonoBehaviour
         allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
         if (sphereCollider.radius >= 0)
         {
-            if (generalManager.GetIsCreatePlayer())
+            if (generalManager.GetIsCreateTile())
             {
-                //if (allTileMap.GetPersonTileRadius(myIndex) > 0)
-                {
-
-                }
-                //else
-                {
-
-                }
-                sphereCollider.radius -= Time.deltaTime * Time.time / 1000;
+                sphereCollider.radius -= Time.deltaTime * Time.time / 100;
             }
         }
         else if (!tryOnce)
@@ -66,6 +58,7 @@ public class PersonTileMap : MonoBehaviour
             }
             for (int i = 0; i < 2; i++) Destroy(allTileMap.GetPortal(int.Parse(transform.name.Substring(13, 1)) - 1, i).gameObject);
             tryOnce = true;
+            allTileMap.SetIsOutPlayer(true, myIndex - 1);
         }
     }
     #region 블럭 파괴
@@ -147,28 +140,22 @@ public class PersonTileMap : MonoBehaviour
         switch (transform.tag)
         {
             case "Floor1" when x == (int)z / 2 && z == count:
-                Debug.Log("Floor1");
                 TagChanging(TempGo, x, z);
                 break;
             case "Floor2" when x == ((int)z + 1) / -2 && z == mapHeight / 2 - count + (count % 2 == 0 ? 1 : -1) && z > 0: //입력 값에따라 안될 경우 있음
-                Debug.Log("Floor2");
                 TagChanging(TempGo, x, z + 1);
                 break;
             case "Floor3" when x < 0 && z == 0 && x > mapWidth / -2:
-                Debug.Log("Floor3");
                 TagChanging(TempGo, x, z);
                 break;
             case "Floor4" when x == ((int)z - 1) / 2 && z == mapHeight / -2 + count && x < 0:
-                Debug.Log("Floor4");
                 TagChanging(TempGo, x, z);
                 break;
             case "Floor5" when x == (int)z / -2 && z == -count + (count % 2 == 0 ? 2 : 0) && z >= mapHeight / -2: //더 좋은 식 찾기
                 TagChanging(TempGo, x + 1, z - 2);
                 if (z == mapHeight / -2 | z == 0) TempGo.tag = transform.tag;
-                else Debug.Log("Floor5");
                 break;
             case "Floor6" when x > 0 && z == 0:
-                Debug.Log("Floor6");
                 TagChanging(TempGo, x, z);
                 break;
             default:

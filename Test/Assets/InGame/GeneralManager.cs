@@ -18,6 +18,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private bool isCreateTile = false;
     private bool isCreatePlayer = false;
 
+
     [SerializeField] GameObject delayCancelButton;
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Button matchDown;
@@ -32,6 +33,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public bool GetIsCreatePlayer() => isCreatePlayer;
     public void SetIsCreateTile(bool _isCreateTile) => isCreateTile = _isCreateTile;
     public void SetIsCreatePlayer(bool _isCreatePlayer) => isCreatePlayer = _isCreatePlayer;
+    
     private void Start()
     {
         view = photonView;
@@ -43,7 +45,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
 
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
         OnMasterChatting("연결 성공");
-        view.RPC(nameof(OnMasterChatting), RpcTarget.Others, "님이 입장하였습니다", playerName);
+        view.RPC(nameof(OnMasterChatting), RpcTarget.Others, " 님이 입장하였습니다", playerName);
     }
     public void CreatePlayer()
     {
@@ -56,7 +58,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
-        OnMasterChatting("님이 퇴장하였습니다", otherPlayer.NickName);
+        OnMasterChatting(" 님이 퇴장하였습니다", otherPlayer.NickName);
     }
     [PunRPC]
     void PunUpdate()
@@ -76,7 +78,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     #region 블럭 동기화
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if (!isRoomFull || !isCreateTile) return;
+        if (!isRoomFull) return;
         if (stream.IsWriting)
         {
             for (int i = 0; i < 6; i++) stream.SendNext(allTileMap.GetPersonTileRadius(i));

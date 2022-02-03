@@ -45,7 +45,7 @@ public class PersonTileMap : MonoBehaviour
         {
             if (generalManager.GetIsCreateTile())
             {
-                sphereCollider.radius -= Time.deltaTime * Time.time / 100;
+                sphereCollider.radius -= Time.deltaTime * Time.time / 1000;
             }
         }
         else if (!tryOnce)
@@ -58,14 +58,20 @@ public class PersonTileMap : MonoBehaviour
             }
             for (int i = 0; i < 2; i++) Destroy(allTileMap.GetPortal(int.Parse(transform.name.Substring(13, 1)) - 1, i).gameObject);
             tryOnce = true;
-            allTileMap.SetIsOutPlayer(true, myIndex - 1);
+            
         }
+        if (transform.childCount == 0) SetIsOutPlayer();
+    }
+    void SetIsOutPlayer()
+    {
+        allTileMap.SetIsOutPlayer(true, myIndex - 1);
     }
     #region ºí·° ÆÄ±«
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag(tag))
         {
+            Debug.Log("ºí·° ÆÄ±«");
             if (sphereCollider.radius > initRadius) Destroy(other.gameObject);
             else StartCoroutine(FallWaiting(other.gameObject));
         }

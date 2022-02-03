@@ -46,7 +46,6 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         yield return new WaitUntil(()=> generalManager.GetIsRoomFull());
         CreatePersonTile();
         generalManager.SetIsCreateTile(true);
-        //generalManager.SetIsCreateTile(true);
         for (int i = 3; i >= 1; i--)
         {
             startTimer.text = i.ToString();

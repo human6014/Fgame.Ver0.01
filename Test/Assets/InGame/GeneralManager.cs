@@ -122,9 +122,5 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
             inputField.text = "";
         }
     }
-    private void OnApplicationQuit()
-    {
-        PhotonNetwork.Disconnect();
-    }
     #endregion
 }

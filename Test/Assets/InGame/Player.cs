@@ -62,9 +62,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Vector3 moveVec;
     void Update()
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine && !isEnd)
         {
-            if (allTileMap.GetIsOutPlayer(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1)) Destroy(gameObject,3f);
+            if (allTileMap.GetIsOutPlayer(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1)) //버그 수정 대기
+            {
+                PhotonNetwork.Destroy(gameObject);
+                isEnd = true;
+            }
             if (isDying) return;
             xMove = Input.GetAxisRaw("Horizontal");
             zMove = Input.GetAxisRaw("Vertical");
@@ -191,6 +195,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     IEnumerator Respawn(int cause)
     {
+        if (isEnd) yield break;
         isDying = true;
         anim.SetBool("isWalk",true);
         if (cause == 1)
@@ -208,7 +213,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 낙사
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("GameController")) view.RPC(nameof(PunHit), RpcTarget.All,1000,1);
+        if (other.gameObject.CompareTag("GameController")) Hit(1000,1);
     }
     #endregion
     #region 포탈 이동

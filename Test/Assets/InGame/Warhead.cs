@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
-
 public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
 {
     private bool isCollison;
+    private int destroyBlockCount;
+    public GameObject target;
     public GameObject particle;
     public MeshRenderer meshRenderer;
-    public int damage;
     public PhotonView pv;
-    Vector3 trajectory = Vector3.forward * 12;
-    RaycastHit[] raycastHits;
+    public int damage;
     private void Start()
     {
         StartCoroutine("BallisticFall");
@@ -21,16 +20,17 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     void Update()
     {
         if (isCollison) return;
-        transform.Translate(trajectory * Time.deltaTime);
-        //transform.LookAt(trajectory);
+        transform.Translate(Vector3.back / 8);
     }
     #region ÃÑ¾Ë ±ËÀû ¼³Á¤
     IEnumerator BallisticFall()
     {
+
         yield return new WaitForSeconds(0.1f);
-        while (!isCollison && trajectory.z >= 0)
+        while (!isCollison)
         {
-            trajectory += Vector3.down * 0.08f + Vector3.back * 0.12f;
+            if (transform.eulerAngles.x == 270) yield break;
+            transform.Rotate(Vector3.left);
             yield return null;
         }
     }
@@ -40,7 +40,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
-            pv.RPC(nameof(Effect),RpcTarget.All);
+            pv.RPC(nameof(Effect), RpcTarget.All);
             Debug.Log("player hit");
         }
         else if (other.tag.StartsWith("Floor"))
@@ -60,17 +60,27 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         isCollison = true;
         meshRenderer.enabled = false;
         particle.SetActive(true);
-        /*
-        raycastHits = Physics.SphereCastAll(transform.position,5,Vector3.up,0f,LayerMask.GetMask("Player"));
-        foreach(RaycastHit hit in raycastHits)
+
+        RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, 0.5f, Vector3.up, 0);
+        foreach (RaycastHit hit in raycastHits)
         {
-            if(hit.transform.CompareTag("Player"))
-                Debug.Log("RaycastHit");
-                hit.transform.GetComponent<Player>().Hit(10,0);
+            if (!hit.transform.name.StartsWith("PerosnTileMap") && hit.transform.tag.StartsWith("Floor") &&
+                !hit.transform.tag.EndsWith(pv.Owner.GetPlayerNumber().ToString()) && !hit.transform.tag.EndsWith("7"))
+            {
+                Destroy(hit.transform.gameObject);
+                destroyBlockCount++;
+                Debug.Log(hit.transform.name);
+                Debug.Log(destroyBlockCount);
+            }
+            if (hit.transform.CompareTag("Player"))
+            {
+                hit.transform.GetComponent<Player>().Hit(10, 0);
+                Debug.Log(hit.transform.name);
+            }
         }
-        */
+
         yield return new WaitForSeconds(3);
-        pv.RPC(nameof(Destroy),RpcTarget.All);
+        pv.RPC(nameof(Destroy), RpcTarget.All);
     }
     [PunRPC]
     void Destroy() => Destroy(gameObject);

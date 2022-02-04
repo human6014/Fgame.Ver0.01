@@ -32,6 +32,7 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     #region 총알 충돌 검사
     private void OnTriggerEnter(Collider other)
     {
+        if (isCollison) return;
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
             other.GetComponent<Player>().Hit(damage,0);

@@ -154,11 +154,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cc218df81dc1b14298fb0fa38951b96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
   particle: {fileID: 5983625810265099829}
   meshRenderer: {fileID: 3695152839577550584}
-  damage: 0
   pv: {fileID: 4481283625299849482}
+  damage: 20
 --- !u!96 &2119786325277975174
 TrailRenderer:
   serializedVersion: 2

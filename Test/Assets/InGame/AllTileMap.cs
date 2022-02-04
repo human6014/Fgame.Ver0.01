@@ -12,6 +12,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     [SerializeField] GeneralManager generalManager;
     [SerializeField] Text tileCount;
     [SerializeField] Text startTimer;
+    [SerializeField] Text hasTileCount;
     private GameObject PersonTile;
     private Transform[,] childPortal = new Transform[6, 2];
     private Transform[] childSpawner = new Transform[6];
@@ -30,7 +31,9 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetSpawner(Transform tr, int i) => childSpawner[i] = tr;
     public void SetPersonTileRadius(int i, float radius) => childSphereColliders[i].radius = radius;
     public void SetChildTileCount(int i,int count) => childTileCount[i] = count;
-    public void SetHasTileNum(int i, int j) => hasTileNum[i] = j;
+    public void SetHasTileNum(int i, int j) => hasTileNum[i] = j * 1000;
+    public void SetPlusHasTileNum(int i) => hasTileNum[i] += 1000;
+    public void SetMinusHasTileNum(int i) => hasTileNum[i] -= 1;
     public void SetIsOutPlayer(bool _isOutPlayer, int i) => isOutPlayer[i] = _isOutPlayer;
     public Transform GetPortal(int i, int j) => childPortal[i, j];
     public Transform GetSpawner(int i) => childSpawner[i];
@@ -110,10 +113,17 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private void Update()
     {
         tileCount.text = "남은 타일\n";
+        hasTileCount.text = "가진 타일\n";
         if (!generalManager.GetIsCreatePlayer()) return;
         foreach(Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
             tileCount.text += player.NickName + " : " + childTileCount[player.GetPlayerNumber() - 1] + "\n";
+            
+        }
+        hasTileCount.text = PhotonNetwork.NickName + " : " + hasTileNum[PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1] + "\n";
+        for (int i = 0; i < 6; i++)
+        {
+            Debug.Log(i+" : " + hasTileNum[i]);
         }
     }
 }

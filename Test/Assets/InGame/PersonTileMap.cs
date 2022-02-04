@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 public class PersonTileMap : MonoBehaviour
 {
     public GeneralManager generalManager;
@@ -16,11 +17,12 @@ public class PersonTileMap : MonoBehaviour
     [SerializeField] GameObject HexTilePrefab;
     [SerializeField] GameObject PortalPrefab;
     [SerializeField] GameObject CastlePrefab;
-    [SerializeField] int mapWidth,  //22 
+    [SerializeField]
+    int mapWidth,  //22 
                          mapHeight;
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f,
-                        tileRadius  = 8.5f;
+                        tileRadius = 8.5f;
     int myIndex;
     int count = 1;
     void Start()
@@ -45,7 +47,10 @@ public class PersonTileMap : MonoBehaviour
         {
             if (generalManager.GetIsCreateTile())
             {
-                sphereCollider.radius -= Time.deltaTime * Time.time / 1000;
+                if (allTileMap.GetHasTileNum(myIndex - 1) > 0) {
+                    allTileMap.SetMinusHasTileNum(myIndex - 1);
+                }
+                else sphereCollider.radius -= Time.deltaTime * Time.time / 1000;
             }
         }
         else if (!tryOnce)
@@ -58,7 +63,7 @@ public class PersonTileMap : MonoBehaviour
             }
             for (int i = 0; i < 2; i++) Destroy(allTileMap.GetPortal(int.Parse(transform.name.Substring(13, 1)) - 1, i).gameObject);
             tryOnce = true;
-            
+
         }
         if (transform.childCount == 0) SetIsOutPlayer();
     }
@@ -157,15 +162,16 @@ public class PersonTileMap : MonoBehaviour
             case "Floor4" when x == ((int)z - 1) / 2 && z == mapHeight / -2 + count && x < 0:
                 TagChanging(TempGo, x, z);
                 break;
-            case "Floor5" when x == (int)z / -2 && z == -count + (count % 2 == 0 ? 2 : 0) && z >= mapHeight / -2: //더 좋은 식 찾기
+            case "Floor5" when x == (int)z / -2 && z == -count + (count % 2 == 0 ? 2 : 0) && z >= mapHeight / -2: //동작 원리 혼자만 특별함
                 TagChanging(TempGo, x + 1, z - 2);
-                if (z == mapHeight / -2 | z == 0) TempGo.tag = transform.tag;
+                if (z == mapHeight / -2) TempGo.tag = transform.tag;
                 break;
             case "Floor6" when x > 0 && z == 0:
                 TagChanging(TempGo, x, z);
                 break;
             default:
-                TempGo.tag = transform.tag;
+                if (x == 0 && z == 0) TempGo.tag = "Floor7";
+                else TempGo.tag = transform.tag;
                 if (transform.CompareTag("Floor7")) CreatePortal(x, z);
                 break;
         }

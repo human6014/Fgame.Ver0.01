@@ -66,8 +66,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (allTileMap.GetIsOutPlayer(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1)) //버그 수정 대기
             {
-                PhotonNetwork.Destroy(gameObject);
                 isEnd = true;
+                PhotonNetwork.Destroy(gameObject);
             }
             if (isDying) return;
             xMove = Input.GetAxisRaw("Horizontal");

@@ -33,15 +33,14 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public bool GetIsCreatePlayer() => isCreatePlayer;
     public void SetIsCreateTile(bool _isCreateTile) => isCreateTile = _isCreateTile;
     public void SetIsCreatePlayer(bool _isCreatePlayer) => isCreatePlayer = _isCreatePlayer;
-    
     private void Start()
     {
         view = photonView;
+        PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().GetPlayerName();
+        PhotonNetwork.LocalPlayer.SetPlayerNumber(PhotonNetwork.PlayerList.Length);
         stateIndex = GameManager.Instance().GetStateIndex();
         roomCode = GameManager.Instance().GetRoomCode();
         playerName = GameManager.Instance().GetPlayerName();
-        PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().GetPlayerName();
-        PhotonNetwork.LocalPlayer.SetPlayerNumber(PhotonNetwork.PlayerList.Length);
 
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
         OnMasterChatting("연결 성공");

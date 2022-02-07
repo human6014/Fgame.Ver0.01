@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private string playerName = "Default";
     private string roomCode = "Default";
     private int stateIndex = -1;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 2 };
     #region 싱글톤
     static GameManager _instance = null;
     public static GameManager Instance() => _instance;
@@ -51,9 +51,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         playerName = _playerName;
         switch (stateIndex)
         {
-            case -1:
-                Debug.Log("Error");
-                break;
             case 0:
                 PhotonNetwork.JoinRandomRoom();
                 break;
@@ -62,6 +59,9 @@ public class GameManager : MonoBehaviourPunCallbacks
                 break;
             case 2:
                 PhotonNetwork.JoinRoom(roomCode);
+                break;
+            default:
+                Debug.LogError("Error");
                 break;
         }
     }

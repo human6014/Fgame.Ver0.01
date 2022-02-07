@@ -7,7 +7,8 @@ using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
-    int curEquip;
+    int curEquip,
+        myIndex;
     float xMove,
           zMove,
           attackDelay;
@@ -43,6 +44,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (photonView.IsMine)
         {
             Camera.main.GetComponent<MainCamera>().target = transform;
+            myIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
+            if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == -1) Debug.LogError("PlayerSetNumber Error");
             Name.text = PhotonNetwork.NickName;
             allTileMap = FindObjectOfType<AllTileMap>();
         }
@@ -64,7 +67,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (photonView.IsMine && !isEnd)
         {
-            if (allTileMap.GetIsOutPlayer(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1)) //버그 수정 대기
+            if (myIndex != -1 && allTileMap.GetIsOutPlayer(myIndex - 1)) //버그 수정 대기
             {
                 isEnd = true;
                 PhotonNetwork.Destroy(gameObject);
@@ -108,9 +111,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         attackDelay += Time.deltaTime;
         if (isAttack && equipWeapon.rate < attackDelay && !isDodging && !isDying)
         {
-            if (equipWeapon.type == Weapon.weaponsType.Melee) anim.SetBool("isSwing", true);
-            else if (equipWeapon.type == Weapon.weaponsType.Range) anim.SetBool("isShot", true);
-            else if(equipWeapon.type == Weapon.weaponsType.Destroyer) anim.SetBool("isShot", true);
+            if (equipWeapon.type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
+            else if (equipWeapon.type == Weapon.WeaponsType.Range) anim.SetBool("isShot", true);
+            else if (equipWeapon.type == Weapon.WeaponsType.Cannon) anim.SetBool("isShot", true);
+            else if (equipWeapon.type == Weapon.WeaponsType.Throwing) { }
             equipWeapon.UseWeapons();
             attackDelay = 0;
             Invoke(nameof(SetAttackAnim), 0.1f);
@@ -118,9 +122,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     void SetAttackAnim()
     {
-        if (equipWeapon.type == Weapon.weaponsType.Melee) anim.SetBool("isSwing", false);
-        else if (equipWeapon.type == Weapon.weaponsType.Range) anim.SetBool("isShot", false);
-        else anim.SetBool("isShot", false);
+        if (equipWeapon.type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", false);
+        else if (equipWeapon.type == Weapon.WeaponsType.Range) anim.SetBool("isShot", false);
+        else if (equipWeapon.type == Weapon.WeaponsType.Cannon) anim.SetBool("isShot", false);
+        else if (equipWeapon.type == Weapon.WeaponsType.Throwing) { }
     }
     #endregion
     #region 점프
@@ -167,13 +172,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public void Hit(int damage,int cause)//casuse == 0 피격, == 1 낙사 //최적화 대기중
     {
         if (isDying) return;
-        view.RPC(nameof(PunHit), RpcTarget.All, damage,cause);
+        view.RPC(nameof(PunHit), RpcTarget.All, damage, cause);
+        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn), cause);
     }
     [PunRPC]
     public void PunHit(int damage, int cause) 
     {
         HP.fillAmount -= damage / 100f;
-        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn), cause);
     }
     #endregion
     #region 무기 교체
@@ -197,13 +202,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (isEnd) yield break;
         isDying = true;
+        rigid.velocity = Vector3.zero;
+        rigid.angularVelocity = Vector3.zero;
         anim.SetBool("isWalk",true);
         if (cause == 1)
-            gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up * 2f;
-            gameObject.transform.eulerAngles = new Vector3(-90, 180, 0); //미완성
+            gameObject.transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
+            gameObject.transform.eulerAngles = new Vector3(-90, 180, 0);
         yield return new WaitForSeconds(5f);
         if (cause == 0)
-            gameObject.transform.position = allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up;
+            gameObject.transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
             gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
         view.RPC(nameof(Recovery), RpcTarget.All);
         anim.SetBool("isWalk", false);

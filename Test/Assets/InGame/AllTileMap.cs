@@ -13,7 +13,6 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     [SerializeField] Text tileCount;
     [SerializeField] Text startTimer;
     [SerializeField] Text hasTileCount;
-    private GameObject PersonTile;
     private Transform[,] childPortal = new Transform[6, 2];
     private Transform[] childSpawner = new Transform[6];
     private SphereCollider[] childSphereColliders= new SphereCollider[6];
@@ -29,8 +28,8 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     #region Getter + Setter
     public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;
     public void SetSpawner(Transform tr, int i) => childSpawner[i] = tr;
-    public void SetPersonTileRadius(int i, float radius) => childSphereColliders[i].radius = radius;
-    public void SetChildTileCount(int i,int count) => childTileCount[i] = count;
+    public void SetPersonTileRadius(int i, float _radius) => childSphereColliders[i].radius = _radius;
+    public void SetChildTileCount(int i,int _count) => childTileCount[i] = _count;
     public void SetHasTileNum(int i, int j) => hasTileNum[i] = j * 1000;
     public void SetPlusHasTileNum(int i) => hasTileNum[i] += 1000;
     public void SetMinusHasTileNum(int i) => hasTileNum[i] -= 1;
@@ -62,51 +61,52 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     }
     void CreatePersonTile()
     {
-        float x = 0,
-              z = 0;
-        int tagNum = 0;
+        GameObject _personTile;
+        float _x = 0,
+              _z = 0;
+        int _tagNum = 0;
         float _radius = personTileMap.GetComponent<SphereCollider>().radius;
         for (int i = 0; i < 7; i++)
         {
             switch (i)
             {
                 case 0:
-                    x = 0;
-                    z = 0;
+                    _x = 0;
+                    _z = 0;
                     break;
                 case 1:
-                    x = 1;
-                    z = 0;
+                    _x = 1;
+                    _z = 0;
                     break;
                 case 2:
-                    x = 1.5f;
-                    z = 0.865f;
+                    _x = 1.5f;
+                    _z = 0.865f;
                     break;
                 case 3:
-                    x = 1;
-                    z = 1.73f;
+                    _x = 1;
+                    _z = 1.73f;
                     break;
                 case 4:
-                    x = 0;
-                    z = 1.73f;
+                    _x = 0;
+                    _z = 1.73f;
                     break;
                 case 5:
-                    x = -0.5f;
-                    z = 0.865f;
+                    _x = -0.5f;
+                    _z = 0.865f;
                     break;
                 case 6:
-                    x = 0.5f;
-                    z = 0.865f;
+                    _x = 0.5f;
+                    _z = 0.865f;
                     break;
             }
-            PersonTile = Instantiate(personTileMap, new Vector3
-            (x * _radius * 3, 0, z * _radius * 3), Quaternion.identity);
-            tagNum++;
-            PersonTile.transform.parent = transform;
-            PersonTile.name = "PerosnTileMap" + (i + 1);
-            PersonTile.tag = "Floor" + tagNum;
-            PersonTile.GetComponent<PersonTileMap>().CreateHexTileMap();
-            if (i != 6) childSphereColliders[i] = PersonTile.GetComponent<SphereCollider>();
+            _personTile = Instantiate(personTileMap, new Vector3
+            (_x * _radius * 3, 0, _z * _radius * 3), Quaternion.identity);
+            _tagNum++;
+            _personTile.transform.parent = transform;
+            _personTile.name = "PerosnTileMap" + (i + 1);
+            _personTile.tag = "Floor" + _tagNum;
+            _personTile.GetComponent<PersonTileMap>().CreateHexTileMap();
+            if (i != 6) childSphereColliders[i] = _personTile.GetComponent<SphereCollider>();
         }
         Destroy(personTileMap);
     }
@@ -117,13 +117,9 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         if (!generalManager.GetIsCreatePlayer()) return;
         foreach(Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
+            if (player.GetPlayerNumber() == -1) return;
             tileCount.text += player.NickName + " : " + childTileCount[player.GetPlayerNumber() - 1] + "\n";
-            
-        }
-        hasTileCount.text = PhotonNetwork.NickName + " : " + hasTileNum[PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1] + "\n";
-        for (int i = 0; i < 6; i++)
-        {
-            Debug.Log(i+" : " + hasTileNum[i]);
+            hasTileCount.text += player.NickName + " : " + hasTileNum[player.GetPlayerNumber() - 1] + "\n";
         }
     }
 }

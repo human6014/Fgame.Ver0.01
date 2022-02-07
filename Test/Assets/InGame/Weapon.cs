@@ -4,8 +4,8 @@ using UnityEngine;
 using Photon.Pun;
 public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
 {
-    public enum weaponsType { Melee, Range, Destroyer};
-    public weaponsType type;
+    public enum WeaponsType { Melee, Range, Cannon, Throwing};
+    public WeaponsType type;
     public int damage;
     public float rate, speed;
     public BoxCollider meleeArea;
@@ -17,13 +17,28 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     #region 사용 무기 판별
     public void UseWeapons()
     {
-        if (type == weaponsType.Melee) StartCoroutine("Swing");
-        else if (type == weaponsType.Range) Shot();
-        else if (type == weaponsType.Destroyer) Launch();
-        else Debug.LogError("NonUseWeapons");
+        switch (type)
+        {
+            case WeaponsType.Melee:
+                StartCoroutine("Swing");
+                break;
+            case WeaponsType.Range:
+                Debug.Log("Range");
+                Shot();
+                break;
+            case WeaponsType.Cannon:
+                Debug.Log("Cannon");
+                Launch();
+                break;
+            case WeaponsType.Throwing:
+                break;
+            default:
+                Debug.LogError("NonUseWeapons");
+                break;
+        }
     }
     #endregion
-    #region 총 발사
+    #region 원거리 무기 사용
     private void Shot()
     {
         PhotonNetwork.Instantiate("BulletHandGun", bulletPos.position, bulletPos.rotation);
@@ -35,7 +50,14 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     }
     private void Launch()
     {
-        PhotonNetwork.Instantiate("Rocket", bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
+        StartCoroutine(nameof(Reload));
+        PhotonNetwork.Instantiate("WarHead", bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
+    }
+    IEnumerator Reload()
+    {
+        bullet.SetActive(false);
+        yield return new WaitForSeconds(2);
+        bullet.SetActive(true);
     }
     #endregion
     #region 근접 무기 사용

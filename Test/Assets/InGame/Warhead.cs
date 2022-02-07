@@ -48,12 +48,12 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     [PunRPC]
-    IEnumerator Effect()
+    IEnumerator Effect() //에러 있음
     {
         isCollison = true;
         meshRenderer.enabled = false;
         particle.SetActive(true);
-
+        
         RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, 0.5f, Vector3.up, 0);
         foreach (RaycastHit hit in raycastHits)
         {
@@ -67,7 +67,6 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
             if (hit.transform.CompareTag("Player"))
             {
                 hit.transform.GetComponent<Player>().Hit(10, 0);
-                Debug.Log(hit.transform.name);
             }
         }
 

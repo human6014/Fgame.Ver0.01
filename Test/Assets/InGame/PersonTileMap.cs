@@ -14,12 +14,12 @@ public class PersonTileMap : MonoBehaviour
     private new Renderer renderer;
     private float initRadius;
     private bool tryOnce;
-    [SerializeField] GameObject HexTilePrefab;
-    [SerializeField] GameObject PortalPrefab;
-    [SerializeField] GameObject CastlePrefab;
+    [SerializeField] GameObject HexTilePrefab,
+                                PortalPrefab,
+                                CastlePrefab;
     [SerializeField]
     int mapWidth,  //22 
-                         mapHeight;
+        mapHeight;
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f,
                         tileRadius = 8.5f;
@@ -33,7 +33,7 @@ public class PersonTileMap : MonoBehaviour
         //else sphereCollider.radius = tileRadius;
         else
         {
-            sphereCollider.radius = 8.5f;//allTileMap.myField[allTileMap.playerNum++];
+            sphereCollider.radius = tileRadius;//allTileMap.myField[allTileMap.playerNum++];
             myIndex = int.Parse(transform.tag.Substring(5));
             Debug.Log(myIndex);
         }
@@ -50,14 +50,14 @@ public class PersonTileMap : MonoBehaviour
                 if (allTileMap.GetHasTileNum(myIndex - 1) > 0) {
                     allTileMap.SetMinusHasTileNum(myIndex - 1);
                 }
-                else sphereCollider.radius -= Time.deltaTime * Time.time / 1000;
+                //else sphereCollider.radius -= Time.deltaTime * Time.time / 1000;
             }
         }
         else if (!tryOnce)
         {
-            Transform[] child = GetComponentsInChildren<Transform>();
+            Transform[] _child = GetComponentsInChildren<Transform>();
 
-            foreach (Transform iter in child)
+            foreach (Transform iter in _child)
             {
                 if (iter != transform) StartCoroutine(FallWaiting(iter.gameObject));
             }
@@ -107,18 +107,18 @@ public class PersonTileMap : MonoBehaviour
         int mapZMin = -mapHeight / 2;
         int mapZMax = mapHeight / 2;
 
-        Vector3 pos;
+        Vector3 _pos;
         GameObject TempGo;
         for (float x = mapXMin; x < mapXMax; x++)
         {
             for (float z = mapZMin; z < mapZMax; z++)
             {
                 TempGo = Instantiate(HexTilePrefab, transform);
-                if (z % 2 == 0) pos = new Vector3(transform.position.x + x * tileXOffset, 0,
+                if (z % 2 == 0) _pos = new Vector3(transform.position.x + x * tileXOffset, 0,
                                                   transform.position.z + z * tileZOffset);
-                else pos = new Vector3(transform.position.x + x * tileXOffset + tileXOffset / 2, 0,
+                else _pos = new Vector3(transform.position.x + x * tileXOffset + tileXOffset / 2, 0,
                                        transform.position.z + z * tileZOffset);
-                StartCoroutine(SetTileInfo(TempGo, x, z, pos));
+                StartCoroutine(SetTileInfo(TempGo, x, z, _pos));
             }
         }
     }

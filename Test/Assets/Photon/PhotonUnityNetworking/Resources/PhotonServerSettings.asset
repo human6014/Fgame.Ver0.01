@@ -69,6 +69,8 @@ MonoBehaviour:
   - OnMasterChatting
   - OnPlayerChatting
   - Effect
+  - DrawTest1
+  - ColDestroy
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

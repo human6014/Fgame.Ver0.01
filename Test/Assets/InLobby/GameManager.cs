@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private string playerName = "Default";
     private string roomCode = "Default";
     private int stateIndex = -1;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 2 };
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers =2 };
     #region 싱글톤
     static GameManager _instance = null;
     public static GameManager Instance() => _instance;

@@ -25,6 +25,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
 
     public float[] myField = new float[6]; //임시용
     public int playerNum;                  //임시용
+
     #region Getter + Setter
     public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;
     public void SetSpawner(Transform tr, int i) => childSpawner[i] = tr;
@@ -121,5 +122,9 @@ public class AllTileMap : MonoBehaviourPunCallbacks
             tileCount.text += player.NickName + " : " + childTileCount[player.GetPlayerNumber() - 1] + "\n";
             hasTileCount.text += player.NickName + " : " + hasTileNum[player.GetPlayerNumber() - 1] + "\n";
         }
+    }
+    public void DrawTest()
+    {
+        generalManager.DrawTest();
     }
 }

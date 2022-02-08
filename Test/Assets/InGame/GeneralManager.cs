@@ -27,7 +27,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] GameObject content;
     [SerializeField] AllTileMap allTileMap;
     PhotonView view;
-
+    public Text test;                      //юс╫ц©К
     public bool GetIsRoomFull() => isRoomFull;
     public bool GetIsCreateTile() => isCreateTile;
     public bool GetIsCreatePlayer() => isCreatePlayer;
@@ -122,4 +122,16 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     #endregion
+    public void DrawTest()
+    {
+        view.RPC(nameof(DrawTest1), RpcTarget.All);
+    }
+    [PunRPC]
+    public void DrawTest1()
+    {
+        test.text = "";
+        string obj = FindObjectOfType<Warhead>().ReturnColName();
+        test.text += obj + "\n";
+        //Destroy(name);
+    }
 }

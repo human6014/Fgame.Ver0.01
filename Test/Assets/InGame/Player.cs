@@ -39,6 +39,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     AllTileMap allTileMap;
     Weapon equipWeapon; //이게 되나?
 
+    int timer;
     private void Start()
     {
         if (photonView.IsMine)
@@ -48,7 +49,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == -1) Debug.LogError("PlayerSetNumber Error");
             Name.text = PhotonNetwork.NickName;
             allTileMap = FindObjectOfType<AllTileMap>();
-        }
+        } 
         else Name.text = view.Owner.NickName;
         for (int i = 0; i < hasWeapons.Length; i++)
         {
@@ -79,7 +80,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             isJump = Input.GetButtonDown("Jump");
             isDodge = Input.GetButtonDown("Dodge");
             isAttack = Input.GetButtonDown("Attack");
-            moveVec = new Vector3(xMove, 0, zMove).normalized;
+            
             for (int i = 0; i < keyCodes.Length; i++)
             {
                 if (Input.GetKeyDown(keyCodes[i]))
@@ -88,6 +89,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                     break;
                 }
             }
+            if (xMove + zMove != 1 && xMove + zMove != -1) xMove /= 2; zMove *= 0.866f;
+            moveVec = new Vector3(xMove, 0, zMove);
+
             if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //변경 고민중
 
             if (!isJumping && !isDodging)
@@ -96,7 +100,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
             anim.SetBool("isRun", moveVec != Vector3.zero);
             anim.SetBool("isWalk", isWalk);
-            transform.LookAt(transform.position + moveVec);
+            timer++;
+            if (timer % 8 == 0)
+            {
+                transform.LookAt(transform.position + moveVec);
+                timer = 0;
+            }
+            
             Attack();
             Jump();
             Dodge(moveVec);
@@ -104,7 +114,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
-
     #region 공격 
     void Attack() //오브젝트 폴링 활용할 것
     {
@@ -152,7 +161,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 회피
     void Dodge(Vector3 moveVec)
     {
-        if (isDodge && !isDodging && !isJumping && moveVec != Vector3.zero && MP.fillAmount >= 0.3f && !isDying)
+        if (isDodge && !isDodging  && moveVec != Vector3.zero && MP.fillAmount >= 0.3f && !isDying)
         {
             speed *= 2.5f;
             anim.SetBool("isDodge", true);
@@ -173,6 +182,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (isDying) return;
         view.RPC(nameof(PunHit), RpcTarget.All, damage, cause);
+
         if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn), cause);
     }
     [PunRPC]
@@ -206,12 +216,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         rigid.angularVelocity = Vector3.zero;
         anim.SetBool("isWalk",true);
         if (cause == 1)
-            gameObject.transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
-            gameObject.transform.eulerAngles = new Vector3(-90, 180, 0);
+            transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
+            transform.eulerAngles = new Vector3(-90, 180, 0);
         yield return new WaitForSeconds(5f);
         if (cause == 0)
-            gameObject.transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
-            gameObject.transform.eulerAngles = new Vector3(0, 180, 0);
+            transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
+            transform.eulerAngles = new Vector3(0, 180, 0);
         view.RPC(nameof(Recovery), RpcTarget.All);
         anim.SetBool("isWalk", false);
         isDying = false;

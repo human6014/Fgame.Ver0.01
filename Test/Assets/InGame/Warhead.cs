@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
+
+using UnityEngine.UI;
+
 public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
 {
     private bool isCollison;
@@ -15,7 +18,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     {
         allTileMap = FindObjectOfType<AllTileMap>();
         StartCoroutine("BallisticFall");
-        Destroy(gameObject, 3);
+        //Destroy(gameObject, 3);
     }
     void Update()
     {
@@ -44,13 +47,23 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner"))
         {
+            NAME = other.name;
+            allTileMap.DrawTest();
+            
             StartCoroutine(nameof(Effect));
+            Destroy(other.gameObject);//temp
         }
+    }
+    string NAME;
+    public string ReturnColName()
+    {
+        return NAME;
     }
     [PunRPC]
     IEnumerator Effect() //에러 있음
     {
         isCollison = true;
+        yield break;
         meshRenderer.enabled = false;
         particle.SetActive(true);
         

@@ -122,16 +122,4 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     #endregion
-    public void DrawTest()
-    {
-        view.RPC(nameof(DrawTest1), RpcTarget.All);
-    }
-    [PunRPC]
-    public void DrawTest1()
-    {
-        test.text = "";
-        string obj = FindObjectOfType<Warhead>().ReturnColName();
-        test.text += obj + "\n";
-        //Destroy(name);
-    }
 }

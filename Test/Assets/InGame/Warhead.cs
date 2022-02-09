@@ -18,14 +18,14 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     {
         allTileMap = FindObjectOfType<AllTileMap>();
         StartCoroutine("BallisticFall");
-        //Destroy(gameObject, 3);
+        Destroy(gameObject, 3);
     }
     void Update()
     {
         if (isCollison) return;
         transform.Translate(Vector3.back * 12 * Time.deltaTime);
     }
-    #region √—æÀ ±À¿˚ º≥¡§
+    #region Ï¥ùÏïå Í∂§Ï†Å ÏÑ§Ï†ï
     IEnumerator BallisticFall()
     {
         yield return new WaitForSeconds(0.1f);
@@ -37,33 +37,29 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     #endregion
-    #region √—æÀ √Êµπ ∞ÀªÁ
+    #region Ï¥ùÏïå Ï∂©Îèå Í≤ÄÏÇ¨
     private void OnTriggerEnter(Collider other)
     {
         if (isCollison) return;
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
-            pv.RPC(nameof(Effect), RpcTarget.All);
+            //StartCoroutine(nameof(Effect));
+            pv.RPC(nameof(Effect), RpcTarget.AllViaServer);
+            Raycasting();
         }
         else if (other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner"))
         {
-            NAME = other.name;
-            allTileMap.DrawTest();
-            
-            StartCoroutine(nameof(Effect));
-            Destroy(other.gameObject);//temp
+            pv.RPC(nameof(Effect), RpcTarget.AllViaServer);
+            Raycasting();
+            //StartCoroutine(nameof(Effect));
         }
     }
-    string NAME;
-    public string ReturnColName()
-    {
-        return NAME;
-    }
+    /*
     [PunRPC]
-    IEnumerator Effect() //ø°∑Ø ¿÷¿Ω
+    void Effect() //RaycastHit rpcÏôÄ Î∂ÑÎ¶¨ -> Ïã§ÌñâÏãúÌÇ® ÌÅ¥ÎùºÏóêÏÑú RaycastHit Í≥ÑÏÇ∞ -> ÌååÍ¥¥ÎêòÎäî Í∞úÏ≤¥ rpcÎ°ú Ï†ÑÎã¨
     {
+        bool _onDamage = false;
         isCollison = true;
-        yield break;
         meshRenderer.enabled = false;
         particle.SetActive(true);
         
@@ -74,20 +70,51 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
                 !hit.transform.tag.EndsWith(pv.Owner.GetPlayerNumber().ToString()) && !hit.transform.tag.EndsWith("7") &&
                 !hit.transform.name.StartsWith("Spawner"))
             {
-                Destroy(hit.transform.gameObject);
+                //Destroy(hit.transform.gameObject);
+                //pv.RPC(nameof(FloorDestroy),RpcTarget.All, hit.transform.name,hit.transform.parent.name);
+                FloorDestroy(hit.transform.name, hit.transform.parent.name);
                 allTileMap.SetPlusHasTileNum(pv.Owner.GetPlayerNumber() - 1);
             }
-            if (hit.transform.CompareTag("Player"))
+            if (hit.transform.CompareTag("Player") && !_onDamage)
             {
-                hit.transform.GetComponent<Player>().Hit(10, 0);
+                _onDamage = true;
+                hit.transform.GetComponent<Player>().Hit(damage);
             }
         }
-
-        yield return new WaitForSeconds(3);
-        pv.RPC(nameof(Destroy), RpcTarget.All);
+    }
+    */
+    [PunRPC]
+    void Effect()
+    {
+        bool _onDamage = false;
+        isCollison = true;
+        meshRenderer.enabled = false;
+        particle.SetActive(true);
+    }
+    void Raycasting()
+    {
+        RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, 0.5f, Vector3.up, 0, 1 << LayerMask.NameToLayer("Destroyable"));
+        foreach (RaycastHit hit in raycastHits)
+        {
+            if(!hit.transform.tag.EndsWith(pv.Owner.GetPlayerNumber().ToString()))
+            {
+                //Destroy(hit.transform.gameObject);
+                pv.RPC(nameof(FloorDestroy),RpcTarget.AllViaServer, hit.transform.name,hit.transform.parent.name);
+                
+            }
+        }
     }
     [PunRPC]
-    void Destroy() => Destroy(gameObject);
+    void FloorDestroy(string hitName,string hitParentName)
+    {
+        Debug.Log(hitName + " " + hitParentName);
+        Transform parentObject = GameObject.Find(hitParentName).transform;
+        Transform hitObject = parentObject.Find(hitName);
+        if (hitObject == null) return;
+        Debug.Log(hitObject.name + " " + parentObject.name);
+        Destroy(hitObject.gameObject);
+        allTileMap.SetPlusHasTileNum(pv.Owner.GetPlayerNumber() - 1);//Î¨∏Ï†úÏûàÏùå
+    }
     #endregion
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }
 }

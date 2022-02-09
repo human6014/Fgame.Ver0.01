@@ -142,7 +142,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (isJump && !isJumping && !isDodging && MP.fillAmount >= 0.2f && !isDying)
         {
-            rigid.AddForce(Vector3.up * 4f, ForceMode.Impulse);
+            rigid.AddForce(Vector3.up * 4.5f, ForceMode.Impulse);
             anim.SetBool("isJump", true);
             MP.fillAmount -= 0.15f;
             isJumping = true;
@@ -178,17 +178,16 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 피격
-    public void Hit(int damage,int cause)//casuse == 0 피격, == 1 낙사 //최적화 대기중
+    public void Hit(int damage)
     {
         if (isDying) return;
-        view.RPC(nameof(PunHit), RpcTarget.All, damage, cause);
-
-        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn), cause);
+        view.RPC(nameof(PunHit), RpcTarget.All, damage);
     }
     [PunRPC]
-    public void PunHit(int damage, int cause) 
+    public void PunHit(int damage)
     {
         HP.fillAmount -= damage / 100f;
+        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn));
     }
     #endregion
     #region 무기 교체
@@ -208,29 +207,46 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount = 1;
         MP.fillAmount = 1;
     }
-    IEnumerator Respawn(int cause)
+    [PunRPC]
+    void UnRecovery()
     {
-        if (isEnd) yield break;
+        HP.fillAmount = 0;
+        MP.fillAmount = 0;
+    }
+    IEnumerator Respawn()//FallRespawn 통합 예정
+    {
+        if (isEnd || !photonView.IsMine) yield break;
         isDying = true;
         rigid.velocity = Vector3.zero;
         rigid.angularVelocity = Vector3.zero;
-        anim.SetBool("isWalk",true);
-        if (cause == 1)
-            transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
-            transform.eulerAngles = new Vector3(-90, 180, 0);
+        transform.eulerAngles = new Vector3(-90, 180, 0);
+
         yield return new WaitForSeconds(5f);
-        if (cause == 0)
-            transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
-            transform.eulerAngles = new Vector3(0, 180, 0);
+        transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
+        transform.eulerAngles = new Vector3(0, 180, 0);
         view.RPC(nameof(Recovery), RpcTarget.All);
-        anim.SetBool("isWalk", false);
         isDying = false;
     }
     #endregion
     #region 낙사
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("GameController")) Hit(1000,1);
+        if (other.gameObject.CompareTag("GameController")) StartCoroutine(nameof(FallRespawn));
+    }
+    IEnumerator FallRespawn()
+    {
+        if (isEnd || !photonView.IsMine) yield break;
+        isDying = true;
+        view.RPC(nameof(UnRecovery), RpcTarget.All);
+        rigid.velocity = Vector3.zero;
+        rigid.angularVelocity = Vector3.zero;
+        transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
+        transform.eulerAngles = new Vector3(-90, 180, 0);
+
+        yield return new WaitForSeconds(5f);
+        transform.eulerAngles = new Vector3(0, 180, 0);
+        view.RPC(nameof(Recovery), RpcTarget.All);
+        isDying = false;
     }
     #endregion
     #region 포탈 이동
@@ -240,7 +256,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             other.gameObject.GetComponent<Portal>().PlayerEntry(gameObject);
     }
     #endregion
-    #region 위치,체력 동기화
+    #region 위치,MP 동기화
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)

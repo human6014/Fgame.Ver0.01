@@ -35,7 +35,7 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
         if (isCollison) return;
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
-            other.GetComponent<Player>().Hit(damage,0);
+            other.GetComponent<Player>().Hit(damage);
             isCollison = true;
             pv.RPC(nameof(Destroy), RpcTarget.All);
         }

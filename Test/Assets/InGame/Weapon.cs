@@ -60,7 +60,9 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         bullet.SetActive(true);
     }
     #endregion
-    #region 근접 무기 사용
+
+    //버그 있음
+    #region 근접 무기
     IEnumerator Swing()
     {
         yield return new WaitForSeconds(0.1f);
@@ -71,21 +73,14 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         meleeArea.enabled = false;
         trailEffect.enabled = false;
     }
-    #endregion
-    #region 근접무기 충돌 검사
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<Player>().Hit(damage,0);
-            meleeArea.enabled = false;
-        }
-        else if (other.CompareTag("TPlayer"))
-        {
-            other.GetComponent<TestPlayer>().Hit(damage);
+            other.GetComponent<Player>().Hit(damage);
             meleeArea.enabled = false;
         }
     }
-    #endregion
+    #endregion 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }
 }

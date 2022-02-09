@@ -123,8 +123,4 @@ public class AllTileMap : MonoBehaviourPunCallbacks
             hasTileCount.text += player.NickName + " : " + hasTileNum[player.GetPlayerNumber() - 1] + "\n";
         }
     }
-    public void DrawTest()
-    {
-        generalManager.DrawTest();
-    }
 }

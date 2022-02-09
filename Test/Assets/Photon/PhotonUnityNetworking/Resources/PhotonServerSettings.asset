@@ -71,6 +71,8 @@ MonoBehaviour:
   - Effect
   - DrawTest1
   - ColDestroy
+  - FloorDestroy
+  - UnRecovery
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

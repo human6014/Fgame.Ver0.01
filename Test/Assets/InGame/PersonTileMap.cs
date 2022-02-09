@@ -65,7 +65,7 @@ public class PersonTileMap : MonoBehaviour
             tryOnce = true;
 
         }
-        if (transform.childCount == 0) SetIsOutPlayer();
+        if (transform.childCount == 0) SetIsOutPlayer(); //임시
     }
     void SetIsOutPlayer()
     {
@@ -162,7 +162,7 @@ public class PersonTileMap : MonoBehaviour
             case "Floor4" when x == ((int)z - 1) / 2 && z == mapHeight / -2 + count && x < 0:
                 TagChanging(TempGo, x, z);
                 break;
-            case "Floor5" when x == (int)z / -2 && z == -count + (count % 2 == 0 ? 2 : 0) && z >= mapHeight / -2: //동작 원리 혼자만 특별함
+            case "Floor5" when x == (int)z / -2 && z == -count + (count % 2 == 0 ? 2 : 0) && z >= mapHeight / -2: //동작 원리 혼자만 특이함
                 TagChanging(TempGo, x + 1, z - 2);
                 if (z == mapHeight / -2) TempGo.tag = transform.tag;
                 break;
@@ -170,9 +170,13 @@ public class PersonTileMap : MonoBehaviour
                 TagChanging(TempGo, x, z);
                 break;
             default:
-                if (x == 0 && z == 0) TempGo.tag = "Floor7";
+                if (x == 0 && z == 0) TempGo.tag = "Floor7"; 
                 else TempGo.tag = transform.tag;
-                if (transform.CompareTag("Floor7")) CreatePortal(x, z);
+                if (transform.CompareTag("Floor7"))
+                {
+                    TempGo.layer = 7;
+                    CreatePortal(x, z);
+                }
                 break;
         }
     }
@@ -181,6 +185,7 @@ public class PersonTileMap : MonoBehaviour
     void TagChanging(GameObject TempGo, float x, float z)
     {
         TempGo.tag = "Floor7";
+        TempGo.layer = 7;
         count++;
         if (x >= 0 && count == mapHeight / 2) CreatePortal(x, z);
         else if (x < 0 && count == 2) CreatePortal(x, z);

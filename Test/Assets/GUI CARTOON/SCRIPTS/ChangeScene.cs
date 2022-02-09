@@ -9,9 +9,9 @@ public class ChangeScene : MonoBehaviour {
 		GetComponent<AudioSource>().Play();
 		Invoke("GameNameScene", GetComponent<AudioSource>().clip.length);
 	}
-	
-	
-	void GameNameScene(){
+
+    [System.Obsolete]
+    void GameNameScene(){
 		Application.LoadLevel (NameScene);
 	}
 }

@@ -67,7 +67,7 @@ public class Grenade : MonoBehaviourPunCallbacks
             }
             if (hit.transform.CompareTag("Player"))
             {
-                hit.transform.GetComponent<Player>().Hit(10, 0);
+                hit.transform.GetComponent<Player>().Hit(10);
                 Debug.Log(hit.transform.name);
             }
         }

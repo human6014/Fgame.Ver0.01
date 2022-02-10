@@ -211,7 +211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 15
   speed: 0
-  pv: {fileID: 2669186511984069519}
+  view: {fileID: 2669186511984069519}
 --- !u!1 &8209104898410953762
 GameObject:
   m_ObjectHideFlags: 0

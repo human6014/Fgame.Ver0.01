@@ -8,7 +8,7 @@ public class Grenade : MonoBehaviourPunCallbacks
     private AllTileMap allTileMap;
     public GameObject particle;
     public MeshRenderer meshRenderer;
-    public PhotonView pv;
+    public PhotonView view;
     public int damage;
     private bool isCollison;
     
@@ -41,7 +41,7 @@ public class Grenade : MonoBehaviourPunCallbacks
         if (isCollison) return;
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
-            pv.RPC(nameof(Effect), RpcTarget.All);
+            view.RPC(nameof(Effect), RpcTarget.All);
         }
         else if (other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner"))
         {
@@ -59,11 +59,11 @@ public class Grenade : MonoBehaviourPunCallbacks
         foreach (RaycastHit hit in raycastHits)
         {
             if (!hit.transform.name.StartsWith("PerosnTileMap") && hit.transform.tag.StartsWith("Floor") &&
-                !hit.transform.tag.EndsWith(pv.Owner.GetPlayerNumber().ToString()) && !hit.transform.tag.EndsWith("7") &&
+                !hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && !hit.transform.tag.EndsWith("7") &&
                 !hit.transform.name.StartsWith("Spawner"))
             {
                 Destroy(hit.transform.gameObject);
-                allTileMap.SetPlusHasTileNum(pv.Owner.GetPlayerNumber() - 1);
+                allTileMap.SetPlusHasTileNum(view.Owner.GetPlayerNumber() - 1);
             }
             if (hit.transform.CompareTag("Player"))
             {
@@ -73,7 +73,7 @@ public class Grenade : MonoBehaviourPunCallbacks
         }
 
         yield return new WaitForSeconds(3);
-        pv.RPC(nameof(Destroy), RpcTarget.All);
+        view.RPC(nameof(Destroy), RpcTarget.All);
     }
     [PunRPC]
     void Destroy() => Destroy(gameObject);

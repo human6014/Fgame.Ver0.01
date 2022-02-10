@@ -48,7 +48,7 @@ public class PersonTileMap : MonoBehaviour
             if (generalManager.GetIsCreateTile())
             {
                 if (allTileMap.GetHasTileNum(myIndex - 1) > 0) {
-                    allTileMap.SetMinusHasTileNum(myIndex - 1);
+                    //allTileMap.SetMinusHasTileNum(myIndex - 1);
                 }
                 //else sphereCollider.radius -= Time.deltaTime * Time.time / 1000;
             }
@@ -170,7 +170,11 @@ public class PersonTileMap : MonoBehaviour
                 TagChanging(TempGo, x, z);
                 break;
             default:
-                if (x == 0 && z == 0) TempGo.tag = "Floor7"; 
+                if (x == 0 && z == 0)
+                {
+                    TempGo.tag = "Floor7";
+                    TempGo.layer = 7;
+                }
                 else TempGo.tag = transform.tag;
                 if (transform.CompareTag("Floor7"))
                 {

@@ -27,7 +27,6 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] GameObject content;
     [SerializeField] AllTileMap allTileMap;
     PhotonView view;
-    public Text test;                      //임시용
     public bool GetIsRoomFull() => isRoomFull;
     public bool GetIsCreateTile() => isCreateTile;
     public bool GetIsCreatePlayer() => isCreatePlayer;
@@ -88,7 +87,6 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     #endregion
-
     #region 채팅
     void Update()
     {
@@ -98,20 +96,11 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
             inputField.Select();
         }
     }
-    public void SetChatClear()
-    {
-        inputField.text = string.Empty;
-    }
+    public void SetChatClear() => inputField.text = string.Empty;
     [PunRPC]
-    void OnPlayerChatting(string message,string sender)
-    {
-        outputText.text += sender + " : " + message + "\r\n";
-    }
+    void OnPlayerChatting(string message,string sender) => outputText.text += sender + " : " + message + "\r\n";
     [PunRPC]
-    void OnMasterChatting(string message, string target = "")
-    {
-        outputText.text += target + message + "\r\n";
-    }
+    void OnMasterChatting(string message, string target = "") => outputText.text += target + message + "\r\n";
     public void Input_OnEndEdit()
     {
         if (PhotonNetwork.IsConnected)

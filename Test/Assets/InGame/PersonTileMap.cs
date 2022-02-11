@@ -37,9 +37,9 @@ public class PersonTileMap : MonoBehaviour
             myIndex = int.Parse(transform.tag.Substring(5));
             Debug.Log(myIndex);
         }
-        initRadius = sphereCollider.radius - 0.05f;
+        initRadius = sphereCollider.radius - 0.005f;
     }
-    private void Update()
+    private void FixedUpdate()
     {
         if (gameObject.CompareTag("Floor7") || gameObject.name == "Sample") return;
         allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
@@ -48,9 +48,9 @@ public class PersonTileMap : MonoBehaviour
             if (generalManager.GetIsCreateTile())
             {
                 if (allTileMap.GetHasTileNum(myIndex - 1) > 0) {
-                    //allTileMap.SetMinusHasTileNum(myIndex - 1);
+                    allTileMap.SetMinusHasTileNum(myIndex - 1);
                 }
-                //else sphereCollider.radius -= Time.deltaTime * Time.time / 1000;
+                else sphereCollider.radius -= 0.001f;
             }
         }
         else if (!tryOnce)
@@ -71,13 +71,14 @@ public class PersonTileMap : MonoBehaviour
     {
         allTileMap.SetIsOutPlayer(true, myIndex - 1);
     }
+    //버그 있음
     #region 블럭 파괴
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag(tag))
         {
             Debug.Log("블럭 파괴");
-            if (sphereCollider.radius > initRadius) Destroy(other.gameObject);
+            if (sphereCollider.radius > initRadius) Destroy(other.gameObject); //버그 있음
             else StartCoroutine(FallWaiting(other.gameObject));
         }
     }

@@ -20,6 +20,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         switch (type)
         {
             case WeaponsType.Melee:
+                Debug.Log("Melle");
                 StartCoroutine("Swing");
                 break;
             case WeaponsType.Range:
@@ -31,6 +32,8 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
                 Launch();
                 break;
             case WeaponsType.Throwing:
+                Debug.Log("Throwing");
+                Throw();
                 break;
             default:
                 Debug.LogError("NonUseWeapons");
@@ -53,6 +56,10 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         StartCoroutine(nameof(Reload));
         PhotonNetwork.Instantiate("WarHead", bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
     }
+    private void Throw()
+    {
+        PhotonNetwork.Instantiate("Grenade", bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
+    }
     IEnumerator Reload()
     {
         bullet.SetActive(false);
@@ -60,8 +67,6 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         bullet.SetActive(true);
     }
     #endregion
-
-    //버그 있음
     #region 근접 무기
     IEnumerator Swing()
     {

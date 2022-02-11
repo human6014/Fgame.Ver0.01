@@ -46,7 +46,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             Camera.main.GetComponent<MainCamera>().target = transform;
             myIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
-            if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == -1) Debug.LogError("PlayerSetNumber Error");
             Name.text = PhotonNetwork.NickName;
             allTileMap = FindObjectOfType<AllTileMap>();
         } 
@@ -95,8 +94,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //∫Ø∞Ê ∞ÌπŒ¡ﬂ
 
             if (!isJumping && !isDodging)
-                if (isWalk || (moveVec == Vector3.zero)) MP.fillAmount += Time.time * Time.deltaTime / 25f;
-                else MP.fillAmount += Time.time * Time.deltaTime / 50f;
+                if (isWalk || (moveVec == Vector3.zero)) MP.fillAmount += 0.3f * Time.deltaTime;
+                else MP.fillAmount += 0.2f * Time.deltaTime;
 
             anim.SetBool("isRun", moveVec != Vector3.zero);
             anim.SetBool("isWalk", isWalk);
@@ -217,6 +216,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (isEnd || !photonView.IsMine) yield break;
         isDying = true;
+        view.RPC(nameof(UnRecovery), RpcTarget.All);
         rigid.velocity = Vector3.zero;
         rigid.angularVelocity = Vector3.zero;
         transform.eulerAngles = new Vector3(-90, 180, 0);

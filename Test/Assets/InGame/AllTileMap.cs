@@ -32,8 +32,8 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetPersonTileRadius(int i, float _radius) => childSphereColliders[i].radius = _radius;
     public void SetChildTileCount(int i,int _count) => childTileCount[i] = _count;
     public void SetHasTileNum(int i, int j) => hasTileNum[i] = j * 1000;
-    public void SetPlusHasTileNum(int i) => hasTileNum[i] += 1;
-    public void SetMinusHasTileNum(int i) => hasTileNum[i] -= 1;
+    public void SetPlusHasTileNum(int i) => hasTileNum[i] += 1000;
+    public void SetMinusHasTileNum(int i) => hasTileNum[i] -= 10;
     public void SetIsOutPlayer(bool _isOutPlayer, int i) => isOutPlayer[i] = _isOutPlayer;
     public Transform GetPortal(int i, int j) => childPortal[i, j];
     public Transform GetSpawner(int i) => childSpawner[i];
@@ -119,7 +119,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         foreach(Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
             if (player.GetPlayerNumber() == -1) return;
-            tileCount.text += player.NickName + " : " + childTileCount[player.GetPlayerNumber() - 1] + "\n";
+            tileCount.text += (player.IsLocal?"<color=red>": "<color=black>")+player.NickName + "</color> : " + childTileCount[player.GetPlayerNumber() - 1] + "\n";
             hasTileCount.text += player.NickName + " : " + hasTileNum[player.GetPlayerNumber() - 1] + "\n";
         }
     }

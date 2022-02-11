@@ -46,6 +46,11 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster() { }
     public void OnStartGame(int _stateIndex, string _playerName, string _roomCode)
     {
+        if (!PhotonNetwork.IsConnectedAndReady)
+        {
+            Debug.Log("Wait!");
+            return;
+        }
         stateIndex = _stateIndex;
         roomCode   = _roomCode;
         playerName = _playerName;

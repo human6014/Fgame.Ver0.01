@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
+using System.Collections;
+using UnityEngine;
 public class Grenade : MonoBehaviourPunCallbacks
 {
     private AllTileMap allTileMap;
@@ -26,7 +25,6 @@ public class Grenade : MonoBehaviourPunCallbacks
     #region 총알 궤적 설정
     IEnumerator BallisticFall()
     {
-        yield return new WaitForSeconds(0.1f);
         while (!isCollison)
         {
             if (transform.eulerAngles.x == 270) yield break;
@@ -35,48 +33,57 @@ public class Grenade : MonoBehaviourPunCallbacks
         }
     }
     #endregion
-    #region 총알 충돌 검사
+    #region 탄두 충돌 검사
     private void OnTriggerEnter(Collider other)
     {
-        if (isCollison) return;
-        if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
+        if (isCollison || view.IsMine) return;
+        if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine)
         {
-            view.RPC(nameof(Effect), RpcTarget.All);
+            other.transform.GetComponent<Player>().Hit(damage);
+            isCollison = true;
+            Raycasting();
         }
-        else if (other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner"))
+        else if ((other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner")))
         {
-            StartCoroutine(nameof(Effect));
+            isCollison = true; //이렇게 안하면 rpc 반응 속도때문에 여러번 호출될 수 있음
+            Raycasting();
         }
     }
     [PunRPC]
-    IEnumerator Effect()
+    void Effect()
     {
         isCollison = true;
         meshRenderer.enabled = false;
         particle.SetActive(true);
-
-        RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, 0.5f, Vector3.up, 0);
+    }
+    void Raycasting()
+    {
+        view.RPC(nameof(Effect), RpcTarget.All);
+        RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, 0.5f, Vector3.up, 0, 1 << LayerMask.NameToLayer("Destroyable"));
+        bool _onDamage = false;
         foreach (RaycastHit hit in raycastHits)
         {
-            if (!hit.transform.name.StartsWith("PerosnTileMap") && hit.transform.tag.StartsWith("Floor") &&
-                !hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && !hit.transform.tag.EndsWith("7") &&
-                !hit.transform.name.StartsWith("Spawner"))
-            {
-                Destroy(hit.transform.gameObject);
-                allTileMap.SetPlusHasTileNum(view.Owner.GetPlayerNumber() - 1);
-            }
-            if (hit.transform.CompareTag("Player"))
+            if (hit.transform.CompareTag("Player") && !_onDamage)
             {
                 hit.transform.GetComponent<Player>().Hit(10);
-                Debug.Log(hit.transform.name);
+                _onDamage = true;
+            }
+            if (!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && hit.transform.tag.StartsWith("Floor"))
+            {
+                view.RPC(nameof(FloorDestroy), RpcTarget.AllViaServer, hit.transform.name, hit.transform.parent.name);
             }
         }
-
-        yield return new WaitForSeconds(3);
-        view.RPC(nameof(Destroy), RpcTarget.All);
     }
     [PunRPC]
-    void Destroy() => Destroy(gameObject);
+    void FloorDestroy(string hitName, string hitParentName)
+    {
+        Transform parentObject = allTileMap.transform.Find(hitParentName);
+        Transform hitObject = parentObject.Find(hitName);
+        if (hitObject == null) return;
+
+        Destroy(hitObject.gameObject);
+        allTileMap.SetPlusHasTileNum(view.Owner.GetPlayerNumber() - 1);
+    }
     #endregion
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }
 }

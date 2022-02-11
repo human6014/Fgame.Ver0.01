@@ -26,7 +26,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         if (isCollison) return;
         transform.Translate(Vector3.back * 12 * Time.deltaTime);
     }
-    #region 총알 궤적 설정
+    #region 탄두 궤적 설정
     IEnumerator BallisticFall()
     {
         yield return new WaitForSeconds(0.1f);
@@ -38,49 +38,44 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     #endregion
-    #region 총알 충돌 검사
+    #region 탄두 충돌 검사
     private void OnTriggerEnter(Collider other)
     {
-        if (isCollison) return;
-        if ((other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine))
+        if (isCollison || view.IsMine) return;
+        if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine)
         {
-            Debug.Log("Hit");
+            other.transform.GetComponent<Player>().Hit(damage);
             isCollison = true;
-            view.RPC(nameof(Effect), RpcTarget.AllViaServer);
             Raycasting();
         }
-        else if (!view.IsMine && (other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner")))
+        else if ((other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner")))
         {
-            isCollison = true;
-            view.RPC(nameof(Effect), RpcTarget.AllViaServer);
+            isCollison = true; //이렇게 안하면 rpc 반응 속도때문에 여러번 호출될 수 있음
             Raycasting();
         }
     }
     [PunRPC]
     void Effect()
     {
-        bool _onDamage = false;
         isCollison = true;
         meshRenderer.enabled = false;
         particle.SetActive(true);
     }
     void Raycasting()
     {
-        Debug.Log("Raycasting");
+        view.RPC(nameof(Effect), RpcTarget.All);
         RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, 0.5f, Vector3.up, 0, 1 << LayerMask.NameToLayer("Destroyable"));
-        
+        bool _onDamage = false;
         foreach (RaycastHit hit in raycastHits)
         {
-            /*
-            if (hit.transform.CompareTag("Player"))
+            if (hit.transform.CompareTag("Player") && !_onDamage)
             {
-                hit.transform.GetComponent<Player>().Hit(5);
+                hit.transform.GetComponent<Player>().Hit(10);
+                _onDamage = true;
             }
-            */
-            if(!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()))
+            if(!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) &&hit.transform.tag.StartsWith("Floor"))
             {
-                view.RPC(nameof(FloorDestroy),RpcTarget.AllViaServer, hit.transform.name,hit.transform.parent.name);
-                Debug.Log(hit.transform.name);
+                view.RPC(nameof(FloorDestroy),RpcTarget.AllViaServer, hit.transform.name, hit.transform.parent.name);
             }
         }
     }
@@ -92,7 +87,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         if (hitObject == null) return;
         
         Destroy(hitObject.gameObject);
-        allTileMap.SetPlusHasTileNum(view.Owner.GetPlayerNumber() - 1);//문제있음
+        allTileMap.SetPlusHasTileNum(view.Owner.GetPlayerNumber() - 1);
     }
     #endregion
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }

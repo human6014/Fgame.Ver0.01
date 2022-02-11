@@ -157,7 +157,7 @@ MonoBehaviour:
   particle: {fileID: 5983625810265099829}
   meshRenderer: {fileID: 3695152839577550584}
   view: {fileID: 4481283625299849482}
-  damage: 20
+  damage: 10
 --- !u!96 &2119786325277975174
 TrailRenderer:
   serializedVersion: 2
@@ -292,7 +292,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5983625810265099829}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.794}
+  m_LocalPosition: {x: 0, y: 0, z: 0.115}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children:
   - {fileID: 7106771879940118892}

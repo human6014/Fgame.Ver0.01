@@ -24,11 +24,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
-        KeyCode.Alpha3,
-        KeyCode.Alpha4 };
+        KeyCode.Alpha3
+    };
     [SerializeField] float speed;
     [SerializeField] bool[] hasWeapons;
-    [SerializeField] GameObject[] weapons;
+    [SerializeField] GameObject[] weapons; //최적화 대기
     [SerializeField] GameObject child;
     [SerializeField] Image HP;
     [SerializeField] Image MP;
@@ -37,7 +37,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
     AllTileMap allTileMap;
-    Weapon equipWeapon; //이게 되나?
+    Weapon equipWeapon;
 
     int timer;
     private void Start()
@@ -90,7 +90,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             }
             if (xMove + zMove != 1 && xMove + zMove != -1) xMove /= 2; zMove *= 0.866f;
             moveVec = new Vector3(xMove, 0, zMove);
-
+            //rigid.velocity = moveVec;
             if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //변경 고민중
 
             if (!isJumping && !isDodging)

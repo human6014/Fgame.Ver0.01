@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
 {
+    private const float frameRate = 0.02f;
     private bool isCollison;
     private AllTileMap allTileMap;
     private GeneralManager generalManager;
@@ -14,6 +15,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     public MeshRenderer meshRenderer;
     public PhotonView view;
     public int damage;
+    Vector3 trajectory = Vector3.back * 12;
     private void Start()
     {
         allTileMap = FindObjectOfType<AllTileMap>();
@@ -21,10 +23,10 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         StartCoroutine("BallisticFall");
         Destroy(gameObject, 3);
     }
-    void Update()
+    void FixedUpdate()
     {
         if (isCollison) return;
-        transform.Translate(Vector3.back * 12 * Time.deltaTime);
+        transform.Translate(trajectory * frameRate);
     }
     #region 탄두 궤적 설정
     IEnumerator BallisticFall()
@@ -50,7 +52,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if ((other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner")))
         {
-            isCollison = true; //이렇게 안하면 rpc 반응 속도때문에 여러번 호출될 수 있음
+            isCollison = true; //이렇게 안하면 rpc 반응 속도때문에 Raycasting이 여러번 호출될 수 있음
             Raycasting();
         }
     }

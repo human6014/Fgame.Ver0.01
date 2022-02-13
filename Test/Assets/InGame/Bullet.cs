@@ -3,6 +3,7 @@ using UnityEngine;
 using Photon.Pun;
 public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
 {
+    private const float frameRate = 0.02f;
     private bool isCollison;
     public int damage;
     public int speed;
@@ -13,10 +14,10 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
         StartCoroutine("BallisticFall");
         Destroy(gameObject, 3);
     }
-    void Update()
+    void FixedUpdate()
     {
         if (isCollison) return;
-        transform.Translate(trajectory * Time.deltaTime);
+        transform.Translate(trajectory * frameRate);
     }
     #region ÃÑ¾Ë ±ËÀû ¼³Á¤
     IEnumerator BallisticFall()

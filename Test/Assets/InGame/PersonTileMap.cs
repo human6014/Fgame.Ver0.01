@@ -12,7 +12,6 @@ public class PersonTileMap : MonoBehaviour
     private MeshCollider meshCollider;
     private new Rigidbody rigidbody;
     private new Renderer renderer;
-    private float initRadius;
     private bool tryOnce;
     [SerializeField] GameObject HexTilePrefab,
                                 PortalPrefab,
@@ -30,14 +29,11 @@ public class PersonTileMap : MonoBehaviour
         if (gameObject.name == "Sample") return;
         sphereCollider = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphereCollider.radius = 5;
-        //else sphereCollider.radius = tileRadius;
         else
         {
             sphereCollider.radius = tileRadius;//allTileMap.myField[allTileMap.playerNum++];
             myIndex = int.Parse(transform.tag.Substring(5));
-            Debug.Log(myIndex);
         }
-        initRadius = sphereCollider.radius - 0.005f;
     }
     private void FixedUpdate()
     {
@@ -45,7 +41,7 @@ public class PersonTileMap : MonoBehaviour
         allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
         if (sphereCollider.radius >= 0)
         {
-            if (generalManager.GetIsCreateTile())
+            if (generalManager.GetIsCreatePlayer())
             {
                 if (allTileMap.GetHasTileNum(myIndex - 1) > 0) {
                     allTileMap.SetMinusHasTileNum(myIndex - 1);
@@ -63,7 +59,6 @@ public class PersonTileMap : MonoBehaviour
             }
             for (int i = 0; i < 2; i++) Destroy(allTileMap.GetPortal(int.Parse(transform.name.Substring(13, 1)) - 1, i).gameObject);
             tryOnce = true;
-
         }
         if (transform.childCount == 0) SetIsOutPlayer(); //임시
     }
@@ -78,7 +73,7 @@ public class PersonTileMap : MonoBehaviour
         if (other.CompareTag(tag))
         {
             Debug.Log("블럭 파괴");
-            if (sphereCollider.radius > initRadius) Destroy(other.gameObject); //버그 있음
+            if (!generalManager.GetIsCreatePlayer())Destroy(other.gameObject);
             else StartCoroutine(FallWaiting(other.gameObject));
         }
     }

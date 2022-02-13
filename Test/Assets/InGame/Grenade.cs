@@ -4,30 +4,32 @@ using System.Collections;
 using UnityEngine;
 public class Grenade : MonoBehaviourPunCallbacks
 {
+    private const float frameRate = 0.02f;
     private AllTileMap allTileMap;
     public GameObject particle;
     public MeshRenderer meshRenderer;
     public PhotonView view;
     public int damage;
     private bool isCollison;
-    
+    Vector3 trajectory = Vector3.back * 12;
     private void Start()
     {
         allTileMap = FindObjectOfType<AllTileMap>();
         StartCoroutine("BallisticFall");
         Destroy(gameObject, 3);
     }
-    void Update()
+    void FixedUpdate()
     {
         if (isCollison) return;
-        transform.Translate(Vector3.back * 12 * Time.deltaTime);
+        transform.Translate(trajectory * frameRate);
     }
     #region 총알 궤적 설정
     IEnumerator BallisticFall()
     {
         while (!isCollison)
         {
-            if (transform.eulerAngles.x == 270) yield break;
+            //if (transform.eulerAngles.x == 270)
+            yield break;
             transform.Rotate(Vector3.left);
             yield return null;
         }
@@ -45,7 +47,7 @@ public class Grenade : MonoBehaviourPunCallbacks
         }
         else if ((other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner")))
         {
-            isCollison = true; //이렇게 안하면 rpc 반응 속도때문에 여러번 호출될 수 있음
+            isCollison = true; //이렇게 안하면 rpc 반응 속도때문에 Raycasting이 여러번 호출될 수 있음
             Raycasting();
         }
     }

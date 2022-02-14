@@ -3,37 +3,31 @@ using UnityEngine;
 using Photon.Pun;
 public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
 {
-    private const float frameRate = 0.02f;
     private bool isCollison;
+    private Rigidbody rigid;
     public int damage;
     public int speed;
     public PhotonView view;
-    Vector3 trajectory = Vector3.forward * 15;
     private void Start()
     {
+        rigid = GetComponent<Rigidbody>();
+        rigid.AddForce(transform.forward * speed);
         StartCoroutine("BallisticFall");
-        Destroy(gameObject, 3);
-    }
-    void FixedUpdate()
-    {
-        if (isCollison) return;
-        transform.Translate(trajectory * frameRate);
     }
     #region ÃÑ¾Ë ±ËÀû ¼³Á¤
     IEnumerator BallisticFall()
     {
-        yield return new WaitForSeconds(0.4f);
-        while (true)
-        {
-            trajectory += Vector3.down * 0.08f + Vector3.back * 0.04f;
-            yield return null;
-        }
+        yield return new WaitForSeconds(0.3f);
+        rigid.constraints = RigidbodyConstraints.None;
+        yield return new WaitForSeconds(2.7f);
+        Destroy(gameObject);
     }
     #endregion
     #region ÃÑ¾Ë Ãæµ¹ °Ë»ç
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
         if (isCollison) return;
+        GameObject other = collision.gameObject;
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
             other.GetComponent<Player>().Hit(damage);
@@ -51,6 +45,7 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
             isCollison = true;
             view.RPC(nameof(Destroy), RpcTarget.All);
         }
+        
     }
     #endregion
     [PunRPC]

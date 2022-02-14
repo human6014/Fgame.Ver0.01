@@ -113,9 +113,9 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     }
     private void Update()
     {
+        if (!generalManager.GetIsCreatePlayer()) return;
         tileCount.text = "남은 타일\n";
         hasTileCount.text = "가진 타일\n";
-        if (!generalManager.GetIsCreatePlayer()) return;
         foreach(Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
             if (player.GetPlayerNumber() == -1) return;

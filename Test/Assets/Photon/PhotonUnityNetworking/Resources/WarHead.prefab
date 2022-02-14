@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: -4834464836724988822}
   - component: {fileID: 6216212058235463048}
   - component: {fileID: 2119786325277975174}
+  - component: {fileID: -7132164367401193483}
   m_Layer: 0
   m_Name: WarHead
   m_TagString: Destroyer
@@ -96,11 +97,11 @@ MeshCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3695152839577550585}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
   m_Convex: 1
-  m_CookingOptions: 30
+  m_CookingOptions: 2147483647
   m_Mesh: {fileID: 4300004, guid: 4e5ce0b6f97fdbc40b7bc818b06b80ba, type: 3}
 --- !u!114 &4481283625299849482
 MonoBehaviour:
@@ -156,8 +157,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particle: {fileID: 5983625810265099829}
   meshRenderer: {fileID: 3695152839577550584}
+  rigid: {fileID: -7132164367401193483}
   view: {fileID: 4481283625299849482}
   damage: 10
+  speed: 100
 --- !u!96 &2119786325277975174
 TrailRenderer:
   serializedVersion: 2
@@ -266,6 +269,22 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!54 &-7132164367401193483
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3695152839577550585}
+  serializedVersion: 2
+  m_Mass: 0.2
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 4
+  m_CollisionDetection: 1
 --- !u!1 &5983625810265099829
 GameObject:
   m_ObjectHideFlags: 0

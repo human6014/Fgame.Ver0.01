@@ -90,7 +90,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             }
             if (xMove + zMove != 1 && xMove + zMove != -1) xMove /= 2; zMove *= 0.866f;
             moveVec = new Vector3(xMove, 0, zMove);
-            //rigid.velocity = moveVec;
             if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //º¯°æ °í¹ÎÁß
 
             if (!isJumping && !isDodging)
@@ -141,7 +140,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (isJump && !isJumping && !isDodging && MP.fillAmount >= 0.2f && !isDying)
         {
-            rigid.AddForce(Vector3.up * 4.5f, ForceMode.Impulse);
+            rigid.velocity = Vector3.up * 4.5f;
             anim.SetBool("isJump", true);
             MP.fillAmount -= 0.15f;
             isJumping = true;
@@ -153,7 +152,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             anim.SetBool("isJump", false);
             isJumping = false;
-            //Destroy(collision.gameObject,10f);
         }
     }
     #endregion

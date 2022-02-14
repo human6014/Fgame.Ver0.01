@@ -72,7 +72,6 @@ public class PersonTileMap : MonoBehaviour
     {
         if (other.CompareTag(tag))
         {
-            Debug.Log("ºí·° ÆÄ±«");
             if (!generalManager.GetIsCreatePlayer())Destroy(other.gameObject);
             else StartCoroutine(FallWaiting(other.gameObject));
         }

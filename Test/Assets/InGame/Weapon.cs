@@ -20,20 +20,16 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         switch (type)
         {
             case WeaponsType.Melee:
-                Debug.Log("Melle");
                 StartCoroutine("Swing");
                 break;
             case WeaponsType.Range:
-                Debug.Log("Range");
                 Shot();
                 break;
             case WeaponsType.Cannon:
-                Debug.Log("Cannon");
                 Launch();
                 break;
             case WeaponsType.Throwing:
-                Debug.Log("Throwing");
-                Throw();
+                Invoke(nameof(Throw), 0.2f);
                 break;
             default:
                 Debug.LogError("NonUseWeapons");
@@ -59,6 +55,11 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     private void Throw()
     {
         PhotonNetwork.Instantiate("Grenade", bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
+        GameObject instantCase = PhotonNetwork.Instantiate("Pin", bulletCasePos.position, bulletCasePos.rotation);
+        Rigidbody caseRigid = instantCase.GetComponent<Rigidbody>();
+        Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
+        caseRigid.AddForce(caseVec, ForceMode.Impulse);
+        caseRigid.AddTorque(Vector3.up, ForceMode.Impulse);
     }
     IEnumerator Reload()
     {

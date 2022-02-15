@@ -121,7 +121,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             if (equipWeapon.type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
             else if (equipWeapon.type == Weapon.WeaponsType.Range) anim.SetBool("isShot", true);
             else if (equipWeapon.type == Weapon.WeaponsType.Cannon) anim.SetBool("isShot", true);
-            else if (equipWeapon.type == Weapon.WeaponsType.Throwing) { }
+            else if (equipWeapon.type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", true);
             equipWeapon.UseWeapons();
             attackDelay = 0;
             Invoke(nameof(SetAttackAnim), 0.1f);
@@ -132,7 +132,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (equipWeapon.type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", false);
         else if (equipWeapon.type == Weapon.WeaponsType.Range) anim.SetBool("isShot", false);
         else if (equipWeapon.type == Weapon.WeaponsType.Cannon) anim.SetBool("isShot", false);
-        else if (equipWeapon.type == Weapon.WeaponsType.Throwing) { }
+        else if (equipWeapon.type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", false);
     }
     #endregion
     #region มกวม

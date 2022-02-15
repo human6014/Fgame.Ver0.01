@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
 {
-    private const float frameRate = 0.02f;
     private bool isCollison;
     private AllTileMap allTileMap;
     
@@ -32,8 +31,8 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     {
         yield return new WaitForSeconds(0.1f);
         rigid.constraints = RigidbodyConstraints.None;
-        rigid.AddTorque(-transform.right / 4);
-        yield return new WaitForSeconds(2.7f);
+        rigid.AddTorque(-transform.right * 0.25f);
+        yield return new WaitForSeconds(2.5f);
         Destroy(gameObject);
     }
     #endregion
@@ -76,7 +75,6 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
                 view.RPC(nameof(FloorDestroy),RpcTarget.AllViaServer, hit.transform.name, hit.transform.parent.name);
             }
         }
-        
     }
     [PunRPC]
     void Effect()

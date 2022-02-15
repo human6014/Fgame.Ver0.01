@@ -4,41 +4,37 @@ using System.Collections;
 using UnityEngine;
 public class Grenade : MonoBehaviourPunCallbacks
 {
-    private const float frameRate = 0.02f;
+    private bool isCollison;
     private AllTileMap allTileMap;
+
     public GameObject particle;
+    public Rigidbody rigid;
     public MeshRenderer meshRenderer;
     public PhotonView view;
     public int damage;
-    private bool isCollison;
-    Vector3 trajectory = Vector3.back * 12;
+    public int speed;
+
     private void Start()
     {
         allTileMap = FindObjectOfType<AllTileMap>();
+        rigid.AddForce(-transform.forward * speed + Vector3.up * 10);
         StartCoroutine("BallisticFall");
-        Destroy(gameObject, 3);
-    }
-    void FixedUpdate()
-    {
-        if (isCollison) return;
-        transform.Translate(trajectory * frameRate);
     }
     #region 총알 궤적 설정
     IEnumerator BallisticFall()
     {
-        while (!isCollison)
-        {
-            //if (transform.eulerAngles.x == 270)
-            yield break;
-            transform.Rotate(Vector3.left);
-            yield return null;
-        }
+        yield return new WaitForSeconds(1.5f);
+        Raycasting();
+        yield return new WaitForSeconds(2);
+        Destroy(gameObject);
     }
     #endregion
     #region 탄두 충돌 검사
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
+        /*
         if (isCollison || view.IsMine) return;
+        GameObject other = collision.gameObject;
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine)
         {
             other.transform.GetComponent<Player>().Hit(damage);
@@ -50,11 +46,13 @@ public class Grenade : MonoBehaviourPunCallbacks
             isCollison = true; //이렇게 안하면 rpc 반응 속도때문에 Raycasting이 여러번 호출될 수 있음
             Raycasting();
         }
+        */
     }
     [PunRPC]
     void Effect()
     {
         isCollison = true;
+        rigid.isKinematic = true;
         meshRenderer.enabled = false;
         particle.SetActive(true);
     }
@@ -67,7 +65,7 @@ public class Grenade : MonoBehaviourPunCallbacks
         {
             if (hit.transform.CompareTag("Player") && !_onDamage)
             {
-                hit.transform.GetComponent<Player>().Hit(10);
+                hit.transform.GetComponent<Player>().Hit(damage);
                 _onDamage = true;
             }
             if (!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && hit.transform.tag.StartsWith("Floor"))

@@ -18,7 +18,6 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private bool isCreateTile = false;
     private bool isCreatePlayer = false;
 
-
     [SerializeField] GameObject delayCancelButton;
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Button matchDown;

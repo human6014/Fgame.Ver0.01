@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
 {
-    public enum WeaponsType { Melee, Range, Cannon, Throwing};
+    public enum WeaponsType { Melee, Range, Cannon, Throwing };
     public WeaponsType type;
     public int damage;
     public float rate, speed;
@@ -40,7 +40,25 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     #region 원거리 무기 사용
     private void Shot()
     {
+        /* // Shotgun 실험중
         PhotonNetwork.Instantiate("BulletHandGun", bulletPos.position, bulletPos.rotation);
+        GameObject intantCase = PhotonNetwork.Instantiate("BulletCase", bulletCasePos.position, bulletCasePos.rotation);
+        Rigidbody caseRigid = intantCase.GetComponent<Rigidbody>();
+        Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
+        caseRigid.AddForce(caseVec, ForceMode.Impulse);
+        caseRigid.AddTorque(Vector3.up, ForceMode.Impulse);
+        */
+        GameObject bullet;
+        Rigidbody bulletRigid;
+        Vector3 bulletVec;
+        for (int i = 0; i < 12; i++)
+        {
+            bullet = PhotonNetwork.Instantiate("BulletShotgun", bulletPos.position, bulletPos.rotation);
+            bulletRigid = bullet.GetComponent<Rigidbody>();
+            bulletVec = bulletPos.forward + bulletPos.right * Random.Range(-0.2f, 0.2f) + bulletPos.up * Random.Range(0, 0.2f);
+
+            bulletRigid.AddForce(bulletVec, ForceMode.Impulse);
+        }
         GameObject intantCase = PhotonNetwork.Instantiate("BulletCase", bulletCasePos.position, bulletCasePos.rotation);
         Rigidbody caseRigid = intantCase.GetComponent<Rigidbody>();
         Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);

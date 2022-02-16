@@ -118,7 +118,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particle: {fileID: 1627534293562245710}
   rigid: {fileID: 5474289246926580892}
+  meshCollider: {fileID: 47218996927194574}
   meshRenderer: {fileID: 47218996927194575}
+  childMeshRenderer: {fileID: 744059138298306084}
   view: {fileID: 47218996927194562}
   damage: 30
   speed: 30

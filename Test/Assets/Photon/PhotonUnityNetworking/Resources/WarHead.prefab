@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cc218df81dc1b14298fb0fa38951b96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  meshCollider: {fileID: 2471796145831816719}
   particle: {fileID: 5983625810265099829}
   meshRenderer: {fileID: 3695152839577550584}
   rigid: {fileID: -7132164367401193483}
@@ -311,7 +312,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5983625810265099829}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.115}
+  m_LocalPosition: {x: 0, y: 0, z: -0.46}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children:
   - {fileID: 7106771879940118892}

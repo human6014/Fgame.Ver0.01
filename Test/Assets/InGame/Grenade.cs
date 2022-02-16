@@ -9,7 +9,9 @@ public class Grenade : MonoBehaviourPunCallbacks
 
     public GameObject particle;
     public Rigidbody rigid;
+    public MeshCollider meshCollider;
     public MeshRenderer meshRenderer;
+    public MeshRenderer childMeshRenderer;
     public PhotonView view;
     public int damage;
     public int speed;
@@ -54,6 +56,8 @@ public class Grenade : MonoBehaviourPunCallbacks
         isCollison = true;
         rigid.isKinematic = true;
         meshRenderer.enabled = false;
+        childMeshRenderer.enabled = false;
+        meshCollider.isTrigger = true;
         particle.SetActive(true);
     }
     void Raycasting()
@@ -65,8 +69,8 @@ public class Grenade : MonoBehaviourPunCallbacks
         {
             if (hit.transform.CompareTag("Player") && !_onDamage)
             {
-                hit.transform.GetComponent<Player>().Hit(damage);
                 _onDamage = true;
+                hit.transform.GetComponent<Player>().Hit(damage);
             }
             if (!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && hit.transform.tag.StartsWith("Floor"))
             {

@@ -26,6 +26,7 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     #region 총알 충돌 검사
     private void OnCollisionEnter(Collision collision)
     {
+        
         if (isCollison) return;
         GameObject other = collision.gameObject;
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)

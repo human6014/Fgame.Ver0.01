@@ -9,8 +9,8 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
 {
     private bool isCollison;
     private AllTileMap allTileMap;
-    
-    private MeshCollider meshCollider; //임시용
+
+    public MeshCollider meshCollider;
     public GameObject particle;
     public MeshRenderer meshRenderer;
     public Rigidbody rigid;
@@ -67,8 +67,8 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (hit.transform.CompareTag("Player") && !_onDamage)
             {
-                hit.transform.GetComponent<Player>().Hit(10);
                 _onDamage = true;
+                hit.transform.GetComponent<Player>().Hit(10);
             }
             if(!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && hit.transform.tag.StartsWith("Floor"))
             {
@@ -82,6 +82,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         isCollison = true;
         rigid.isKinematic = true;
         meshRenderer.enabled = false;
+        meshCollider.isTrigger = true;
         particle.SetActive(true);
     }
     [PunRPC]

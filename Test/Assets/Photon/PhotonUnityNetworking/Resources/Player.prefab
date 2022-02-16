@@ -650,6 +650,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6557026285455071732}
+  - component: {fileID: 4072001523795314375}
   - component: {fileID: 8881236159903576477}
   - component: {fileID: 2061732537787033414}
   m_Layer: 6
@@ -675,6 +676,28 @@ Transform:
   m_Father: {fileID: 4863490270549815028}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4072001523795314375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 340103681106385425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d312a2031bf528418620f7931b808dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  damage: 0
+  rate: 1.2
+  speed: 0
+  meleeArea: {fileID: 0}
+  trailEffect: {fileID: 0}
+  bullet: {fileID: 5086712924862526819, guid: 911cbc0cec0ff93439e101d084d6641a, type: 3}
+  bulletCase: {fileID: 2933650942077873095, guid: cb84450d8d9adfa439d278071bec6f84, type: 3}
+  bulletPos: {fileID: 5735198156930495412}
+  bulletCasePos: {fileID: 4160011325116807243}
 --- !u!114 &8881236159903576477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -694,6 +717,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
+  - {fileID: 4072001523795314375}
   - {fileID: 2061732537787033414}
   sceneViewId: 0
   InstantiationId: 0
@@ -2857,7 +2881,7 @@ MonoBehaviour:
   hasWeapons: 010000
   weapons:
   - {fileID: 779165039904131264}
-  - {fileID: 5913925752646081746}
+  - {fileID: 340103681106385425}
   - {fileID: 3326517048465712092}
   child: {fileID: 5168173898441154768}
   HP: {fileID: 800992798285252588}
@@ -3369,7 +3393,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   damage: 0
-  rate: 0.4
+  rate: 0.5
   speed: 2
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
@@ -3466,7 +3490,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   damage: 0
-  rate: 0.4
+  rate: 1
   speed: 2
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}

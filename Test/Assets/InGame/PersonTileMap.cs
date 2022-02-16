@@ -70,7 +70,7 @@ public class PersonTileMap : MonoBehaviour
     #region 블럭 파괴
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag(tag))
+        if (other.CompareTag(tag)) //블럭 생성에서 버그 있음
         {
             if (!generalManager.GetIsCreatePlayer())Destroy(other.gameObject);
             else StartCoroutine(FallWaiting(other.gameObject));
@@ -110,9 +110,9 @@ public class PersonTileMap : MonoBehaviour
             {
                 TempGo = Instantiate(HexTilePrefab, transform);
                 if (z % 2 == 0) _pos = new Vector3(transform.position.x + x * tileXOffset, 0,
-                                                  transform.position.z + z * tileZOffset);
+                                                   transform.position.z + z * tileZOffset);
                 else _pos = new Vector3(transform.position.x + x * tileXOffset + tileXOffset / 2, 0,
-                                       transform.position.z + z * tileZOffset);
+                                        transform.position.z + z * tileZOffset);
                 StartCoroutine(SetTileInfo(TempGo, x, z, _pos));
             }
         }
@@ -136,9 +136,11 @@ public class PersonTileMap : MonoBehaviour
         }
         TagChecking(TempGo, x, z);
 
-        yield return new WaitForSeconds(0.000001f);
+        //yield return new WaitUntil(()=> isTagChecking);
+        yield return new WaitForFixedUpdate();
         TempGo.transform.position = pos;
     }
+    bool isTagChecking;
     #endregion
     #region 포탈방향 블럭 설정
     void TagChecking(GameObject TempGo, float x, float z)
@@ -178,6 +180,7 @@ public class PersonTileMap : MonoBehaviour
                 }
                 break;
         }
+        isTagChecking = true;
     }
     #endregion
     #region 블럭 태그 설정+포탈

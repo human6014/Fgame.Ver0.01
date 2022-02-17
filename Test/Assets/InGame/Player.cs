@@ -27,8 +27,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         KeyCode.Alpha3
     };
     [SerializeField] float speed;
+    [SerializeField] GameObject[] allWeapons;
     [SerializeField] bool[] hasWeapons;
-    [SerializeField] GameObject[] weapons; //최적화 대기
+    private GameObject[] weapons = new GameObject[3]; //최적화 대기
     [SerializeField] GameObject child;
     [SerializeField] Image HP;
     [SerializeField] Image MP;
@@ -48,8 +49,20 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             myIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
             Name.text = PhotonNetwork.NickName;
             allTileMap = FindObjectOfType<AllTileMap>();
+
+            for (int i = 0; i < 3; i++)
+            {
+                Debug.Log(allWeapons[allTileMap.weapon[i]]);
+                weapons[i] = allWeapons[allTileMap.weapon[i]];
+                Debug.Log(weapons[i].transform.name);
+            }
+            curEquip = 0;
+            weapons[0].SetActive(true);
+            equipWeapon = weapons[0].GetComponent<Weapon>();
         } 
         else Name.text = view.Owner.NickName;
+        
+        /*
         for (int i = 0; i < hasWeapons.Length; i++)
         {
             if (hasWeapons[i])
@@ -60,6 +73,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 break;
             }
         }
+        */
+
+
     }
     Vector3 curPos;
     Vector3 moveVec;
@@ -73,21 +89,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 PhotonNetwork.Destroy(gameObject);
             }
             if (isDying) return;
-            xMove = Input.GetAxisRaw("Horizontal");
-            zMove = Input.GetAxisRaw("Vertical");
-            isWalk = Input.GetButton("Walk");
-            isJump = Input.GetButtonDown("Jump");
-            isDodge = Input.GetButtonDown("Dodge");
-            isAttack = Input.GetButtonDown("Attack");
-            
-            for (int i = 0; i < keyCodes.Length; i++)
-            {
-                if (Input.GetKeyDown(keyCodes[i]))
-                {
-                    view.RPC("ChangeEquip", RpcTarget.All, i);
-                    break;
-                }
-            }
+            KeyInput();
             if (xMove + zMove != 1 && xMove + zMove != -1) xMove /= 2; zMove *= 0.866f;
             moveVec = new Vector3(xMove, 0, zMove);
             if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //변경 고민중
@@ -112,6 +114,26 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
+    #region 키 입력
+    void KeyInput()
+    {
+        xMove = Input.GetAxisRaw("Horizontal");
+        zMove = Input.GetAxisRaw("Vertical");
+        isWalk = Input.GetButton("Walk");
+        isJump = Input.GetButtonDown("Jump");
+        isDodge = Input.GetButtonDown("Dodge");
+        isAttack = Input.GetButtonDown("Attack");
+
+        for (int i = 0; i < keyCodes.Length; i++)
+        {
+            if (Input.GetKeyDown(keyCodes[i]))
+            {
+                view.RPC(nameof(ChangeEquip), RpcTarget.All, i);
+                break;
+            }
+        }
+    }
+    #endregion
     #region 공격 
     void Attack() //오브젝트 폴링 활용할 것
     {
@@ -189,7 +211,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #endregion
     #region 무기 교체
     [PunRPC]
-    void ChangeEquip(int index)
+    void ChangeEquip(int index) //버그있음
     {
         weapons[curEquip].SetActive(false);
         weapons[index].SetActive(true);

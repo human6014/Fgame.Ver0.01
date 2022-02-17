@@ -40,14 +40,15 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     #region 원거리 무기 사용
     private void Shot()
     {
-        /* // Shotgun 실험중
-        PhotonNetwork.Instantiate("BulletHandGun", bulletPos.position, bulletPos.rotation);
+         // Shotgun 실험중
+        PhotonNetwork.Instantiate("BulletSniperRifle", bulletPos.position, bulletPos.rotation);
         GameObject intantCase = PhotonNetwork.Instantiate("BulletCase", bulletCasePos.position, bulletCasePos.rotation);
         Rigidbody caseRigid = intantCase.GetComponent<Rigidbody>();
         Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
         caseRigid.AddForce(caseVec, ForceMode.Impulse);
         caseRigid.AddTorque(Vector3.up, ForceMode.Impulse);
-        */
+        //일반 탄 무기 코드
+        /*
         GameObject bullet;
         Rigidbody bulletRigid;
         Vector3 bulletVec;
@@ -64,6 +65,8 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
         caseRigid.AddForce(caseVec, ForceMode.Impulse);
         caseRigid.AddTorque(Vector3.up, ForceMode.Impulse);
+        */ 
+        // Shotgun코드
     }
     private void Launch()
     {

@@ -19,7 +19,17 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private int[] childTileCount = new int[6];
     private int[] hasTileNum = new int[6];
     private bool[] isOutPlayer = new bool[6];
+    
+    public int[] weapon = new int[3] { 0, 0, 0 };
+    int weaponIndexCounting;
+    public void SetWeapon(int index)
+    {
+        weapon[weaponIndexCounting++] = index;
+    }
+    public void GetWeapon()
+    {
 
+    }
     public int i, j, bottom, top = 5;
     public int spawnerRotation = 90;
 
@@ -49,7 +59,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         yield return new WaitUntil(()=> generalManager.GetIsRoomFull());
         CreatePersonTile();
         generalManager.SetIsCreateTile(true);
-        for (int i = 3; i >= 1; i--)
+        for (int i = 5; i >= 1; i--)
         {
             startTimer.text = i.ToString();
             yield return new WaitForSeconds(1);

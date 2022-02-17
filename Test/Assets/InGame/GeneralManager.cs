@@ -17,11 +17,12 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private bool isRoomFull = false;
     private bool isCreateTile = false;
     private bool isCreatePlayer = false;
-
+    private bool isChatOn = false;
     [SerializeField] GameObject delayCancelButton;
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Button matchDown;
     [SerializeField] InputField inputField;
+    [SerializeField] Image image;
     [SerializeField] Text outputText;
     [SerializeField] GameObject content;
     [SerializeField] AllTileMap allTileMap;
@@ -31,6 +32,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public bool GetIsCreatePlayer() => isCreatePlayer;
     public void SetIsCreateTile(bool _isCreateTile) => isCreateTile = _isCreateTile;
     public void SetIsCreatePlayer(bool _isCreatePlayer) => isCreatePlayer = _isCreatePlayer;
+
     private void Start()
     {
         view = photonView;
@@ -91,8 +93,11 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            isChatOn = !isChatOn;
             if (!string.IsNullOrEmpty(inputField.text)) Input_OnEndEdit();
             inputField.Select();
+            if (isChatOn) image.fillAmount = 1;
+            else image.fillAmount = 0;
         }
     }
     public void SetChatClear() => inputField.text = string.Empty;
@@ -104,8 +109,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (PhotonNetwork.IsConnected)
         {
-            if (inputField.text.Length > 50) outputText.text += "최대 50글자까지 입력 가능합니다.\r\n";
-            else view.RPC(nameof(OnPlayerChatting), RpcTarget.All, inputField.text, PhotonNetwork.LocalPlayer.NickName);
+            view.RPC(nameof(OnPlayerChatting), RpcTarget.All, inputField.text, PhotonNetwork.LocalPlayer.NickName);
             inputField.text = "";
         }
     }

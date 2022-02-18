@@ -41,6 +41,17 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Weapon equipWeapon;
 
     int timer;
+    [PunRPC]
+    void EquipWeapon(int [] _weapons)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            weapons[i] = allWeapons[_weapons[i]];
+        }
+        curEquip = 0;
+        weapons[0].SetActive(true);
+        equipWeapon = weapons[0].GetComponent<Weapon>();
+    }
     private void Start()
     {
         if (photonView.IsMine)
@@ -49,19 +60,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             myIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
             Name.text = PhotonNetwork.NickName;
             allTileMap = FindObjectOfType<AllTileMap>();
-
-            for (int i = 0; i < 3; i++)
-            {
-                Debug.Log(allWeapons[allTileMap.weapon[i]]);
-                weapons[i] = allWeapons[allTileMap.weapon[i]];
-                Debug.Log(weapons[i].transform.name);
-            }
-            curEquip = 0;
-            weapons[0].SetActive(true);
-            equipWeapon = weapons[0].GetComponent<Weapon>();
-        } 
+            view.RPC(nameof(EquipWeapon), RpcTarget.All, allTileMap.weapon);
+        }
         else Name.text = view.Owner.NickName;
-        
+
         /*
         for (int i = 0; i < hasWeapons.Length; i++)
         {
@@ -73,9 +75,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 break;
             }
         }
-        */
-
-
+        */ //기존 코드
     }
     Vector3 curPos;
     Vector3 moveVec;
@@ -128,7 +128,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(keyCodes[i]))
             {
-                view.RPC(nameof(ChangeEquip), RpcTarget.All, i);
+                view.RPC(nameof(ChangeWeapon), RpcTarget.All, i);
                 break;
             }
         }
@@ -211,7 +211,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #endregion
     #region 무기 교체
     [PunRPC]
-    void ChangeEquip(int index) //버그있음
+    void ChangeWeapon(int index) //버그있음
     {
         weapons[curEquip].SetActive(false);
         weapons[index].SetActive(true);

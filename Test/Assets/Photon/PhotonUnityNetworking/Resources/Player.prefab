@@ -3399,7 +3399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   damage: 0
-  rate: 0.2
+  rate: 0.15
   speed: 2
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}

@@ -26,10 +26,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     {
         weapon[weaponIndexCounting++] = index;
     }
-    public void GetWeapon()
-    {
-
-    }
+    public int[] GetWeapon() => weapon;
     public int i, j, bottom, top = 5;
     public int spawnerRotation = 90;
 

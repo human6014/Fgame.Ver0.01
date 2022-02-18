@@ -40,33 +40,27 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     #region 원거리 무기 사용
     private void Shot()
     {
-         // Shotgun 실험중
-        PhotonNetwork.Instantiate("BulletSniperRifle", bulletPos.position, bulletPos.rotation);
-        GameObject intantCase = PhotonNetwork.Instantiate("BulletCase", bulletCasePos.position, bulletCasePos.rotation);
-        Rigidbody caseRigid = intantCase.GetComponent<Rigidbody>();
-        Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
-        caseRigid.AddForce(caseVec, ForceMode.Impulse);
-        caseRigid.AddTorque(Vector3.up, ForceMode.Impulse);
-        //일반 탄 무기 코드
+        // Shotgun 실험중
         /*
         GameObject bullet;
         Rigidbody bulletRigid;
         Vector3 bulletVec;
         for (int i = 0; i < 12; i++)
         {
-            bullet = PhotonNetwork.Instantiate("BulletShotgun", bulletPos.position, bulletPos.rotation);
+            bullet = PhotonNetwork.Instantiate("BulletShotgun", bulletPos.position, bulletPos.rotation);// rigidbody->rotaion 변경 보류
             bulletRigid = bullet.GetComponent<Rigidbody>();
             bulletVec = bulletPos.forward + bulletPos.right * Random.Range(-0.2f, 0.2f) + bulletPos.up * Random.Range(0, 0.2f);
 
             bulletRigid.AddForce(bulletVec, ForceMode.Impulse);
         }
+        */
+        PhotonNetwork.Instantiate("BulletSniperRifle", bulletPos.position, bulletPos.rotation);//일반 탄 무기 코드
+        //탄피
         GameObject intantCase = PhotonNetwork.Instantiate("BulletCase", bulletCasePos.position, bulletCasePos.rotation);
         Rigidbody caseRigid = intantCase.GetComponent<Rigidbody>();
         Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
         caseRigid.AddForce(caseVec, ForceMode.Impulse);
         caseRigid.AddTorque(Vector3.up, ForceMode.Impulse);
-        */ 
-        // Shotgun코드
     }
     private void Launch()
     {

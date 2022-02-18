@@ -7,7 +7,7 @@ using Photon.Pun.UtilityScripts;
 
 public class AllTileMap : MonoBehaviourPunCallbacks
 {
-    [SerializeField] GameObject beforeStartCanvas;
+    [SerializeField] GameObject beforeStartPanel;
     [SerializeField] GameObject personTileMap;
     [SerializeField] GeneralManager generalManager;
     [SerializeField] Text tileCount;
@@ -65,7 +65,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         generalManager.CreatePlayer();
         generalManager.SetIsCreatePlayer(true);
         yield return new WaitForSeconds(0.5f);
-        beforeStartCanvas.SetActive(false);
+        beforeStartPanel.SetActive(false);
     }
     void CreatePersonTile()
     {

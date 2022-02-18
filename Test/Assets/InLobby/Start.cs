@@ -4,11 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Start : MonoBehaviour
 {
-    [SerializeField] GameObject FirstCanvas;
-    [SerializeField] GameObject SecondCanvas;
+    [SerializeField] GameObject StartPanel;
+    [SerializeField] GameObject ReadyPanel;
     public void OnClicked()
     {
-        FirstCanvas.SetActive(false);
-        SecondCanvas.SetActive(true);
+        StartPanel.SetActive(false);
+        ReadyPanel.SetActive(true);
     }
 }

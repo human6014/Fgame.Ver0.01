@@ -191,7 +191,7 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.9339623, g: 0.056962345, b: 0.048460312, a: 1}
+      key0: {r: 1, g: 0.013274334, b: 0, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
@@ -292,8 +292,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 028d58228ecc98d449ef9ff68136a3f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 3
-  speed: 20
+  damage: 4
+  speed: 60
   view: {fileID: 2177125116880142373}
 --- !u!54 &8243928852377001469
 Rigidbody:

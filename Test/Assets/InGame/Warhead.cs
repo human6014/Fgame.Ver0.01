@@ -17,9 +17,9 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     public PhotonView view;
     public int damage;
     public int speed;
-    Vector3 trajectory = Vector3.back * 12;
     private void Start()
     {
+        transform.rotation *= Quaternion.Euler(0, 180, 0);
         allTileMap = FindObjectOfType<AllTileMap>();
 
         rigid.AddForce(-transform.forward * speed);

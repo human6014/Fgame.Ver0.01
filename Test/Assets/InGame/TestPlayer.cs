@@ -39,7 +39,6 @@ public class TestPlayer : MonoBehaviourPunCallbacks, IPunObservable
     void PunHit(int damage)
     {
         HP.fillAmount -= damage / 100f;
-        Debug.Log(HP.fillAmount);
         if (HP.fillAmount <= 0)
         {
             HP.fillAmount = 0;

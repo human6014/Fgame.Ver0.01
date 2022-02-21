@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
 {
-    public enum WeaponsType { Melee, Range, Cannon, Throwing };
+    public enum WeaponsType { Melee, Range, Throwing };
     public WeaponsType type;
     public int damage;
     public float rate, speed;
@@ -14,6 +14,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     public GameObject bulletCase;
     public Transform bulletPos;
     public Transform bulletCasePos;
+
     #region 사용 무기 판별
     public void UseWeapons()
     {
@@ -24,9 +25,6 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
                 break;
             case WeaponsType.Range:
                 Shot();
-                break;
-            case WeaponsType.Cannon:
-                Launch();
                 break;
             case WeaponsType.Throwing:
                 Invoke(nameof(Throw), 0.2f);
@@ -40,37 +38,27 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     #region 원거리 무기 사용
     private void Shot()
     {
-        // Shotgun 실험중
-        /*
-        GameObject bullet;
-        Rigidbody bulletRigid;
-        Vector3 bulletVec;
+        GameObject _bullet;
+        Rigidbody _bulletRigid;
         for (int i = 0; i < 12; i++)
         {
-            bullet = PhotonNetwork.Instantiate("BulletShotgun", bulletPos.position, bulletPos.rotation);// rigidbody->rotaion 변경 보류
-            bulletRigid = bullet.GetComponent<Rigidbody>();
-            bulletVec = bulletPos.forward + bulletPos.right * Random.Range(-0.2f, 0.2f) + bulletPos.up * Random.Range(0, 0.2f);
-
-            bulletRigid.AddForce(bulletVec, ForceMode.Impulse);
+            _bullet = PhotonNetwork.Instantiate(bullet.name, bulletPos.position, bulletPos.rotation);
+            if (bullet.name != "BulletShotgun") break;
+            _bulletRigid = _bullet.GetComponent<Rigidbody>();
+            _bulletRigid.AddForce(bulletPos.right * Random.Range(-0.35f, 0.35f) + bulletPos.up * Random.Range(0, 0.2f), ForceMode.Impulse);
         }
-        */
-        PhotonNetwork.Instantiate("BulletSniperRifle", bulletPos.position, bulletPos.rotation);//일반 탄 무기 코드
-        //탄피
-        GameObject intantCase = PhotonNetwork.Instantiate("BulletCase", bulletCasePos.position, bulletCasePos.rotation);
-        Rigidbody caseRigid = intantCase.GetComponent<Rigidbody>();
-        Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
-        caseRigid.AddForce(caseVec, ForceMode.Impulse);
-        caseRigid.AddTorque(Vector3.up, ForceMode.Impulse);
-    }
-    private void Launch()
-    {
-        StartCoroutine(nameof(Reload));
-        PhotonNetwork.Instantiate("WarHead", bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
+        if(bullet.name=="WarHead") StartCoroutine(nameof(Reload));
+        CreateCase();
     }
     private void Throw()
     {
-        PhotonNetwork.Instantiate("Grenade", bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
-        GameObject instantCase = PhotonNetwork.Instantiate("Pin", bulletCasePos.position, bulletCasePos.rotation);
+        PhotonNetwork.Instantiate(bullet.name, bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
+        CreateCase();
+    }
+    private void CreateCase()
+    {
+        if (bulletCase == null) return;
+        GameObject instantCase = PhotonNetwork.Instantiate(bulletCase.name, bulletCasePos.position, bulletCasePos.rotation);
         Rigidbody caseRigid = instantCase.GetComponent<Rigidbody>();
         Vector3 caseVec = bulletCasePos.forward * Random.Range(-0.02f, -0.01f) + Vector3.up * Random.Range(0.01f, 0.02f);
         caseRigid.AddForce(caseVec, ForceMode.Impulse);

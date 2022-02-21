@@ -41,17 +41,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Weapon equipWeapon;
 
     int timer;
-    [PunRPC]
-    void EquipWeapon(int [] _weapons)
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            weapons[i] = allWeapons[_weapons[i]];
-        }
-        curEquip = 0;
-        weapons[0].SetActive(true);
-        equipWeapon = weapons[0].GetComponent<Weapon>();
-    }
+
     private void Start()
     {
         if (photonView.IsMine)
@@ -63,19 +53,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             view.RPC(nameof(EquipWeapon), RpcTarget.All, allTileMap.weapon);
         }
         else Name.text = view.Owner.NickName;
-
-        /*
-        for (int i = 0; i < hasWeapons.Length; i++)
-        {
-            if (hasWeapons[i])
-            {
-                curEquip = i;
-                weapons[i].SetActive(true);
-                equipWeapon = weapons[i].GetComponent<Weapon>();
-                break;
-            }
-        }
-        */ //기존 코드
     }
     Vector3 curPos;
     Vector3 moveVec;
@@ -87,6 +64,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             {
                 isEnd = true;
                 PhotonNetwork.Destroy(gameObject);
+                return;
             }
             if (isDying) return;
             KeyInput();
@@ -142,7 +120,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (equipWeapon.type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
             else if (equipWeapon.type == Weapon.WeaponsType.Range) anim.SetBool("isShot", true);
-            else if (equipWeapon.type == Weapon.WeaponsType.Cannon) anim.SetBool("isShot", true);
             else if (equipWeapon.type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", true);
             equipWeapon.UseWeapons();
             attackDelay = 0;
@@ -153,7 +130,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (equipWeapon.type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", false);
         else if (equipWeapon.type == Weapon.WeaponsType.Range) anim.SetBool("isShot", false);
-        else if (equipWeapon.type == Weapon.WeaponsType.Cannon) anim.SetBool("isShot", false);
         else if (equipWeapon.type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", false);
     }
     #endregion
@@ -209,7 +185,18 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn));
     }
     #endregion
-    #region 무기 교체
+    #region 무기 장착,교체
+    [PunRPC]
+    void EquipWeapon(int[] _weapons)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            weapons[i] = allWeapons[_weapons[i]];
+        }
+        curEquip = 0;
+        weapons[0].SetActive(true);
+        equipWeapon = weapons[0].GetComponent<Weapon>();
+    }
     [PunRPC]
     void ChangeWeapon(int index) //버그있음
     {

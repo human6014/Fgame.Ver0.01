@@ -21,17 +21,18 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private bool[] isOutPlayer = new bool[6];
     
     public int[] weapon = new int[3] { 0, 0, 0 };
-    int weaponIndexCounting;
-    public void SetWeapon(int index)
-    {
-        weapon[weaponIndexCounting++] = index;
-    }
-    public int[] GetWeapon() => weapon;
+
     public int i, j, bottom, top = 5;
     public int spawnerRotation = 90;
 
     public float[] myField = new float[6]; //임시용
     public int playerNum;                  //임시용
+
+    public void SetWeapon(int index)
+    {
+        weapon[index / 3] = index;
+    }
+    public int[] GetWeapon() => weapon;
 
     #region Getter + Setter
     public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;

@@ -20,7 +20,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
          isJumping,
          isDodging,
          isDying,
-         isEnd;
+         isEnd,
+         isStun;
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
@@ -50,7 +51,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             myIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
             Name.text = PhotonNetwork.NickName;
             allTileMap = FindObjectOfType<AllTileMap>();
-            view.RPC(nameof(EquipWeapon), RpcTarget.All, allTileMap.weapon);
+            view.RPC(nameof(EquipWeapon), RpcTarget.All, allTileMap.GetWeapon());
         }
         else Name.text = view.Owner.NickName;
     }
@@ -95,6 +96,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 키 입력
     void KeyInput()
     {
+        if (isStun)
+        {
+            Debug.Log("isStun");
+            return;
+        }
         xMove = Input.GetAxisRaw("Horizontal");
         zMove = Input.GetAxisRaw("Vertical");
         isWalk = Input.GetButton("Walk");
@@ -121,7 +127,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             if (equipWeapon.type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
             else if (equipWeapon.type == Weapon.WeaponsType.Range) anim.SetBool("isShot", true);
             else if (equipWeapon.type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", true);
-            equipWeapon.UseWeapons();
+            equipWeapon.UseWeapons(allTileMap.GetMeleeIndex());
             attackDelay = 0;
             Invoke(nameof(SetAttackAnim), 0.1f);
         }
@@ -185,6 +191,48 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn));
     }
     #endregion
+    #region 근접무기 cc
+    public void CrowdControl(int _ccIndex)
+    {
+        switch (_ccIndex)
+        {
+            case 0:
+               StartCoroutine(nameof(Slow));
+                break;
+            case 1:
+                KnockBack();
+                break;
+            case 2:
+                StartCoroutine(nameof(Stun));
+                break;
+            default:
+                Debug.LogError("Melee weapon index error");
+                break;
+        }
+    }
+    [PunRPC] public void SpeedDown() => speed -= 0.3f;
+    [PunRPC] public void SpeedUp() => speed = 1;
+    [PunRPC] public void StunUp() => isStun = true;
+    [PunRPC] public void StunDown() => isStun = false;
+    [PunRPC]
+    IEnumerator Slow()//Knife ,1
+    {
+        view.RPC(nameof(SpeedDown), RpcTarget.All);
+        yield return new WaitForSeconds(3);
+        view.RPC(nameof(SpeedUp), RpcTarget.All);
+    }
+    void KnockBack()//Bat ,2
+    {
+        Debug.Log("KnockBack");
+    }
+
+    IEnumerator Stun()//Hammer ,3
+    {
+        view.RPC(nameof(StunUp), RpcTarget.All);
+        yield return new WaitForSeconds(3);
+        view.RPC(nameof(StunDown), RpcTarget.All);
+    }
+    #endregion
     #region 무기 장착,교체
     [PunRPC]
     void EquipWeapon(int[] _weapons)
@@ -198,7 +246,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         equipWeapon = weapons[0].GetComponent<Weapon>();
     }
     [PunRPC]
-    void ChangeWeapon(int index) //버그있음
+    void ChangeWeapon(int index)
     {
         weapons[curEquip].SetActive(false);
         weapons[index].SetActive(true);

@@ -36,7 +36,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         Destroy(gameObject);
     }
     #endregion
-    //탄두 충돌시 튀는 버그 있음
+    //탄두 충돌시 튀는 버그, 동기화 이상함
     #region 탄두 충돌 검사
     private void OnCollisionEnter(Collision collision)
     {
@@ -53,7 +53,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         
         else if (other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner"))
         {
-            isCollison = true; //이렇게 안하면 rpc 반응 속도때문에 Raycasting이 여러번 호출될 수 있음
+            isCollison = true; //이렇게 안하면 rpc 반응 속도때문에(아마) Raycasting이 여러번 호출될 수 있음
             rigid.isKinematic = true;
             Raycasting();
         }

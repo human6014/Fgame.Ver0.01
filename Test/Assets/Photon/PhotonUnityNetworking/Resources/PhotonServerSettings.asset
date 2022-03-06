@@ -77,6 +77,11 @@ MonoBehaviour:
   - PunDestroyFloor
   - EquipWeapon
   - ChangeWeapon
+  - SpeedDown
+  - SpeedUp
+  - Slow
+  - StunDown
+  - StunUp
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -14,14 +14,15 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     public GameObject bulletCase;
     public Transform bulletPos;
     public Transform bulletCasePos;
-
+    private int curEquip;
     #region 사용 무기 판별
-    public void UseWeapons()
+    public void UseWeapons(int _curEquip)
     {
         switch (type)
         {
             case WeaponsType.Melee:
-                StartCoroutine("Swing");
+                curEquip = _curEquip;
+                StartCoroutine(nameof(Swing));
                 break;
             case WeaponsType.Range:
                 Shot();
@@ -47,7 +48,6 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
             _bulletRigid = _bullet.GetComponent<Rigidbody>();
             _bulletRigid.AddForce(bulletPos.right * Random.Range(-0.35f, 0.35f) + bulletPos.up * Random.Range(0, 0.2f), ForceMode.Impulse);
         }
-        if(bullet.name=="WarHead") StartCoroutine(nameof(Reload));
         CreateCase();
     }
     private void Throw()
@@ -64,12 +64,6 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         caseRigid.AddForce(caseVec, ForceMode.Impulse);
         caseRigid.AddTorque(Vector3.up, ForceMode.Impulse);
     }
-    IEnumerator Reload()
-    {
-        bullet.SetActive(false);
-        yield return new WaitForSeconds(2);
-        bullet.SetActive(true);
-    }
     #endregion
     #region 근접 무기
     IEnumerator Swing()
@@ -82,14 +76,17 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         meleeArea.enabled = false;
         trailEffect.enabled = false;
     }
+    Player player;
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<Player>().Hit(damage);
+            player = other.GetComponent<Player>();
+            player.CrowdControl(curEquip);
+            player.Hit(damage);
             meleeArea.enabled = false;
         }
     }
-    #endregion 
+    #endregion
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }
 }

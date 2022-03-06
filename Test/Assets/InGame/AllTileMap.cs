@@ -20,19 +20,13 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private int[] hasTileNum = new int[6];
     private bool[] isOutPlayer = new bool[6];
     
-    public int[] weapon = new int[3] { 0, 0, 0 };
+    private int[] weapon = new int[3] { 0, 3, 6 };
 
     public int i, j, bottom, top = 5;
     public int spawnerRotation = 90;
 
     public float[] myField = new float[6]; //임시용
     public int playerNum;                  //임시용
-
-    public void SetWeapon(int index)
-    {
-        weapon[index / 3] = index;
-    }
-    public int[] GetWeapon() => weapon;
 
     #region Getter + Setter
     public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;
@@ -43,12 +37,15 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetPlusHasTileNum(int i) => hasTileNum[i] += 1000;
     public void SetMinusHasTileNum(int i) => hasTileNum[i] -= 10;
     public void SetIsOutPlayer(bool _isOutPlayer, int i) => isOutPlayer[i] = _isOutPlayer;
+    public void SetWeapon(int index) => weapon[index / 3] = index; //Buuton에서 호출함!
     public Transform GetPortal(int i, int j) => childPortal[i, j];
     public Transform GetSpawner(int i) => childSpawner[i];
     public float GetPersonTileRadius(int i) => childSphereColliders[i].radius;
     public int GetHasTileNum(int i) => hasTileNum[i];
     public bool GetIsOutPlayer(int i) => isOutPlayer[i];
-    
+    public int[] GetWeapon() => weapon;
+    public int GetMeleeIndex() => weapon[0];
+
     #endregion
     IEnumerator Start()
     {

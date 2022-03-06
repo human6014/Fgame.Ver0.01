@@ -28,7 +28,7 @@ public class Grenade : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(livingTime);
         Raycasting();
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         Destroy(gameObject);
     }
     #endregion

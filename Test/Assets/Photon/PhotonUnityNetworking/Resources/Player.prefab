@@ -1444,7 +1444,7 @@ BoxCollider:
   m_GameObject: {fileID: 565202565905581605}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 0.4, y: 1.5, z: 0.4}
   m_Center: {x: 0, y: -0.5, z: 0}
@@ -1736,7 +1736,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  damage: 20
+  damage: 15
   rate: 2
   speed: 0
   meleeArea: {fileID: 5628065744898280205}
@@ -1902,7 +1902,7 @@ BoxCollider:
   m_GameObject: {fileID: 888576379659894674}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 0.4, y: 2.5, z: 0.4}
   m_Center: {x: 0, y: -0.5, z: 0}
@@ -2214,7 +2214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  damage: 15
+  damage: 20
   rate: 2
   speed: 0
   meleeArea: {fileID: 3943663715368299939}
@@ -2380,7 +2380,7 @@ BoxCollider:
   m_GameObject: {fileID: 1812394710965517020}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 0.5, y: 2, z: 1}
   m_Center: {x: 0, y: -1, z: 0}

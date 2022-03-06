@@ -57,7 +57,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     Vector3 curPos;
     Vector3 moveVec;
-    void Update()
+    private void Update()
     {
         if (photonView.IsMine && !isEnd)
         {
@@ -94,7 +94,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
     #region 키 입력
-    void KeyInput()
+    private void KeyInput()
     {
         if (isStun)
         {
@@ -119,7 +119,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 공격 
-    void Attack() //오브젝트 폴링 활용할 것
+    private void Attack() //오브젝트 폴링 활용할 것
     {
         attackDelay += Time.deltaTime;
         if (isAttack && equipWeapon.rate < attackDelay && !isDodging && !isDying)
@@ -132,7 +132,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             Invoke(nameof(SetAttackAnim), 0.1f);
         }
     }
-    void SetAttackAnim()
+    private void SetAttackAnim()
     {
         if (equipWeapon.type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", false);
         else if (equipWeapon.type == Weapon.WeaponsType.Range) anim.SetBool("isShot", false);
@@ -185,7 +185,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         view.RPC(nameof(PunHit), RpcTarget.All, damage);
     }
     [PunRPC]
-    public void PunHit(int damage)
+    private void PunHit(int damage)
     {
         HP.fillAmount -= damage / 100f;
         if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn));
@@ -197,11 +197,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         switch (_ccIndex)
         {
             case 0:
-               StartCoroutine(nameof(Slow));
+                StartCoroutine(nameof(Slow));
                 break;
-            case 1:
-                KnockBack();
-                break;
+ 
             case 2:
                 StartCoroutine(nameof(Stun));
                 break;
@@ -210,22 +208,20 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 break;
         }
     }
-    [PunRPC] public void SpeedDown() => speed -= 0.3f;
-    [PunRPC] public void SpeedUp() => speed = 1;
-    [PunRPC] public void StunUp() => isStun = true;
-    [PunRPC] public void StunDown() => isStun = false;
-    [PunRPC]
-    IEnumerator Slow()//Knife ,1
+    [PunRPC] private void SpeedDown() => speed -= 0.3f;
+    [PunRPC] private void SpeedUp() => speed = 1;
+    [PunRPC] private void KnockBackUp(float x, float z) => rigid.AddForce(new Vector3((transform.position.x - x) * 7, 2.5f, (transform.position.z - z) * 7), ForceMode.Impulse);
+    [PunRPC] private void StunUp() => isStun = true;
+    [PunRPC] private void StunDown() => isStun = false;
+
+    IEnumerator Slow(string ccName)//Knife ,1
     {
         view.RPC(nameof(SpeedDown), RpcTarget.All);
         yield return new WaitForSeconds(3);
         view.RPC(nameof(SpeedUp), RpcTarget.All);
     }
-    void KnockBack()//Bat ,2
-    {
-        Debug.Log("KnockBack");
-    }
-
+    public void KnockBack(float x,float z) => view.RPC(nameof(KnockBackUp), RpcTarget.All, x, z); //Bat ,2
+    
     IEnumerator Stun()//Hammer ,3
     {
         view.RPC(nameof(StunUp), RpcTarget.All);

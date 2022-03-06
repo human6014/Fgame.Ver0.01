@@ -8,12 +8,12 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     public WeaponsType type;
     public int damage;
     public float rate, speed;
-    public BoxCollider meleeArea;
-    public TrailRenderer trailEffect;
-    public GameObject bullet;
-    public GameObject bulletCase;
-    public Transform bulletPos;
-    public Transform bulletCasePos;
+    [SerializeField] BoxCollider meleeArea;
+    [SerializeField] TrailRenderer trailEffect;
+    [SerializeField] GameObject bullet;
+    [SerializeField] GameObject bulletCase;
+    [SerializeField] Transform bulletPos;
+    [SerializeField] Transform bulletCasePos;
     private int curEquip;
     #region 사용 무기 판별
     public void UseWeapons(int _curEquip)
@@ -76,13 +76,15 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         meleeArea.enabled = false;
         trailEffect.enabled = false;
     }
-    Player player;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            player = other.GetComponent<Player>();
-            player.CrowdControl(curEquip);
+            Player player = other.GetComponent<Player>();
+            //cc기 설계 변경 보류
+            if (curEquip == 1) player.KnockBack(transform.root.position.x, transform.root.position.z);
+            else player.CrowdControl(curEquip);
             player.Hit(damage);
             meleeArea.enabled = false;
         }

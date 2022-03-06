@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1419160118852215256}
   - component: {fileID: 1419160118852215259}
   - component: {fileID: 1419160118852215258}
+  - component: {fileID: -5456723232222585903}
   m_Layer: 0
   m_Name: Pin
   m_TagString: Untagged
@@ -155,3 +156,15 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!114 &-5456723232222585903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419160118852215261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 372cc0173a281504ba8e4ca2bccc9de6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -10,13 +10,13 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     private bool isCollison;
     private AllTileMap allTileMap;
 
-    public MeshCollider meshCollider;
-    public GameObject particle;
-    public MeshRenderer meshRenderer;
-    public Rigidbody rigid;
-    public PhotonView view;
-    public int damage;
-    public int speed;
+    [SerializeField] MeshCollider meshCollider;
+    [SerializeField] GameObject particle;
+    [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] Rigidbody rigid;
+    [SerializeField] PhotonView view;
+    [SerializeField] int damage;
+    [SerializeField] int speed;
     private void Start()
     {
         transform.rotation *= Quaternion.Euler(0, 180, 0);
@@ -27,7 +27,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         Destroy(gameObject, 3);
     }
     #region 탄두 궤적 설정
-    IEnumerator BallisticFall()
+    private IEnumerator BallisticFall()
     {
         yield return new WaitForSeconds(0.1f);
         rigid.constraints = RigidbodyConstraints.None;
@@ -58,7 +58,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
             Raycasting();
         }
     }
-    void Raycasting()
+    private void Raycasting()
     {
         view.RPC(nameof(Effect), RpcTarget.All);
         RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, 0.5f, Vector3.up, 0, 1 << LayerMask.NameToLayer("Destroyable"));
@@ -77,7 +77,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     [PunRPC]
-    void Effect()
+    private void Effect()
     {
         isCollison = true;
         rigid.isKinematic = true;
@@ -86,7 +86,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         particle.SetActive(true);
     }
     [PunRPC]
-    void FloorDestroy(string hitName,string hitParentName)
+    private void FloorDestroy(string hitName,string hitParentName)
     {
         Transform parentObject = allTileMap.transform.Find(hitParentName);
         Transform hitObject = parentObject.Find(hitName);

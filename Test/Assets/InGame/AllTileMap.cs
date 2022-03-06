@@ -47,7 +47,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public int GetMeleeIndex() => weapon[0];
 
     #endregion
-    IEnumerator Start()
+    private IEnumerator Start()
     {
         myField = new float[] { 8.5f,7.5f,6.5f,5.5f,4.5f,3.5f};//플레이어 타일 크기
 
@@ -65,7 +65,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(0.5f);
         beforeStartPanel.SetActive(false);
     }
-    void CreatePersonTile()
+    private void CreatePersonTile()
     {
         GameObject _personTile;
         float _x = 0,

@@ -5,8 +5,8 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
 {
     private bool isCollison;
     private Rigidbody rigid;
-    public int damage;
-    public int speed;
+    [SerializeField] int damage;
+    [SerializeField] int speed;
     public PhotonView view;
     private void Start()
     {

@@ -6,8 +6,8 @@ using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 public class PersonTileMap : MonoBehaviour
 {
-    public GeneralManager generalManager;
-    public AllTileMap allTileMap;
+    [SerializeField] GeneralManager generalManager;
+    [SerializeField] AllTileMap allTileMap;
     private SphereCollider sphereCollider;
     private MeshCollider meshCollider;
     private new Rigidbody rigidbody;
@@ -24,7 +24,7 @@ public class PersonTileMap : MonoBehaviour
                         tileRadius = 8.5f;
     int myIndex;
     int count = 1;
-    void Start()
+    private void Start()
     {
         if (gameObject.name == "Sample") return;
         sphereCollider = GetComponent<SphereCollider>();
@@ -62,7 +62,7 @@ public class PersonTileMap : MonoBehaviour
         }
         if (transform.childCount == 0) SetIsOutPlayer(); //임시
     }
-    void SetIsOutPlayer()
+    private void SetIsOutPlayer()
     {
         allTileMap.SetIsOutPlayer(true, myIndex - 1);
     }
@@ -119,7 +119,7 @@ public class PersonTileMap : MonoBehaviour
     }
     #endregion
     #region 블럭 설정 + 스포너 생성
-    IEnumerator SetTileInfo(GameObject TempGo, float x, float z, Vector3 pos)
+    private IEnumerator SetTileInfo(GameObject TempGo, float x, float z, Vector3 pos)
     {
         TempGo.transform.parent = transform;
         TempGo.name = x.ToString() + "," + z.ToString();
@@ -140,10 +140,10 @@ public class PersonTileMap : MonoBehaviour
         yield return new WaitForFixedUpdate();
         TempGo.transform.position = pos;
     }
-    bool isTagChecking;
+    //bool isTagChecking;
     #endregion
     #region 포탈방향 블럭 설정
-    void TagChecking(GameObject TempGo, float x, float z)
+    private void TagChecking(GameObject TempGo, float x, float z)
     {
         switch (transform.tag)
         {
@@ -180,11 +180,11 @@ public class PersonTileMap : MonoBehaviour
                 }
                 break;
         }
-        isTagChecking = true;
+        //isTagChecking = true;
     }
     #endregion
     #region 블럭 태그 설정+포탈
-    void TagChanging(GameObject TempGo, float x, float z)
+    private void TagChanging(GameObject TempGo, float x, float z)
     {
         TempGo.tag = "Floor7";
         TempGo.layer = 7;
@@ -194,7 +194,7 @@ public class PersonTileMap : MonoBehaviour
     }
     #endregion
     #region 포탈 생성
-    void CreatePortal(float x, float z)
+    private void CreatePortal(float x, float z)
     {
         if (transform.CompareTag("Floor7"))
         {

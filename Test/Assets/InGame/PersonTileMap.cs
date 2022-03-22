@@ -46,7 +46,8 @@ public class PersonTileMap : MonoBehaviour
                 if (allTileMap.GetHasTileNum(myIndex - 1) > 0) {
                     allTileMap.SetMinusHasTileNum(myIndex - 1);
                 }
-                else sphereCollider.radius -= 0.001f;
+                else sphereCollider.radius -= 0.05f;
+                //0.0005f == 분당 radius 1.5줄음
             }
         }
         else if (!tryOnce)

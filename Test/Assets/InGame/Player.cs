@@ -61,8 +61,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (photonView.IsMine && !isEnd)
         {
-            if (myIndex != -1 && allTileMap.GetIsOutPlayer(myIndex - 1)) //버그 수정 대기
+            if (myIndex != -1 && allTileMap.GetIsOutPlayer(myIndex - 1))
             {
+                allTileMap.SetIsOutPlayer(true, myIndex - 1);
                 isEnd = true;
                 PhotonNetwork.Destroy(gameObject);
                 return;
@@ -96,11 +97,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 키 입력
     private void KeyInput()
     {
-        if (isStun)
-        {
-            Debug.Log("isStun");
-            return;
-        }
+        if (isStun)return;
         xMove = Input.GetAxisRaw("Horizontal");
         zMove = Input.GetAxisRaw("Vertical");
         isWalk = Input.GetButton("Walk");
@@ -225,7 +222,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Stun()//Hammer ,3
     {
         view.RPC(nameof(StunUp), RpcTarget.All);
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(0.5f);
         view.RPC(nameof(StunDown), RpcTarget.All);
     }
     #endregion
@@ -282,11 +279,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 낙사
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("GameController")) StartCoroutine(nameof(FallRespawn));
+        if (!isEnd && other.gameObject.CompareTag("GameController")) StartCoroutine(nameof(FallRespawn));
     }
     IEnumerator FallRespawn()
     {
-        if (isEnd || !photonView.IsMine) yield break;
+        if (!photonView.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
         isDying = true;
         view.RPC(nameof(UnRecovery), RpcTarget.All);
         rigid.velocity = Vector3.zero;

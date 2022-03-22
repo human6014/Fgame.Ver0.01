@@ -43,7 +43,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         playerName = GameManager.Instance().GetPlayerName();
 
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
-        OnMasterChatting("연결 성공");
+        OnMasterChatting("입장");
         view.RPC(nameof(OnMasterChatting), RpcTarget.Others, " 님이 입장하였습니다", playerName);
     }
     public void CreatePlayer()
@@ -102,7 +102,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     public void SetChatClear() => inputField.text = string.Empty;
     [PunRPC]
-    void OnPlayerChatting(string message,string sender) => outputText.text += sender + " : " + message + "\r\n";
+    void OnPlayerChatting(string message, string sender) => outputText.text += sender + " : " + message + "\r\n";
     [PunRPC]
     void OnMasterChatting(string message, string target = "") => outputText.text += target + message + "\r\n";
     public void Input_OnEndEdit()

@@ -8,25 +8,23 @@ using Photon.Pun.UtilityScripts;
 public class AllTileMap : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject beforeStartPanel;
+    [SerializeField] GameObject gameOverPanel;
     [SerializeField] GameObject personTileMap;
     [SerializeField] GeneralManager generalManager;
     [SerializeField] Text tileCount;
     [SerializeField] Text startTimer;
-    [SerializeField] Text hasTileCount;
+    [SerializeField] Text hasTileCount; //temp
     private Transform[,] childPortal = new Transform[6, 2];
     private Transform[] childSpawner = new Transform[6];
     private SphereCollider[] childSphereColliders= new SphereCollider[6];
     private int[] childTileCount = new int[6];
     private int[] hasTileNum = new int[6];
     private bool[] isOutPlayer = new bool[6];
-    
     private int[] weapon = new int[3] { 0, 3, 6 };
+    private bool flag;
 
     public int i, j, bottom, top = 5;
     public int spawnerRotation = 90;
-
-    public float[] myField = new float[6]; //임시용
-    public int playerNum;                  //임시용
 
     #region Getter + Setter
     public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;
@@ -49,12 +47,10 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     #endregion
     private IEnumerator Start()
     {
-        myField = new float[] { 8.5f,7.5f,6.5f,5.5f,4.5f,3.5f};//플레이어 타일 크기
-
         yield return new WaitUntil(()=> generalManager.GetIsRoomFull());
         CreatePersonTile();
         generalManager.SetIsCreateTile(true);
-        for (int i = 5; i >= 1; i--)
+        for (int i = 10; i >= 1; i--)
         {
             startTimer.text = i.ToString();
             yield return new WaitForSeconds(1);
@@ -124,8 +120,17 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
             if (player.GetPlayerNumber() == -1) return;
-            tileCount.text += (player.IsLocal?"<color=red>": "<color=black>")+player.NickName + "</color> : " + childTileCount[player.GetPlayerNumber() - 1] + "\n";
+            tileCount.text += (player.IsLocal ? "<color=red>" : "<color=black>") + player.NickName + "</color> : ";
+            tileCount.text += (isOutPlayer[player.GetPlayerNumber() - 1] ? "OUT" : childTileCount[player.GetPlayerNumber() - 1].ToString()) + "\n";
+
+            if (!flag && isOutPlayer[PhotonNetwork.LocalPlayer.GetPlayerNumber()])
+            {
+                flag = true;
+                gameOverPanel.SetActive(true);
+            }
+
             hasTileCount.text += player.NickName + " : " + hasTileNum[player.GetPlayerNumber() - 1] + "\n";
         }
+        
     }
 }

@@ -7,13 +7,13 @@ using Photon.Pun;
 using Photon.Realtime;
 public class JoinRoom : MonoBehaviourPunCallbacks
 {
-    [SerializeField] GameObject playerName;
-    [SerializeField] GameObject roomName;
+    [SerializeField] Text playerName;
+    [SerializeField] Text roomName;
     public void OnClicked()
     {
-        string tempPlayerName = playerName.GetComponent<Text>().text,
-               tempRoomCode = roomName.GetComponent<Text>().text;
-        if (string.IsNullOrEmpty(tempPlayerName) || string.IsNullOrEmpty(tempRoomCode)) return;
-        GameManager.Instance().OnStartGame(2, tempPlayerName, tempRoomCode);
+        if (string.IsNullOrEmpty(playerName.text) || string.IsNullOrEmpty(roomName.text)) return;
+        string tempPlayerName = playerName.text,
+               tempRoomCode  = roomName.text;
+        GameManager.Instance().OnStartGame(2, tempPlayerName, tempRoomCode, -1);
     }
 }

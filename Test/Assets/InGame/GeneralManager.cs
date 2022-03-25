@@ -18,6 +18,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private bool isCreateTile = false;
     private bool isCreatePlayer = false;
     private bool isChatOn = false;
+
     [SerializeField] GameObject delayCancelButton;
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Button matchDown;
@@ -49,6 +50,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public void CreatePlayer()
     {
         GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
+        player.name = "Player" + PhotonNetwork.LocalPlayer.GetPlayerNumber();
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {

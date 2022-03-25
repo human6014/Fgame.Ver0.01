@@ -8,8 +8,9 @@ public class GameManager : MonoBehaviourPunCallbacks
 {
     private string playerName = "Default";
     private string roomCode = "Default";
+    private int maxPlayer = -1;
     private int stateIndex = -1;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 1 };
+    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 6 };
     #region 싱글톤
     static GameManager _instance = null;
     public static GameManager Instance() => _instance;
@@ -44,18 +45,20 @@ public class GameManager : MonoBehaviourPunCallbacks
         PhotonNetwork.GameVersion = "1.0";
     }
     public override void OnConnectedToMaster() { }
-    public void OnStartGame(int _stateIndex, string _playerName, string _roomCode)
+    public void OnStartGame(int _stateIndex, string _playerName, string _roomCode, int _maxPlayer)
     {
         if (!PhotonNetwork.IsConnectedAndReady) return;
         stateIndex = _stateIndex;
         roomCode   = _roomCode;
         playerName = _playerName;
+        maxPlayer = _maxPlayer;
         switch (stateIndex)
         {
             case 0:
                 PhotonNetwork.JoinRandomRoom();
                 break;
             case 1:
+                roomOptions = new RoomOptions { MaxPlayers = (byte)maxPlayer };
                 PhotonNetwork.CreateRoom(roomCode, roomOptions);
                 break;
             case 2:

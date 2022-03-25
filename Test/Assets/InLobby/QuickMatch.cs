@@ -3,11 +3,11 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class QuickMatch : MonoBehaviour
 {
-    [SerializeField] GameObject playerName;
+    [SerializeField] Text playerName;
     public void OnClicked()
     {
-        string tempPlayerName = playerName.GetComponent<Text>().text;
-        if (string.IsNullOrEmpty(tempPlayerName)) return;
-        GameManager.Instance().OnStartGame(0,tempPlayerName,"");
+        if (string.IsNullOrEmpty(playerName.text)) return;
+        string tempPlayerName = playerName.text;
+        GameManager.Instance().OnStartGame(0,tempPlayerName,"", -1);
     }
 }

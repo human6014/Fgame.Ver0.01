@@ -5,13 +5,18 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class CreateRoom : MonoBehaviour
 {
-    [SerializeField] GameObject playerName;
-    [SerializeField] GameObject roomName;
+    [SerializeField] Text playerName;
+    [SerializeField] Text roomName;
+    [SerializeField] Text maxPlayer;
     public void OnClicked()
     {
-        string tempPlayerName = playerName.GetComponent<Text>().text,
-               tempRoomCode = roomName.GetComponent<Text>().text;
-        if (string.IsNullOrEmpty(tempPlayerName) || string.IsNullOrEmpty(tempRoomCode)) return;
-        GameManager.Instance().OnStartGame(1, tempPlayerName, tempRoomCode);
+        if (string.IsNullOrEmpty(playerName.text) || 
+            string.IsNullOrEmpty(roomName.text) ||
+            string.IsNullOrEmpty(maxPlayer.text)) return;
+        string tempPlayerName = playerName.text,
+               tempRoomCode = roomName.text;
+        int tempMaxPlayer = int.Parse(maxPlayer.text);
+        if (tempMaxPlayer < 2 || tempMaxPlayer > 6) return;
+        GameManager.Instance().OnStartGame(1, tempPlayerName, tempRoomCode, tempMaxPlayer);
     }
 }

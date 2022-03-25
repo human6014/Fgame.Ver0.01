@@ -29,6 +29,11 @@ public class PersonTileMap : MonoBehaviour
         if (gameObject.name == "Sample") return;
         sphereCollider = GetComponent<SphereCollider>();
         if (gameObject.CompareTag("Floor7")) sphereCollider.radius = 5;
+        else if (gameObject.CompareTag("Floor1"))
+        {
+            sphereCollider.radius = 3;
+            myIndex = int.Parse(transform.tag.Substring(5));
+        }
         else
         {
             sphereCollider.radius = tileRadius;//allTileMap.myField[allTileMap.playerNum++];
@@ -46,7 +51,7 @@ public class PersonTileMap : MonoBehaviour
                 if (allTileMap.GetHasTileNum(myIndex - 1) > 0) {
                     allTileMap.SetMinusHasTileNum(myIndex - 1);
                 }
-                else sphereCollider.radius -= 0.05f;
+                else sphereCollider.radius -= 0.0005f;
                 //0.0005f == 분당 radius 1.5줄음
             }
         }

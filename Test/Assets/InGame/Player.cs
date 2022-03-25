@@ -40,7 +40,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Animator anim;
     AllTileMap allTileMap;
     Weapon equipWeapon;
-
     int timer;
 
     private void Start()
@@ -196,7 +195,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             case 0:
                 StartCoroutine(nameof(Slow));
                 break;
- 
             case 2:
                 StartCoroutine(nameof(Stun));
                 break;
@@ -211,7 +209,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC] private void StunUp() => isStun = true;
     [PunRPC] private void StunDown() => isStun = false;
 
-    IEnumerator Slow(string ccName)//Knife ,1
+    IEnumerator Slow()//Knife ,1
     {
         view.RPC(nameof(SpeedDown), RpcTarget.All);
         yield return new WaitForSeconds(3);

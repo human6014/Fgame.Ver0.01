@@ -4,9 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
-using UnityEngine.SceneManagement;
 using Photon.Pun.UtilityScripts;
-using ExitGames.Client.Photon;
 
 public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -49,6 +47,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     public void CreatePlayer()
     {
+        Debug.Log(PhotonNetwork.LocalPlayer.GetPlayerNumber());
         GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
         player.name = "Player" + PhotonNetwork.LocalPlayer.GetPlayerNumber();
     }
@@ -82,11 +81,11 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         if (!isRoomFull) return;
         if (stream.IsWriting)
         {
-            for (int i = 0; i < 6; i++) stream.SendNext(allTileMap.GetPersonTileRadius(i));
+            for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++) stream.SendNext(allTileMap.GetPersonTileRadius(i));
         }
         else
         {
-            for (int i = 0; i < 6; i++) allTileMap.SetPersonTileRadius(i, (float)stream.ReceiveNext());
+            for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++) allTileMap.SetPersonTileRadius(i, (float)stream.ReceiveNext());
         }
     }
     #endregion

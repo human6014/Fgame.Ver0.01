@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Portal : MonoBehaviour
@@ -15,7 +16,14 @@ public class Portal : MonoBehaviour
     }
     public void PlayerEntry(GameObject player)
     {
-        if (jNum == 0) player.transform.position = allTileMap.GetPortal(iNum, jNum + 1).position;//out->in
-        else player.transform.position = allTileMap.GetPortal(iNum, jNum - 1).position;//in->out
+        try
+        {
+            if (jNum == 0) player.transform.position = allTileMap.GetPortal(iNum, jNum + 1).position;//out->in
+            else player.transform.position = allTileMap.GetPortal(iNum, jNum - 1).position;//in->out
+        }
+        catch(Exception e)
+        {
+            Debug.Log(e.Message);
+        }
     }
 }

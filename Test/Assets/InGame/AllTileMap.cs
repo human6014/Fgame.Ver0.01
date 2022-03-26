@@ -23,11 +23,12 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private int[] weapon = new int[3] { 0, 3, 6 };
     private bool flag;
 
-    public int i, j, bottom, top = 5;
+    public int i, j, first = 1, second = 4;
+    public int tempTop = 5, tempBottom = 0;
     public int spawnerRotation = 90;
 
     #region Getter + Setter
-    public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;
+    public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr; //¿©±â
     public void SetSpawner(Transform tr, int i) => childSpawner[i] = tr;
     public void SetPersonTileRadius(int i, float _radius) => childSphereColliders[i].radius = _radius;
     public void SetChildTileCount(int i,int _count) => childTileCount[i] = _count;
@@ -36,7 +37,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetMinusHasTileNum(int i) => hasTileNum[i] -= 10;
     public void SetIsOutPlayer(bool _isOutPlayer, int i) => isOutPlayer[i] = _isOutPlayer;
     public void SetWeapon(int index) => weapon[index / 3] = index; //Buuton¿¡¼­ È£ÃâÇÔ!
-    public Transform GetPortal(int i, int j) => childPortal[i, j];
+    public Transform GetPortal(int i, int j) => childPortal[i, j]; //¿©±â
     public Transform GetSpawner(int i) => childSpawner[i];
     public float GetPersonTileRadius(int i) => childSphereColliders[i].radius;
     public int GetHasTileNum(int i) => hasTileNum[i];
@@ -68,47 +69,47 @@ public class AllTileMap : MonoBehaviourPunCallbacks
               _z = 0;
         int _tagNum = 0;
         float _radius = personTileMap.GetComponent<SphereCollider>().radius;
-        for (int i = 0; i < 7; i++)
+
+        for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers + 1; i++)
         {
             switch (i)
             {
-                case 0:
+                case 0: //Áß¾Ó
+                    _x = 0.5f;
+                    _z = 0.865f;
+                    break;
+                case 1: //ÁÂÇÏ
                     _x = 0;
                     _z = 0;
                     break;
-                case 1:
+                case 2: //¿ìÇÏ
                     _x = 1;
                     _z = 0;
                     break;
-                case 2:
+                case 3: //¿ì
                     _x = 1.5f;
                     _z = 0.865f;
                     break;
-                case 3:
+                case 4: //¿ì»ó
                     _x = 1;
                     _z = 1.73f;
                     break;
-                case 4:
+                case 5: //ÁÂ»ó
                     _x = 0;
                     _z = 1.73f;
                     break;
-                case 5:
+                case 6: //ÁÂ
                     _x = -0.5f;
-                    _z = 0.865f;
-                    break;
-                case 6:
-                    _x = 0.5f;
                     _z = 0.865f;
                     break;
             }
             _personTile = Instantiate(personTileMap, new Vector3
             (_x * _radius * 3, 0, _z * _radius * 3), Quaternion.identity);
-            _tagNum++;
             _personTile.transform.parent = transform;
-            _personTile.name = "PerosnTileMap" + (i + 1);
-            _personTile.tag = "Floor" + _tagNum;
+            _personTile.name = "PerosnTileMap" + i;
+            _personTile.tag = "Floor" + _tagNum++;
             _personTile.GetComponent<PersonTileMap>().CreateHexTileMap();
-            if (i != 6) childSphereColliders[i] = _personTile.GetComponent<SphereCollider>();
+            if (i != 0) childSphereColliders[i - 1] = _personTile.GetComponent<SphereCollider>();
         }
         Destroy(personTileMap);
     }

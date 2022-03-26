@@ -28,12 +28,7 @@ public class PersonTileMap : MonoBehaviour
     {
         if (gameObject.name == "Sample") return;
         sphereCollider = GetComponent<SphereCollider>();
-        if (gameObject.CompareTag("Floor7")) sphereCollider.radius = 5;
-        else if (gameObject.CompareTag("Floor1"))
-        {
-            sphereCollider.radius = 3;
-            myIndex = int.Parse(transform.tag.Substring(5));
-        }
+        if (gameObject.CompareTag("Floor0")) sphereCollider.radius = 5;
         else
         {
             sphereCollider.radius = tileRadius;//allTileMap.myField[allTileMap.playerNum++];
@@ -42,7 +37,7 @@ public class PersonTileMap : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (gameObject.CompareTag("Floor7") || gameObject.name == "Sample") return;
+        if (gameObject.CompareTag("Floor0") || gameObject.name == "Sample") return;
         allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
         if (sphereCollider.radius >= 0)
         {
@@ -129,7 +124,7 @@ public class PersonTileMap : MonoBehaviour
     {
         TempGo.transform.parent = transform;
         TempGo.name = x.ToString() + "," + z.ToString();
-        if (x == 0 && z == 0 && !transform.CompareTag("Floor7"))
+        if (x == 0 && z == 0 && !transform.CompareTag("Floor0"))
         {
             GameObject castle = Instantiate(CastlePrefab, new Vector3(x * tileXOffset + transform.position.x, 0,
                                                                       z * tileZOffset + transform.position.z), Quaternion.identity);
@@ -138,15 +133,12 @@ public class PersonTileMap : MonoBehaviour
             castle.name = "Spawner" + transform.tag.Substring(5, 1);
             castle.transform.parent = transform;
             castle.tag = transform.tag;
-            allTileMap.SetSpawner(castle.transform, int.Parse(transform.tag.Substring(5, 1)) - 1);
+            allTileMap.SetSpawner(castle.transform, int.Parse(transform.tag.Substring(5)) - 1);
         }
         TagChecking(TempGo, x, z);
-
-        //yield return new WaitUntil(()=> isTagChecking);
         yield return new WaitForFixedUpdate();
         TempGo.transform.position = pos;
     }
-    //bool isTagChecking;
     #endregion
     #region 포탈방향 블럭 설정
     private void TagChecking(GameObject TempGo, float x, float z)
@@ -175,11 +167,11 @@ public class PersonTileMap : MonoBehaviour
             default:
                 if (x == 0 && z == 0)
                 {
-                    TempGo.tag = "Floor7";
+                    TempGo.tag = "Floor0";
                     TempGo.layer = 7;
                 }
                 else TempGo.tag = transform.tag;
-                if (transform.CompareTag("Floor7"))
+                if (transform.CompareTag("Floor0"))
                 {
                     TempGo.layer = 7;
                     CreatePortal(x, z);
@@ -192,7 +184,7 @@ public class PersonTileMap : MonoBehaviour
     #region 블럭 태그 설정+포탈
     private void TagChanging(GameObject TempGo, float x, float z)
     {
-        TempGo.tag = "Floor7";
+        TempGo.tag = "Floor0";
         TempGo.layer = 7;
         count++;
         if (x >= 0 && count == mapHeight / 2) CreatePortal(x, z);
@@ -202,7 +194,7 @@ public class PersonTileMap : MonoBehaviour
     #region 포탈 생성
     private void CreatePortal(float x, float z)
     {
-        if (transform.CompareTag("Floor7"))
+        if (transform.CompareTag("Floor0"))
         {
             switch (count)
             {
@@ -229,24 +221,35 @@ public class PersonTileMap : MonoBehaviour
         }
         GameObject Portal = Instantiate(PortalPrefab, new Vector3(x * tileXOffset + transform.position.x, 0.5f,
                                                                   z * tileZOffset + transform.position.z), Quaternion.identity);
+        
         Portal.transform.parent = transform.parent;
         if (allTileMap.j > 0)
         {
-            if (allTileMap.i % 2 == 0)
-            {
-                Portal.name = allTileMap.top + "" + allTileMap.j;
-                allTileMap.SetPortal(Portal.transform, allTileMap.top--, allTileMap.j);
-            }
-            else
-            {
-                Portal.name = allTileMap.bottom + "" + allTileMap.j;
-                allTileMap.SetPortal(Portal.transform, allTileMap.bottom++, allTileMap.j);
-            }
+            Portal.name = allTileMap.i - 6 + "" + allTileMap.j;
+            allTileMap.SetPortal(Portal.transform, allTileMap.i - 6, allTileMap.j);
         }
         else
         {
-            Portal.name = allTileMap.i + "" + allTileMap.j;
-            allTileMap.SetPortal(Portal.transform, allTileMap.i, allTileMap.j);
+            int myPosition;
+            if (allTileMap.i % 2 == 0)
+            {
+                myPosition = allTileMap.tempTop;
+                allTileMap.tempTop--;
+            }
+            else
+            {
+                myPosition = allTileMap.tempBottom;
+                allTileMap.tempBottom++;
+            }
+            if (myPosition > PhotonNetwork.CurrentRoom.MaxPlayers - 1)
+            {
+                Destroy(Portal);
+            }
+            else
+            {
+                Portal.name = myPosition + "" + allTileMap.j;
+                allTileMap.SetPortal(Portal.transform, myPosition, allTileMap.j);
+            }
             if (allTileMap.i == 5) allTileMap.j++;
         }
         allTileMap.i++;

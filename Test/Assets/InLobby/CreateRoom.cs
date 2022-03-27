@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
+
 public class CreateRoom : MonoBehaviour
 {
     [SerializeField] Text playerName;
@@ -10,7 +12,7 @@ public class CreateRoom : MonoBehaviour
     [SerializeField] Text maxPlayer;
     public void OnClicked()
     {
-        if (string.IsNullOrEmpty(playerName.text) || 
+        if (string.IsNullOrEmpty(playerName.text) ||
             string.IsNullOrEmpty(roomName.text) ||
             string.IsNullOrEmpty(maxPlayer.text)) return;
         string tempPlayerName = playerName.text,

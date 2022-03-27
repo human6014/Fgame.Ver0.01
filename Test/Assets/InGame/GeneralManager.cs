@@ -17,18 +17,18 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private bool isCreatePlayer = false;
     private bool isChatOn = false;
 
-    [SerializeField] GameObject delayCancelButton;
     [SerializeField] Text roomCountDisplay;
+    [SerializeField] Text outputText;
+    [SerializeField] Image image;
     [SerializeField] Button matchDown;
     [SerializeField] InputField inputField;
-    [SerializeField] Image image;
-    [SerializeField] Text outputText;
-    [SerializeField] GameObject content;
+    [SerializeField] RectTransform rectTransform;
     [SerializeField] AllTileMap allTileMap;
     PhotonView view;
     public bool GetIsRoomFull() => isRoomFull;
     public bool GetIsCreateTile() => isCreateTile;
     public bool GetIsCreatePlayer() => isCreatePlayer;
+    public bool GetIsChatOn() => isChatOn;
     public void SetIsCreateTile(bool _isCreateTile) => isCreateTile = _isCreateTile;
     public void SetIsCreatePlayer(bool _isCreatePlayer) => isCreatePlayer = _isCreatePlayer;
 
@@ -47,7 +47,6 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     public void CreatePlayer()
     {
-        Debug.Log(PhotonNetwork.LocalPlayer.GetPlayerNumber());
         GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
         player.name = "Player" + PhotonNetwork.LocalPlayer.GetPlayerNumber();
     }
@@ -80,13 +79,11 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (!isRoomFull) return;
         if (stream.IsWriting)
-        {
-            for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++) stream.SendNext(allTileMap.GetPersonTileRadius(i));
-        }
+            for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++) 
+                stream.SendNext(allTileMap.GetPersonTileRadius(i));
         else
-        {
-            for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++) allTileMap.SetPersonTileRadius(i, (float)stream.ReceiveNext());
-        }
+            for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers; i++) 
+                allTileMap.SetPersonTileRadius(i, (float)stream.ReceiveNext());
     }
     #endregion
     #region Ã¤ÆÃ
@@ -95,15 +92,20 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         if (Input.GetKeyDown(KeyCode.Return))
         {
             isChatOn = !isChatOn;
+            inputField.interactable = isChatOn;
+            inputField.ActivateInputField();
             if (!string.IsNullOrEmpty(inputField.text)) Input_OnEndEdit();
-            inputField.Select();
             if (isChatOn) image.fillAmount = 1;
             else image.fillAmount = 0;
         }
     }
     public void SetChatClear() => inputField.text = string.Empty;
     [PunRPC]
-    void OnPlayerChatting(string message, string sender) => outputText.text += sender + " : " + message + "\r\n";
+    void OnPlayerChatting(string message, string sender)
+    {
+        outputText.text += sender + " : " + message + "\r\n";
+        rectTransform.sizeDelta = new Vector3(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y + 12);
+    }
     [PunRPC]
     void OnMasterChatting(string message, string target = "") => outputText.text += target + message + "\r\n";
     public void Input_OnEndEdit()

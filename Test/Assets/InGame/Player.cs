@@ -39,6 +39,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
     AllTileMap allTileMap;
+    GeneralManager generalManager;
     Weapon equipWeapon;
     int timer;
 
@@ -50,6 +51,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             myIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
             Name.text = PhotonNetwork.NickName;
             allTileMap = FindObjectOfType<AllTileMap>();
+            generalManager = FindObjectOfType<GeneralManager>();
             view.RPC(nameof(EquipWeapon), RpcTarget.All, allTileMap.GetWeapon());
         }
         else Name.text = view.Owner.NickName;
@@ -96,7 +98,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region Å° ÀÔ·Â
     private void KeyInput()
     {
-        if (isStun)return;
+        if (isStun||generalManager.GetIsChatOn())return;
         xMove = Input.GetAxisRaw("Horizontal");
         zMove = Input.GetAxisRaw("Vertical");
         isWalk = Input.GetButton("Walk");

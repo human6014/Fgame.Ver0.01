@@ -10,7 +10,9 @@ public class GameManager : MonoBehaviourPunCallbacks
     private string roomCode = "Default";
     private int maxPlayer = -1;
     private int stateIndex = -1;
-    RoomOptions roomOptions = new RoomOptions { MaxPlayers = 2 };
+    private const byte MAXPLAYER = 1;
+
+    RoomOptions roomOptions;// = new RoomOptions { MaxPlayers = 1 };
     #region 싱글톤
     static GameManager _instance = null;
     public static GameManager Instance() => _instance;
@@ -74,7 +76,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnCreatedRoom(){ if (stateIndex == 1) PhotonNetwork.CurrentRoom.IsVisible = false; }
     public override void OnJoinedRoom() => PhotonNetwork.LoadLevel("InGameScene");
     public override void OnCreateRoomFailed(short returnCode, string message) => Debug.Log("OnCreateRoomFailed");
-    public override void OnJoinRandomFailed(short returnCode, string message) => PhotonNetwork.CreateRoom(null, roomOptions);
+    public override void OnJoinRandomFailed(short returnCode, string message) => PhotonNetwork.CreateRoom(null, roomOptions = new RoomOptions { MaxPlayers = MAXPLAYER });
     public override void OnJoinRoomFailed(short returnCode, string message) => Debug.Log("OnJoinRoomFailed");
     public override void OnLeftRoom()
     {

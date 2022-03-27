@@ -764,7 +764,7 @@ RectTransform:
   m_GameObject: {fileID: 327697485}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.52987105, y: 0.60259324, z: 1}
+  m_LocalScale: {x: 0.57623476, y: 0.68544984, z: 1}
   m_Children:
   - {fileID: 446717344}
   - {fileID: 873443202}
@@ -881,8 +881,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.0000026077032}
-  m_SizeDelta: {x: 183, y: 300}
+  m_AnchoredPosition: {x: 0, y: 0.000027652022}
+  m_SizeDelta: {x: 183, y: 256.13}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &354655516
 GameObject:
@@ -1589,7 +1589,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -12.699997}
+  m_AnchoredPosition: {x: 0, y: -12.700012}
   m_SizeDelta: {x: 182.3347, y: 119.05261}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &717560876
@@ -1814,7 +1814,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 156.551, y: 30}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &828980391
 MonoBehaviour:
@@ -1855,7 +1855,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 828980392}
   m_TextComponent: {fileID: 316679572}
   m_Placeholder: {fileID: 0}
@@ -2248,13 +2248,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49cf9619074c90346a285d4bb3004fe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayCancelButton: {fileID: 0}
   roomCountDisplay: {fileID: 447989685}
+  outputText: {fileID: 769322728}
+  image: {fileID: 1030915738}
   matchDown: {fileID: 1629746272}
   inputField: {fileID: 828980391}
-  image: {fileID: 1030915738}
-  outputText: {fileID: 769322728}
-  content: {fileID: 353709497}
+  rectTransform: {fileID: 353709498}
   allTileMap: {fileID: 1299624831}
 --- !u!65 &888231542
 BoxCollider:
@@ -2754,7 +2753,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 200}
+  m_SizeDelta: {x: 194.704, y: 174.35}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1030915737
 MonoBehaviour:
@@ -2775,7 +2774,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 5
   m_Viewport: {fileID: 385370118}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 1588057550}
@@ -3142,7 +3141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -3619,8 +3618,10 @@ MonoBehaviour:
   hasTileCount: {fileID: 188158839}
   i: 0
   j: 0
-  bottom: 0
-  top: 5
+  first: 1
+  second: 4
+  tempTop: 5
+  tempBottom: 0
   spawnerRotation: 90
 --- !u!1 &1333242927
 GameObject:
@@ -4286,8 +4287,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1123263017}
   m_HandleRect: {fileID: 1123263016}
   m_Direction: 2
-  m_Value: 0.0000072474795
-  m_Size: 0.9793802
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

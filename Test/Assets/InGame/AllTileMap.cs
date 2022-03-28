@@ -23,8 +23,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private int[] weapon = new int[3] { 0, 3, 6 };
     private bool flag;
 
-    public int i, j, first = 1, second = 4;
-    public int tempTop = 5, tempBottom = 0;
+    public int i, j, tempTop = 5, tempBottom = 0;
     public int spawnerRotation = 90;
 
     #region Getter + Setter
@@ -51,7 +50,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         yield return new WaitUntil(()=> generalManager.GetIsRoomFull());
         CreatePersonTile();
         generalManager.SetIsCreateTile(true);
-        for (int i = 10; i >= 1; i--)
+        for (int i = 3; i >= 1; i--)
         {
             startTimer.text = i.ToString();
             yield return new WaitForSeconds(1);

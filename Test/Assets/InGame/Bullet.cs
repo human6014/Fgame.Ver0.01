@@ -12,7 +12,7 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     {
         rigid = GetComponent<Rigidbody>();
         rigid.AddForce(transform.forward * speed);
-        StartCoroutine("BallisticFall");
+        StartCoroutine(nameof(BallisticFall));
     }
     #region ÃÑ¾Ë ±ËÀû ¼³Á¤
     IEnumerator BallisticFall()
@@ -26,25 +26,27 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     #region ÃÑ¾Ë Ãæµ¹ °Ë»ç
     private void OnCollisionEnter(Collision collision)
     {
-        
         if (isCollison) return;
         GameObject other = collision.gameObject;
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
             other.GetComponent<Player>().Hit(damage);
             isCollison = true;
-            view.RPC(nameof(Destroy), RpcTarget.All);
+            Destroy(gameObject);
+            //view.RPC(nameof(Destroy), RpcTarget.All);
         }
         else if (other.CompareTag("TPlayer"))
         {
             other.GetComponent<TestPlayer>().Hit(damage);
             isCollison = true;
-            view.RPC(nameof(Destroy), RpcTarget.All);
+            Destroy(gameObject);
+            //view.RPC(nameof(Destroy), RpcTarget.All);
         }
         if (other.tag.Substring(0, 5) == "Floor")
         {
             isCollison = true;
-            view.RPC(nameof(Destroy), RpcTarget.All);
+            Destroy(gameObject);
+            //view.RPC(nameof(Destroy), RpcTarget.All);
         }
         
     }

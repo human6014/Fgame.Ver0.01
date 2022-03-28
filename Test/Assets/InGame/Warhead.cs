@@ -17,11 +17,10 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] PhotonView view;
     [SerializeField] int damage;
     [SerializeField] int speed;
+    private void Awake() => transform.rotation *= Quaternion.Euler(0, 180, 0);
     private void Start()
     {
-        transform.rotation *= Quaternion.Euler(0, 180, 0);
         allTileMap = FindObjectOfType<AllTileMap>();
-
         rigid.AddForce(-transform.forward * speed);
         StartCoroutine("BallisticFall");
         Destroy(gameObject, 3);
@@ -90,7 +89,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     {
         Transform parentObject = allTileMap.transform.Find(hitParentName);
         Transform hitObject = parentObject.Find(hitName);
-        if (hitObject == null) return;
+        if (!hitObject) return;
         
         Destroy(hitObject.gameObject);
         allTileMap.SetPlusHasTileNum(view.Owner.GetPlayerNumber() - 1);

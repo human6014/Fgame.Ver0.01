@@ -46,7 +46,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
             _bullet = PhotonNetwork.Instantiate(bullet.name, bulletPos.position, bulletPos.rotation);
             if (bullet.name != "BulletShotgun") break;
             _bulletRigid = _bullet.GetComponent<Rigidbody>();
-            _bulletRigid.AddForce(bulletPos.right * Random.Range(-0.35f, 0.35f) + bulletPos.up * Random.Range(0, 0.2f), ForceMode.Impulse);
+            _bulletRigid.AddForce(bulletPos.right * Random.Range(-0.35f, 0.35f) + bulletPos.up * Random.Range(0.05f, 0.20f), ForceMode.Impulse);
         }
         CreateCase();
     }

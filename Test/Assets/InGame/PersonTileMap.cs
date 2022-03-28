@@ -178,7 +178,6 @@ public class PersonTileMap : MonoBehaviour
                 }
                 break;
         }
-        //isTagChecking = true;
     }
     #endregion
     #region 블럭 태그 설정+포탈

@@ -84,6 +84,9 @@ MonoBehaviour:
   - StunUp
   - KnockBackPun
   - KnockBackUp
+  - setPlayersName
+  - SetPlayersName
+  - ChangeName
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

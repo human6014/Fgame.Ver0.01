@@ -24,6 +24,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] InputField inputField;
     [SerializeField] RectTransform rectTransform;
     [SerializeField] AllTileMap allTileMap;
+    [SerializeField] Transform players;
     PhotonView view;
     public bool GetIsRoomFull() => isRoomFull;
     public bool GetIsCreateTile() => isCreateTile;

@@ -1,36 +1,29 @@
 using UnityEngine;
-
+using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 public class MainCamera : MonoBehaviour
 {
-    public Transform target;
-    public Vector3 offset;
-
+    Transform[] players;
+    Transform target;
+    Vector3 offset = new Vector3(0,4,-2);
+    
     private bool isEnd;
     KeyCode[] keyCodes = {
-        KeyCode.Alpha1,
-        KeyCode.Alpha2,
-        KeyCode.Alpha3,
-        KeyCode.Alpha4,
-        KeyCode.Alpha5,
-        KeyCode.Alpha6
+        KeyCode.RightArrow,
+        KeyCode.LeftArrow
     };
+    public void SetTarget(Transform _target) => target = _target;
     private void Update()
     {
-        if (!target) isEnd = true;
-        /*
-        if (isEnd)
-        {
-            for (int i = 0; i < keyCodes.Length; i++)
-            {
-                if (Input.GetKeyDown(keyCodes[i]))
-                {
-                    target = GameObject.Find("Player"+ i).transform;//target
-                    break;
-                }
-            }
-        }
-        */
         if (!target) return;
+        if (Input.GetKeyDown(keyCodes[0]))
+        {
+            
+        }
+        else if (Input.GetKeyDown(keyCodes[1]))
+        {
+
+        }
         transform.position = target.position + offset;
     }
 }

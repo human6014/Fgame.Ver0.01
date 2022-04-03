@@ -38,23 +38,31 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] PhotonView view;
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
+    GameObject players;
     AllTileMap allTileMap;
     GeneralManager generalManager;
     Weapon equipWeapon;
     int timer;
 
+    private void Awake() => players = GameObject.Find("Players");
     private void Start()
     {
         if (photonView.IsMine)
         {
-            Camera.main.GetComponent<MainCamera>().target = transform;
+            Camera.main.GetComponent<MainCamera>().SetTarget(transform);
             myIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
             Name.text = PhotonNetwork.NickName;
             allTileMap = FindObjectOfType<AllTileMap>();
             generalManager = FindObjectOfType<GeneralManager>();
+
             view.RPC(nameof(EquipWeapon), RpcTarget.All, allTileMap.GetWeapon());
         }
-        else Name.text = view.Owner.NickName;
+        else
+        {
+            Name.text = view.Owner.NickName;
+            gameObject.name = "Player" + view.Owner.GetPlayerNumber();
+        }
+        transform.SetParent(players.transform);
     }
     Vector3 curPos;
     Vector3 moveVec;

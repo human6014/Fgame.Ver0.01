@@ -61,7 +61,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         OnMasterChatting(" 님이 퇴장하였습니다", otherPlayer.NickName);
     }
     [PunRPC]
-    void PunUpdate()
+    private void PunUpdate()
     {
         roomCountDisplay.text = PhotonNetwork.PlayerList.Length + " / " + PhotonNetwork.CurrentRoom.MaxPlayers;
         if (PhotonNetwork.PlayerList.Length == PhotonNetwork.CurrentRoom.MaxPlayers)
@@ -88,7 +88,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 채팅
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return))
         {
@@ -102,14 +102,14 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     public void SetChatClear() => inputField.text = string.Empty;
     [PunRPC]
-    void OnPlayerChatting(string message, string sender)
+    private void OnPlayerChatting(string message, string sender)
     {
         outputText.text += sender + " : " + message + "\r\n";
         rectTransform.sizeDelta = new Vector3(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y + 12);
     }
     [PunRPC]
-    void OnMasterChatting(string message, string target = "") => outputText.text += target + message + "\r\n";
-    public void Input_OnEndEdit()
+    private void OnMasterChatting(string message, string target = "") => outputText.text += target + message + "\r\n";
+    private void Input_OnEndEdit()
     {
         if (PhotonNetwork.IsConnected)
         {

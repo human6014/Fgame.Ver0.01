@@ -8,20 +8,23 @@ public class PersonTileMap : MonoBehaviour
 {
     [SerializeField] GeneralManager generalManager;
     [SerializeField] AllTileMap allTileMap;
+    [SerializeField]
+    GameObject HexTilePrefab,
+                            PortalPrefab,
+                            CastlePrefab;
+    [SerializeField]
+    int mapWidth,  //22 
+        mapHeight;
     private SphereCollider sphereCollider;
     private MeshCollider meshCollider;
     private new Rigidbody rigidbody;
     private new Renderer renderer;
     private bool tryOnce;
-    [SerializeField] GameObject HexTilePrefab,
-                                PortalPrefab,
-                                CastlePrefab;
-    [SerializeField]
-    int mapWidth,  //22 
-        mapHeight;
+
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f,
-                        tileRadius = 8.5f;
+                        tileRadius = 8.5f,
+                        tileSpeed = 0.0005f; //0.0005f == 분당 radius 1.5줄음
     int myIndex;
     int count = 1;
     private void Start()
@@ -43,11 +46,13 @@ public class PersonTileMap : MonoBehaviour
         {
             if (generalManager.GetIsCreatePlayer())
             {
-                if (allTileMap.GetHasTileNum(myIndex - 1) > 0) {
+                if (allTileMap.GetHasTileNum(myIndex - 1) > 0)
+                {
                     allTileMap.SetMinusHasTileNum(myIndex - 1);
                 }
-                else sphereCollider.radius -= 0.0005f;
-                //0.0005f == 분당 radius 1.5줄음
+                //else sphereCollider.radius -= tileSpeed;
+                else sphereCollider.radius -= 0.005f;
+
             }
         }
         else if (!tryOnce)

@@ -44,7 +44,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Weapon equipWeapon;
     int timer;
 
-    private void Awake() => players = GameObject.Find("Players");
+    private void Awake() => players = GameObject.Find("PlayersPool");
     private void Start()
     {
         if (photonView.IsMine)
@@ -113,7 +113,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         isJump = Input.GetButtonDown("Jump");
         isDodge = Input.GetButtonDown("Dodge");
         isAttack = Input.GetButtonDown("Attack");
-
+        
         for (int i = 0; i < keyCodes.Length; i++)
         {
             if (Input.GetKeyDown(keyCodes[i]))
@@ -122,6 +122,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 break;
             }
         }
+        
     }
     #endregion
     #region АјАн 

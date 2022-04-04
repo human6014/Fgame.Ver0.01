@@ -14,9 +14,11 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     [SerializeField] Text tileCount;
     [SerializeField] Text startTimer;
     [SerializeField] Text hasTileCount; //temp
+
     private Transform[,] childPortal = new Transform[6, 2];
     private Transform[] childSpawner = new Transform[6];
     private SphereCollider[] childSphereColliders= new SphereCollider[6];
+
     private int[] childTileCount = new int[6];
     private int[] hasTileNum = new int[6];
     private bool[] isOutPlayer = new bool[6];
@@ -59,6 +61,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         generalManager.CreatePlayer();
         generalManager.SetIsCreatePlayer(true);
         yield return new WaitForSeconds(0.5f);
+        Camera.main.GetComponent<MainCamera>().SetPlayers();
         beforeStartPanel.SetActive(false);
     }
     private void CreatePersonTile()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     [SerializeField] GeneralManager generalManager;
     [SerializeField] Text tileCount;
     [SerializeField] Text startTimer;
+    [SerializeField] Text information;
     [SerializeField] Text hasTileCount; //temp
 
     private Transform[,] childPortal = new Transform[6, 2];
@@ -24,6 +26,11 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private bool[] isOutPlayer = new bool[6];
     private int[] weapon = new int[3] { 0, 3, 6 };
     private bool flag;
+
+    private int dieCount,
+                killCount,
+                destroyCount;
+    private float suviveCount;
 
     public int i, j, tempTop = 5, tempBottom = 0;
     public int spawnerRotation = 90;
@@ -37,12 +44,23 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetPlusHasTileNum(int i) => hasTileNum[i] += 1000;
     public void SetMinusHasTileNum(int i) => hasTileNum[i] -= 10;
     public void SetIsOutPlayer(bool _isOutPlayer, int i) => isOutPlayer[i] = _isOutPlayer;
+    public void SetKillCount()
+    {
+        killCount++;
+        Debug.Log(killCount);
+    }
+    public void SetDieCount() => dieCount++;
+    public void SetDestroyCount() => destroyCount++;
     public void SetWeapon(int index) => weapon[index / 3] = index; //Buuton에서 호출함!
     public Transform GetPortal(int i, int j) => childPortal[i, j]; //여기
     public Transform GetSpawner(int i) => childSpawner[i];
     public float GetPersonTileRadius(int i) => childSphereColliders[i].radius;
     public int GetHasTileNum(int i) => hasTileNum[i];
-    public bool GetIsOutPlayer(int i) => isOutPlayer[i];
+    public bool GetIsOutPlayer(int i)
+    {
+        if (i < 0 || i > 6) return false;
+        return isOutPlayer[i];
+    }
     public int[] GetWeapon() => weapon;
     public int GetMeleeIndex() => weapon[0];
 
@@ -120,20 +138,24 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         tileCount.text = "남은 타일\n";
         hasTileCount.text = "가진 타일\n";
         if (!generalManager.GetIsCreatePlayer()) return;
+        if (!flag) suviveCount += Time.deltaTime;
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
             if (player.GetPlayerNumber() == -1) return;
             tileCount.text += (player.IsLocal ? "<color=red>" : "<color=black>") + player.NickName + "</color> : ";
             tileCount.text += (isOutPlayer[player.GetPlayerNumber() - 1] ? "OUT" : childTileCount[player.GetPlayerNumber() - 1].ToString()) + "\n";
 
-            if (!flag && isOutPlayer[PhotonNetwork.LocalPlayer.GetPlayerNumber()])
+            if (!flag && isOutPlayer[PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1])
             {
                 flag = true;
-                gameOverPanel.SetActive(true);
+                SetGameOverPanel();
             }
-
             hasTileCount.text += player.NickName + " : " + hasTileNum[player.GetPlayerNumber() - 1] + "\n";
         }
-        
+    }
+    private void SetGameOverPanel()
+    {
+        information.text = "킬 : " + killCount + " 죽음 : " + dieCount + " 파괴한 땅 : " + destroyCount + " 생존시간 : " + Math.Truncate(suviveCount * 100)/100;
+        gameOverPanel.SetActive(true);
     }
 }

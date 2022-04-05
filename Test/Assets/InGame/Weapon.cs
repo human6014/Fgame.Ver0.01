@@ -14,7 +14,12 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] GameObject bulletCase;
     [SerializeField] Transform bulletPos;
     [SerializeField] Transform bulletCasePos;
+    private AllTileMap allTileMap;
     private int curEquip;
+    private void Start()
+    {
+        allTileMap = FindObjectOfType<AllTileMap>();
+    }
     #region 사용 무기 판별
     public void UseWeapons(int _curEquip)
     {
@@ -85,7 +90,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
             //cc기 설계 변경 보류
             if (curEquip == 1) player.KnockBack(transform.root.position.x, transform.root.position.z);
             else player.CrowdControl(curEquip);
-            player.Hit(damage);
+            if(player.Hit(damage) && photonView.IsMine) allTileMap.SetKillCount(); //근접은 킬 수 잘 올라감
             meleeArea.enabled = false;
         }
     }

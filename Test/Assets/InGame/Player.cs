@@ -186,16 +186,22 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 피격
-    public void Hit(int damage)
+    public bool Hit(int damage)
     {
-        if (isDying) return;
-        view.RPC(nameof(PunHit), RpcTarget.All, damage);
+        if (isDying) return false;
+        view.RPC(nameof(PunHit), RpcTarget.Others, damage);
+        HP.fillAmount -= damage / 100f;
+        if (HP.fillAmount <= 0)
+        {
+            StartCoroutine(nameof(Respawn));
+            return true;
+        }
+        return false;
     }
     [PunRPC]
     private void PunHit(int damage)
     {
         HP.fillAmount -= damage / 100f;
-        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn));
     }
     #endregion
     #region 근접무기 cc
@@ -272,6 +278,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Respawn()//FallRespawn 통합 예정
     {
         if (isEnd || !photonView.IsMine) yield break;
+        allTileMap.SetDieCount();
         isDying = true;
         view.RPC(nameof(UnRecovery), RpcTarget.All);
         rigid.velocity = Vector3.zero;
@@ -293,6 +300,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator FallRespawn()
     {
         if (!photonView.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
+        allTileMap.SetDieCount();
         isDying = true;
         view.RPC(nameof(UnRecovery), RpcTarget.All);
         rigid.velocity = Vector3.zero;

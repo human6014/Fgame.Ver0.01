@@ -46,7 +46,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         {
             isCollison = true;
             rigid.isKinematic = true;
-            other.transform.GetComponent<Player>().Hit(damage);
+            if(other.transform.GetComponent<Player>().Hit(damage))allTileMap.SetKillCount();
             Raycasting();
         }
         
@@ -67,7 +67,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
             if (hit.transform.CompareTag("Player") && !_onDamage)
             {
                 _onDamage = true;
-                hit.transform.GetComponent<Player>().Hit(10);
+                if(hit.transform.GetComponent<Player>().Hit(damage) && photonView.IsMine) allTileMap.SetKillCount();
             }
             if(!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && hit.transform.tag.StartsWith("Floor"))
             {
@@ -92,6 +92,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         if (!hitObject) return;
         
         Destroy(hitObject.gameObject);
+        if(view.IsMine) allTileMap.SetDestroyCount();
         allTileMap.SetPlusHasTileNum(view.Owner.GetPlayerNumber() - 1);
     }
     #endregion

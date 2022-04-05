@@ -5,6 +5,7 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
 {
     private bool isCollison;
     private Rigidbody rigid;
+    private AllTileMap allTileMap;
     [SerializeField] int damage;
     [SerializeField] int speed;
     public PhotonView view;
@@ -12,6 +13,7 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     {
         rigid = GetComponent<Rigidbody>();
         rigid.AddForce(transform.forward * speed);
+        allTileMap = FindObjectOfType<AllTileMap>();
         StartCoroutine(nameof(BallisticFall));
     }
     #region 총알 궤적 설정
@@ -30,7 +32,8 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
         GameObject other = collision.gameObject;
         if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
         {
-            other.GetComponent<Player>().Hit(damage);
+            if(other.GetComponent<Player>().Hit(damage) && PhotonNetwork.LocalPlayer.IsLocal) allTileMap.SetKillCount();
+            //킬 수가 죽인 사람이 아닌 죽은 사람한테 올라감 버그
             isCollison = true;
             Destroy(gameObject);
             //view.RPC(nameof(Destroy), RpcTarget.All);

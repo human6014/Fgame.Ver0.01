@@ -86,7 +86,7 @@ public class Grenade : MonoBehaviourPunCallbacks
             if (hit.transform.CompareTag("Player") && !_onDamage)
             {
                 _onDamage = true;
-                hit.transform.GetComponent<Player>().Hit(damage);
+                if(hit.transform.GetComponent<Player>().Hit(damage) && photonView.IsMine) allTileMap.SetKillCount();
             }
             if (!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && hit.transform.tag.StartsWith("Floor"))
             {
@@ -101,6 +101,7 @@ public class Grenade : MonoBehaviourPunCallbacks
         Transform hitObject = parentObject.Find(hitName);
         if (hitObject == null) return;
 
+        if (view.IsMine) allTileMap.SetDestroyCount();
         Destroy(hitObject.gameObject);
         allTileMap.SetPlusHasTileNum(view.Owner.GetPlayerNumber() - 1);
     }

@@ -692,6 +692,7 @@ MonoBehaviour:
   damage: 0
   rate: 1.2
   speed: 0
+  playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
   bullet: {fileID: 9055555001861701321, guid: 2623b715e9c520946af9ec74d9486f9b, type: 3}
@@ -1119,6 +1120,7 @@ MonoBehaviour:
   damage: 0
   rate: 2
   speed: 1.5
+  playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
   bullet: {fileID: 5518677305093557997, guid: 4d6ec44ced7b3994ea79cb3aa20ddb57, type: 3}
@@ -1258,8 +1260,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 565202565905581605}
   m_LocalRotation: {x: 0, y: 0.5, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: -0, y: 11.19, z: -0}
-  m_LocalScale: {x: 8, y: 8, z: 8}
+  m_LocalPosition: {x: -0, y: 12.52, z: -0}
+  m_LocalScale: {x: 8, y: 9, z: 8}
   m_Children:
   - {fileID: 6155671719191333809}
   m_Father: {fileID: 4863490270549815028}
@@ -1281,6 +1283,7 @@ MonoBehaviour:
   damage: 30
   rate: 1.5
   speed: 0
+  playerTransform: {fileID: 0}
   meleeArea: {fileID: 861396524038333038}
   trailEffect: {fileID: 565202565905581600}
   bullet: {fileID: 0}
@@ -1446,8 +1449,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.4, y: 1.5, z: 0.4}
-  m_Center: {x: 0, y: -0.5, z: 0}
+  m_Size: {x: 0.44286323, y: 1.730212, z: 0.46249786}
+  m_Center: {x: 0.0067023262, y: -0.3848948, z: -0.031248886}
 --- !u!1 &570490795694747227
 GameObject:
   m_ObjectHideFlags: 0
@@ -1739,6 +1742,7 @@ MonoBehaviour:
   damage: 15
   rate: 2
   speed: 0
+  playerTransform: {fileID: 0}
   meleeArea: {fileID: 5628065744898280205}
   trailEffect: {fileID: 888576379659894703}
   bullet: {fileID: 0}
@@ -1904,8 +1908,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.4, y: 2.5, z: 0.4}
-  m_Center: {x: 0, y: -0.5, z: 0}
+  m_Size: {x: 0.50584537, y: 2.819511, z: 0.6348674}
+  m_Center: {x: -0.017943883, y: -0.34024522, z: 0.027723113}
 --- !u!1 &994372082417875423
 GameObject:
   m_ObjectHideFlags: 0
@@ -2217,6 +2221,7 @@ MonoBehaviour:
   damage: 20
   rate: 2
   speed: 0
+  playerTransform: {fileID: 0}
   meleeArea: {fileID: 3943663715368299939}
   trailEffect: {fileID: 1812394710965517017}
   bullet: {fileID: 0}
@@ -2382,8 +2387,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 2, z: 1}
-  m_Center: {x: 0, y: -1, z: 0}
+  m_Size: {x: 0.5, y: 2.7637494, z: 1.0835495}
+  m_Center: {x: -0.000000050404847, y: -0.90510386, z: 0.018127143}
 --- !u!1 &1958964706239083165
 GameObject:
   m_ObjectHideFlags: 0
@@ -2540,6 +2545,7 @@ MonoBehaviour:
   damage: 0
   rate: 2
   speed: 1.5
+  playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
   bullet: {fileID: 3695152839577550585, guid: 53de347cf2a17494b99a1065d4c12cd2, type: 3}
@@ -2913,6 +2919,7 @@ MonoBehaviour:
   damage: 10
   rate: 2
   speed: 1
+  playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
   bullet: {fileID: 47218996927194572, guid: b1add9fb59c9e2d4ca98a0b21d335f5b, type: 3}
@@ -4102,6 +4109,7 @@ MonoBehaviour:
   damage: 0
   rate: 0.15
   speed: 0
+  playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
   bullet: {fileID: 8592462005021533135, guid: d5c8fd28d870d2746ae4155033d02a2c, type: 3}
@@ -4281,6 +4289,7 @@ MonoBehaviour:
   damage: 0
   rate: 1
   speed: 0
+  playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
   bullet: {fileID: 5086712924862526819, guid: 911cbc0cec0ff93439e101d084d6641a, type: 3}

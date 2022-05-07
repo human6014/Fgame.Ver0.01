@@ -189,19 +189,21 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public bool Hit(int damage)
     {
         if (isDying) return false;
-        view.RPC(nameof(PunHit), RpcTarget.Others, damage);
-        HP.fillAmount -= damage / 100f;
-        if (HP.fillAmount <= 0)
-        {
-            StartCoroutine(nameof(Respawn));
-            return true;
-        }
+        
+        view.RPC(nameof(PunHit), RpcTarget.All, damage);
+        Debug.Log(HP.fillAmount);
+        if (HP.fillAmount <= 0) return true;
         return false;
     }
     [PunRPC]
     private void PunHit(int damage)
     {
         HP.fillAmount -= damage / 100f;
+        if (HP.fillAmount <= 0)
+        {
+            Debug.Log("Die");
+            StartCoroutine(nameof(Respawn));
+        }
     }
     #endregion
     #region 근접무기 cc
@@ -222,7 +224,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     [PunRPC] private void SpeedDown() => speed -= 0.3f;
     [PunRPC] private void SpeedUp() => speed = 1;
-    [PunRPC] private void KnockBackUp(float x, float z) => rigid.AddForce(new Vector3((transform.position.x - x) * 7, 2.5f, (transform.position.z - z) * 7), ForceMode.Impulse);
+    [PunRPC]
+    private void KnockBackUp(float x, float z)
+    {
+        Debug.Log("때린넘 : x : " + x + " z : " + z + "\n맞은넘 : x : " + transform.localPosition.x + " z : "+ transform.localPosition.z);
+        rigid.AddForce(new Vector3((transform.localPosition.x - x) * 7, 2.5f, (transform.localPosition.z - z) * 7), ForceMode.Impulse);
+    }
     [PunRPC] private void StunUp() => isStun = true;
     [PunRPC] private void StunDown() => isStun = false;
 
@@ -284,6 +291,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         rigid.velocity = Vector3.zero;
         rigid.angularVelocity = Vector3.zero;
         transform.eulerAngles = new Vector3(-90, 180, 0);
+
+        Debug.Log("Respawn중");
 
         yield return new WaitForSeconds(5f);
         transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;

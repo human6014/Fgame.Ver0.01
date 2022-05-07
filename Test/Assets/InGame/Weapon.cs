@@ -8,6 +8,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     public WeaponsType type;
     public int damage;
     public float rate, speed;
+    [SerializeField] Transform playerTransform;
     [SerializeField] BoxCollider meleeArea;
     [SerializeField] TrailRenderer trailEffect;
     [SerializeField] GameObject bullet;
@@ -87,11 +88,11 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         if (other.CompareTag("Player"))
         {
             Player player = other.GetComponent<Player>();
-            //cc기 설계 변경 보류
-            if (curEquip == 1) player.KnockBack(transform.root.position.x, transform.root.position.z);
-            else player.CrowdControl(curEquip);
-            if(player.Hit(damage) && photonView.IsMine) allTileMap.SetKillCount(); //근접은 킬 수 잘 올라감
+            if (player.Hit(damage) && photonView.IsMine) allTileMap.SetKillCount(); //근접은 킬 수 잘 올라감
             meleeArea.enabled = false;
+
+            if (curEquip == 1) player.KnockBack(playerTransform.position.x, playerTransform.position.z);
+            else player.CrowdControl(curEquip);
         }
     }
     #endregion

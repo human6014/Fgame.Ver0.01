@@ -30,17 +30,9 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (isCollison) return;
         GameObject other = collision.gameObject;
-        if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine && !photonView.IsMine)
+        if (other.CompareTag("Player") && !other.GetComponent<PhotonView>().IsMine && photonView.IsMine)
         {
-            if(other.GetComponent<Player>().Hit(damage) && PhotonNetwork.LocalPlayer.IsLocal) allTileMap.SetKillCount();
-            //킬 수가 죽인 사람이 아닌 죽은 사람한테 올라감 버그
-            isCollison = true;
-            Destroy(gameObject);
-            //view.RPC(nameof(Destroy), RpcTarget.All);
-        }
-        else if (other.CompareTag("TPlayer"))
-        {
-            other.GetComponent<TestPlayer>().Hit(damage);
+            if(other.GetComponent<Player>().Hit(damage)) allTileMap.SetKillCount();
             isCollison = true;
             Destroy(gameObject);
             //view.RPC(nameof(Destroy), RpcTarget.All);
@@ -51,7 +43,6 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
             Destroy(gameObject);
             //view.RPC(nameof(Destroy), RpcTarget.All);
         }
-        
     }
     #endregion
     [PunRPC]

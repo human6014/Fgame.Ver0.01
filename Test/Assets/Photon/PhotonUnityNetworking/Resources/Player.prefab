@@ -1742,7 +1742,7 @@ MonoBehaviour:
   damage: 15
   rate: 2
   speed: 0
-  playerTransform: {fileID: 0}
+  playerTransform: {fileID: 2792768260377557250}
   meleeArea: {fileID: 5628065744898280205}
   trailEffect: {fileID: 888576379659894703}
   bullet: {fileID: 0}

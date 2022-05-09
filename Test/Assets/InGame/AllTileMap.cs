@@ -51,8 +51,8 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     }
     public void SetDieCount() => dieCount++;
     public void SetDestroyCount() => destroyCount++;
-    public void SetWeapon(int index) => weapon[index / 3] = index; //Buuton에서 호출함!
-    public Transform GetPortal(int i, int j) => childPortal[i, j]; //여기
+    public void SetWeapon(int index) => weapon[index / 3] = index; //Button에서 호출함!
+    public Transform GetPortal(int i, int j) => childPortal[i, j];
     public Transform GetSpawner(int i) => childSpawner[i];
     public float GetPersonTileRadius(int i) => childSphereColliders[i].radius;
     public int GetHasTileNum(int i) => hasTileNum[i];
@@ -63,11 +63,11 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     }
     public int[] GetWeapon() => weapon;
     public int GetMeleeIndex() => weapon[0];
-
     #endregion
+
     private IEnumerator Start()
     {
-        yield return new WaitUntil(()=> generalManager.GetIsRoomFull());
+        yield return new WaitUntil(() => generalManager.GetIsRoomFull());
         CreatePersonTile();
         generalManager.SetIsCreateTile(true);
         for (int i = 3; i >= 1; i--)
@@ -90,7 +90,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         int _tagNum = 0;
         float _radius = personTileMap.GetComponent<SphereCollider>().radius;
 
-        for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers + 1; i++)
+        for (int i = 0; i <= PhotonNetwork.CurrentRoom.MaxPlayers; i++)
         {
             switch (i)
             {

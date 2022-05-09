@@ -87,6 +87,7 @@ MonoBehaviour:
   - setPlayersName
   - SetPlayersName
   - ChangeName
+  - SetPunRemainPlayerCount
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -9802,7 +9802,7 @@ GameObject:
   - component: {fileID: 4132455182931308728}
   m_Layer: 0
   m_Name: Dynamite
-  m_TagString: Untagged
+  m_TagString: Destroyer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9930,8 +9930,8 @@ MonoBehaviour:
   meshRenderer: {fileID: 143658455510423857}
   childMeshRenderer: {fileID: 143658455510423857}
   view: {fileID: 5518677305093557995}
-  raycastingRange: 0.5
-  damage: 20
+  raycastingRange: 0.6
+  damage: 35
   speed: 30
   livingTime: 3
 --- !u!54 &3012065219018881753

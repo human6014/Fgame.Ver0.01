@@ -35,9 +35,10 @@ public class Grenade : MonoBehaviourPunCallbacks
     #region 탄두 충돌 검사
     private void OnCollisionEnter(Collision collision)
     {
-        if (isCollison || view.IsMine || transform.name == "Grenade") return;
+        if (isCollison) return;
         GameObject other = collision.gameObject;
-        if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine)
+
+        if (other.CompareTag("Player") && !other.GetComponent<PhotonView>().IsMine && photonView.IsMine)
         {
             isCollison = true;
             rigid.velocity = Vector3.zero;

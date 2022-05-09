@@ -123,7 +123,7 @@ MonoBehaviour:
   childMeshRenderer: {fileID: 744059138298306084}
   view: {fileID: 47218996927194562}
   raycastingRange: 0.5
-  damage: 30
+  damage: 20
   speed: 30
   livingTime: 1.5
 --- !u!114 &47218996927194562

@@ -39,14 +39,13 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     #region 탄두 충돌 검사
     private void OnCollisionEnter(Collision collision)
     {
-        if (isCollison|| view.IsMine) return;
+        if (isCollison) return;
         GameObject other = collision.gameObject;
         
-        if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine)
+        if (other.CompareTag("Player") && !other.GetComponent<PhotonView>().IsMine && photonView.IsMine)
         {
             isCollison = true;
             rigid.isKinematic = true;
-            if(other.transform.GetComponent<Player>().Hit(damage))allTileMap.SetKillCount();
             Raycasting();
         }
         

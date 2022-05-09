@@ -9,6 +9,7 @@ using Photon.Pun.UtilityScripts;
 public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     private int stateIndex;
+    private int remainPlayerCount;
     private string roomCode = string.Empty;
     private string playerName = string.Empty;
 
@@ -16,6 +17,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private bool isCreateTile = false;
     private bool isCreatePlayer = false;
     private bool isChatOn = false;
+    private bool isGameEnd = false;
 
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Text outputText;
@@ -30,6 +32,13 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public bool GetIsCreateTile() => isCreateTile;
     public bool GetIsCreatePlayer() => isCreatePlayer;
     public bool GetIsChatOn() => isChatOn;
+    public bool GetIsGameEnd() => isGameEnd;
+    [PunRPC]
+    private void SetPunRemainPlayerCount() => remainPlayerCount--;
+    public void SetRemainPlayerCount()
+    {
+        if (isRoomFull) view.RPC(nameof(SetPunRemainPlayerCount), RpcTarget.All);
+    }
     public void SetIsCreateTile(bool _isCreateTile) => isCreateTile = _isCreateTile;
     public void SetIsCreatePlayer(bool _isCreatePlayer) => isCreatePlayer = _isCreatePlayer;
 
@@ -58,6 +67,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
+        SetRemainPlayerCount();
         OnMasterChatting(" 님이 퇴장하였습니다", otherPlayer.NickName);
     }
     [PunRPC]
@@ -68,12 +78,18 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         {
             PhotonNetwork.CurrentRoom.IsOpen = false;
             PhotonNetwork.CurrentRoom.IsVisible = false;
+            remainPlayerCount = PhotonNetwork.CurrentRoom.MaxPlayers;
             isRoomFull = true;
         }
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag.Substring(0, 5) == "Floor") Destroy(other.gameObject);
+    }
+    private void OnApplicationQuit()
+    {
+        Debug.Log("GeneralManager");
+        SetRemainPlayerCount();
     }
     #region 블럭 동기화
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -90,12 +106,13 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     #region 채팅
     private void Update()
     {
+        if (remainPlayerCount == 1) isGameEnd = true;
         if (Input.GetKeyDown(KeyCode.Return))
         {
             isChatOn = !isChatOn;
             inputField.interactable = isChatOn;
             inputField.ActivateInputField();
-            if (!string.IsNullOrEmpty(inputField.text)) Input_OnEndEdit();
+            if (!string.IsNullOrEmpty(inputField.text)) InputOnEndEdit();
             if (isChatOn) image.fillAmount = 1;
             else image.fillAmount = 0;
         }
@@ -109,7 +126,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     [PunRPC]
     private void OnMasterChatting(string message, string target = "") => outputText.text += target + message + "\r\n";
-    private void Input_OnEndEdit()
+    private void InputOnEndEdit()
     {
         if (PhotonNetwork.IsConnected)
         {
@@ -117,5 +134,6 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
             inputField.text = "";
         }
     }
+
     #endregion
 }

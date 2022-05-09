@@ -5,6 +5,8 @@ using UnityStandardAssets;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
+using System;
+
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
     int curEquip,
@@ -30,7 +32,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] float speed;
     [SerializeField] GameObject[] allWeapons;
     [SerializeField] bool[] hasWeapons;
-    private GameObject[] weapons = new GameObject[3]; //최적화 대기
     [SerializeField] GameObject child;
     [SerializeField] Image HP;
     [SerializeField] Image MP;
@@ -38,6 +39,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] PhotonView view;
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
+    private GameObject[] weapons = new GameObject[3]; //최적화 대기
     GameObject players;
     AllTileMap allTileMap;
     GeneralManager generalManager;
@@ -73,6 +75,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             if (myIndex != -1 && allTileMap.GetIsOutPlayer(myIndex - 1))
             {
                 allTileMap.SetIsOutPlayer(true, myIndex - 1);
+                generalManager.SetRemainPlayerCount();
                 isEnd = true;
                 PhotonNetwork.Destroy(gameObject);
                 return;
@@ -191,17 +194,21 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (isDying) return false;
         
         view.RPC(nameof(PunHit), RpcTarget.All, damage);
-        Debug.Log(HP.fillAmount);
-        if (HP.fillAmount <= 0) return true;
+        if (HP.fillAmount <= 0)
+        {
+            isDying = true; //샷건 때문에 임시로 이렇게 함 한번 죽으면 체력 안다는 버그 있음
+            return true;
+        }
         return false;
     }
     [PunRPC]
     private void PunHit(int damage)
     {
         HP.fillAmount -= damage / 100f;
+        HP.fillAmount = (float)Math.Round(HP.fillAmount,2);
+        Debug.Log("HP.fillAmount : " + HP.fillAmount);
         if (HP.fillAmount <= 0)
         {
-            Debug.Log("Die");
             StartCoroutine(nameof(Respawn));
         }
     }
@@ -224,12 +231,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     [PunRPC] private void SpeedDown() => speed -= 0.3f;
     [PunRPC] private void SpeedUp() => speed = 1;
-    [PunRPC]
-    private void KnockBackUp(float x, float z)
-    {
-        Debug.Log("때린넘 : x : " + x + " z : " + z + "\n맞은넘 : x : " + transform.localPosition.x + " z : "+ transform.localPosition.z);
+    [PunRPC] private void KnockBackUp(float x, float z) => 
         rigid.AddForce(new Vector3((transform.localPosition.x - x) * 7, 2.5f, (transform.localPosition.z - z) * 7), ForceMode.Impulse);
-    }
     [PunRPC] private void StunUp() => isStun = true;
     [PunRPC] private void StunDown() => isStun = false;
 
@@ -285,8 +288,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Respawn()//FallRespawn 통합 예정
     {
         if (isEnd || !photonView.IsMine) yield break;
-        allTileMap.SetDieCount();
         isDying = true;
+        allTileMap.SetDieCount();
         view.RPC(nameof(UnRecovery), RpcTarget.All);
         rigid.velocity = Vector3.zero;
         rigid.angularVelocity = Vector3.zero;

@@ -33,8 +33,7 @@ public class MainCamera : MonoBehaviour
     }
     public void SetPlayers()
     {
-        foreach (Transform child in playersPool)
-            players[int.Parse(child.name.Substring(child.name.Length - 1)) - 1] = child;
+        foreach (Transform child in playersPool) players[int.Parse(child.name.Substring(child.name.Length - 1)) - 1] = child;
         start = true;
     }
     //아웃된 플레이어가 다른 플레이어 보는 동안 그 플레이어 아웃 시 에러 발생

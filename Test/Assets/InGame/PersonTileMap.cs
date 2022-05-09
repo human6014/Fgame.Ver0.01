@@ -34,12 +34,18 @@ public class PersonTileMap : MonoBehaviour
         if (gameObject.CompareTag("Floor0")) sphereCollider.radius = 5;
         else
         {
-            sphereCollider.radius = tileRadius;//allTileMap.myField[allTileMap.playerNum++];
             myIndex = int.Parse(transform.tag.Substring(5));
+            if(myIndex == 1) sphereCollider.radius = 5; //temp
+            else sphereCollider.radius = tileRadius;//allTileMap.myField[allTileMap.playerNum++];
         }
     }
     private void FixedUpdate()
     {
+        if (generalManager.GetIsGameEnd())
+        {
+            //게임끝
+            return;
+        }
         if (gameObject.CompareTag("Floor0") || gameObject.name == "Sample") return;
         allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
         if (sphereCollider.radius >= 0)
@@ -50,9 +56,8 @@ public class PersonTileMap : MonoBehaviour
                 {
                     allTileMap.SetMinusHasTileNum(myIndex - 1);
                 }
+                else sphereCollider.radius -= 0.001f;
                 //else sphereCollider.radius -= tileSpeed;
-                else sphereCollider.radius -= 0.005f;
-
             }
         }
         else if (!tryOnce)

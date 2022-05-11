@@ -14,7 +14,8 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     [SerializeField] GeneralManager generalManager;
     [SerializeField] Text tileCount;
     [SerializeField] Text startTimer;
-    [SerializeField] Text information;
+    [SerializeField] Text informationText;
+    [SerializeField] Text explainText;
     [SerializeField] Text hasTileCount; //temp
 
     private Transform[,] childPortal = new Transform[6, 2];
@@ -25,12 +26,13 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private int[] hasTileNum = new int[6];
     private bool[] isOutPlayer = new bool[6];
     private int[] weapon = new int[3] { 0, 3, 6 };
-    private bool flag;
+    private bool isLose,
+                 isWin;
 
     private int dieCount,
                 killCount,
                 destroyCount;
-    private float suviveCount;
+    private float suviveTime;
 
     public int i, j, tempTop = 5, tempBottom = 0;
     public int spawnerRotation = 90;
@@ -133,21 +135,21 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         }
         Destroy(personTileMap);
     }
-    private void Update()
+    private void FixedUpdate()
     {
         tileCount.text = "³²Àº Å¸ÀÏ\n";
         hasTileCount.text = "°¡Áø Å¸ÀÏ\n";
         if (!generalManager.GetIsCreatePlayer()) return;
-        if (!flag) suviveCount += Time.deltaTime;
+        if (!isLose) suviveTime += Time.deltaTime;
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
             if (player.GetPlayerNumber() == -1) return;
             tileCount.text += (player.IsLocal ? "<color=red>" : "<color=black>") + player.NickName + "</color> : ";
             tileCount.text += (isOutPlayer[player.GetPlayerNumber() - 1] ? "OUT" : childTileCount[player.GetPlayerNumber() - 1].ToString()) + "\n";
 
-            if (!flag && isOutPlayer[PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1])
+            if (!isLose && isOutPlayer[PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1])
             {
-                flag = true;
+                isLose = true;
                 SetGameOverPanel();
             }
             hasTileCount.text += player.NickName + " : " + hasTileNum[player.GetPlayerNumber() - 1] + "\n";
@@ -155,7 +157,13 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     }
     private void SetGameOverPanel()
     {
-        information.text = "Å³ : " + killCount + " Á×À½ : " + dieCount + " ÆÄ±«ÇÑ ¶¥ : " + destroyCount + " »ýÁ¸½Ã°£ : " + Math.Truncate(suviveCount * 100)/100;
+        informationText.text = "Å³ : " + killCount + " Á×À½ : " + dieCount + " ÆÄ±«ÇÑ ¶¥ : " + destroyCount + " »ýÁ¸½Ã°£ : " + Math.Truncate(suviveTime * 100)/100;
+        gameOverPanel.SetActive(true);
+    }
+    private void SetGameWinnerPanel()
+    {
+        informationText.text = "Å³ : " + killCount + " Á×À½ : " + dieCount + " ÆÄ±«ÇÑ ¶¥ : " + destroyCount + " »ýÁ¸½Ã°£ : " + Math.Truncate(suviveTime * 100) / 100;
+        explainText.text = "ÃàÇÏÇÕ´Ï´Ù";
         gameOverPanel.SetActive(true);
     }
 }

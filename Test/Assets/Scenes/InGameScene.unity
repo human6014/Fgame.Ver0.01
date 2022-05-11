@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 58967127}
   - component: {fileID: 58967126}
   m_Layer: 5
-  m_Name: Explain
+  m_Name: ExplainText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -182,18 +182,18 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: eb4afc0d39c172e4b943ea90ba1e1d3c, type: 3}
-    m_FontSize: 14
+    m_FontSize: 25
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 2
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 
+  m_Text: "\uCD95\uD558\uD569\uB2C8\uB2E4"
 --- !u!222 &58967127
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -960,7 +960,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.000024329614}
+  m_AnchoredPosition: {x: 0, y: -0.00029032485}
   m_SizeDelta: {x: 183, y: 256.13}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &354655516
@@ -3724,7 +3724,8 @@ MonoBehaviour:
   generalManager: {fileID: 888231541}
   tileCount: {fileID: 1449297143}
   startTimer: {fileID: 717560876}
-  information: {fileID: 1936030189}
+  informationText: {fileID: 1936030189}
+  explainText: {fileID: 0}
   hasTileCount: {fileID: 188158839}
   i: 0
   j: 0

@@ -63,10 +63,10 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         bool _onDamage = false;
         foreach (RaycastHit hit in raycastHits)
         {
-            if (hit.transform.CompareTag("Player") && !_onDamage)
+            if (!_onDamage && hit.transform.CompareTag("Player") && photonView.IsMine)
             {
                 _onDamage = true;
-                if(hit.transform.GetComponent<Player>().Hit(damage) && photonView.IsMine) allTileMap.SetKillCount();
+                if(hit.transform.GetComponent<Player>().Hit(damage)) allTileMap.SetKillCount();
             }
             if(!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && hit.transform.tag.StartsWith("Floor"))
             {

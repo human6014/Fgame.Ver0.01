@@ -30,6 +30,7 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (isCollison) return;
         GameObject other = collision.gameObject;
+
         if (other.CompareTag("Player") && !other.GetComponent<PhotonView>().IsMine && photonView.IsMine)
         {
             if(other.GetComponent<Player>().Hit(damage)) allTileMap.SetKillCount();

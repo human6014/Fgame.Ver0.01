@@ -10,6 +10,8 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     private int stateIndex;
     private int remainPlayerCount;
+    private int myPlayerIndex;
+    private int winnerPlayerIndex = -1;
     private string roomCode = string.Empty;
     private string playerName = string.Empty;
 
@@ -34,6 +36,11 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public bool GetIsChatOn() => isChatOn;
     public bool GetIsGameEnd() => isGameEnd;
     [PunRPC]
+    public int SetWinnerPlayerIndex()
+    {
+        return winnerPlayerIndex;
+    }
+    [PunRPC]
     private void SetPunRemainPlayerCount() => remainPlayerCount--;
     public void SetRemainPlayerCount()
     {
@@ -47,6 +54,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         view = photonView;
         PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().GetPlayerName();
         PhotonNetwork.LocalPlayer.SetPlayerNumber(PhotonNetwork.PlayerList.Length);
+        myPlayerIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
         stateIndex = GameManager.Instance().GetStateIndex();
         roomCode = GameManager.Instance().GetRoomCode();
         playerName = GameManager.Instance().GetPlayerName();
@@ -106,7 +114,14 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     #region Ã¤ÆÃ
     private void Update()
     {
-        if (remainPlayerCount == 1) isGameEnd = true;
+        //Debug.Log("remainPlayerCounts : " + remainPlayerCount);
+        //Debug.Log("isGameEnd : " + isGameEnd);
+        if (remainPlayerCount == 1 && allTileMap.GetIsOutPlayer(myPlayerIndex - 1))
+        {
+            //Debug.Log("Winner is " + winnerPlayerIndex);
+            winnerPlayerIndex = myPlayerIndex;
+            isGameEnd = true;
+        }
         if (Input.GetKeyDown(KeyCode.Return))
         {
             isChatOn = !isChatOn;

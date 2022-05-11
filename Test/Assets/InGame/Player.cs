@@ -192,25 +192,23 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     public bool Hit(int damage)
     {
         if (isDying) return false;
-        
+
         view.RPC(nameof(PunHit), RpcTarget.All, damage);
         if (HP.fillAmount <= 0)
         {
-            isDying = true; //샷건 때문에 임시로 이렇게 함 한번 죽으면 체력 안다는 버그 있음
+            isDying = true; //샷건 때문에 이렇게 함
+            Invoke(nameof(SetIsDying), 5); //여기까지
             return true;
         }
         return false;
     }
+    public void SetIsDying() => isDying = false;
     [PunRPC]
     private void PunHit(int damage)
     {
         HP.fillAmount -= damage / 100f;
         HP.fillAmount = (float)Math.Round(HP.fillAmount,2);
-        Debug.Log("HP.fillAmount : " + HP.fillAmount);
-        if (HP.fillAmount <= 0)
-        {
-            StartCoroutine(nameof(Respawn));
-        }
+        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn));
     }
     #endregion
     #region 근접무기 cc

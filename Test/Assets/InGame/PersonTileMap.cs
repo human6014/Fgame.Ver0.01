@@ -56,7 +56,7 @@ public class PersonTileMap : MonoBehaviour
                 {
                     allTileMap.SetMinusHasTileNum(myIndex - 1);
                 }
-                else sphereCollider.radius -= 0.001f;
+                else sphereCollider.radius -= 0.0015f;
                 //else sphereCollider.radius -= tileSpeed;
             }
         }

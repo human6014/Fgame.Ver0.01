@@ -14,6 +14,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     [SerializeField] GeneralManager generalManager;
     [SerializeField] Text tileCount;
     [SerializeField] Text startTimer;
+    [SerializeField] Text gameOverText;
     [SerializeField] Text informationText;
     [SerializeField] Text explainText;
     [SerializeField] Text hasTileCount; //temp
@@ -27,7 +28,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private bool[] isOutPlayer = new bool[6];
     private int[] weapon = new int[3] { 0, 3, 6 };
     private bool isLose,
-                 isWin;
+                 isGameEnd;
 
     private int dieCount,
                 killCount,
@@ -46,11 +47,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetPlusHasTileNum(int i) => hasTileNum[i] += 1000;
     public void SetMinusHasTileNum(int i) => hasTileNum[i] -= 10;
     public void SetIsOutPlayer(bool _isOutPlayer, int i) => isOutPlayer[i] = _isOutPlayer;
-    public void SetKillCount()
-    {
-        killCount++;
-        Debug.Log(killCount);
-    }
+    public void SetKillCount() => killCount++;
     public void SetDieCount() => dieCount++;
     public void SetDestroyCount() => destroyCount++;
     public void SetWeapon(int index) => weapon[index / 3] = index; //Button에서 호출함!
@@ -139,7 +136,13 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     {
         tileCount.text = "남은 타일\n";
         hasTileCount.text = "가진 타일\n";
-        if (!generalManager.GetIsCreatePlayer()) return;
+        if (!generalManager.GetIsCreatePlayer() || isGameEnd) return;
+        if (generalManager.GetIsGameEnd())
+        {
+            isGameEnd = true;
+            SetGameOverPanel();
+            return;
+        }
         if (!isLose) suviveTime += Time.deltaTime;
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
@@ -158,12 +161,11 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private void SetGameOverPanel()
     {
         informationText.text = "킬 : " + killCount + " 죽음 : " + dieCount + " 파괴한 땅 : " + destroyCount + " 생존시간 : " + Math.Truncate(suviveTime * 100)/100;
-        gameOverPanel.SetActive(true);
-    }
-    private void SetGameWinnerPanel()
-    {
-        informationText.text = "킬 : " + killCount + " 죽음 : " + dieCount + " 파괴한 땅 : " + destroyCount + " 생존시간 : " + Math.Truncate(suviveTime * 100) / 100;
-        explainText.text = "축하합니다";
+        if (isGameEnd)
+        {
+            if(PhotonNetwork.LocalPlayer.GetPlayerNumber() == generalManager.GetWinnerPlayerIndex()) gameOverText.text = "Winner Winner";
+            explainText.text = generalManager.GetWinnerPlayerIndex() + " 번님이 승리하였습니다";
+        }
         gameOverPanel.SetActive(true);
     }
 }

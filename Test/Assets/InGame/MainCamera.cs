@@ -13,7 +13,6 @@ public class MainCamera : MonoBehaviour
     Vector3 offset = new Vector3(0,4,-2);
 
     private bool start;
-    private bool isEnd;
     private int myNum;
     private int maxPlayer;
     KeyCode[] keyCodes = {

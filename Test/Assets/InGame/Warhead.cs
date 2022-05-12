@@ -10,32 +10,27 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     private bool isCollison;
     private AllTileMap allTileMap;
 
-    [SerializeField] MeshCollider meshCollider;
+    
     [SerializeField] GameObject particle;
     [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] MeshCollider meshCollider;
     [SerializeField] Rigidbody rigid;
     [SerializeField] PhotonView view;
+    [SerializeField] float raycastingRange;
     [SerializeField] int damage;
+    [SerializeField] int crashDamage;
     [SerializeField] int speed;
     private void Awake() => transform.rotation *= Quaternion.Euler(0, 180, 0);
-    private void Start()
+    private IEnumerator Start()
     {
         allTileMap = FindObjectOfType<AllTileMap>();
         rigid.AddForce(-transform.forward * speed);
-        StartCoroutine("BallisticFall");
-        Destroy(gameObject, 3);
-    }
-    #region 탄두 궤적 설정
-    private IEnumerator BallisticFall()
-    {
         yield return new WaitForSeconds(0.1f);
         rigid.constraints = RigidbodyConstraints.None;
-        rigid.AddTorque(-transform.right * 0.25f);
-        yield return new WaitForSeconds(2.5f);
+        rigid.AddTorque(-transform.right * 0.2f);
+        yield return new WaitForSeconds(2.9f);
         Destroy(gameObject);
     }
-    #endregion
-    //탄두 충돌시 튀는 버그, 동기화 이상함
     #region 탄두 충돌 검사
     private void OnCollisionEnter(Collision collision)
     {
@@ -45,6 +40,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         if (other.CompareTag("Player") && !other.GetComponent<PhotonView>().IsMine && photonView.IsMine)
         {
             isCollison = true;
+            if (other.GetComponent<Player>().Hit(crashDamage)) allTileMap.SetKillCount();
             rigid.isKinematic = true;
             Raycasting();
         }
@@ -56,10 +52,21 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
             Raycasting();
         }
     }
+    #endregion
+    #region 레이케스트와 이펙트
+    [PunRPC]
+    private void Effect()
+    {
+        isCollison = true;
+        rigid.isKinematic = true;
+        meshRenderer.enabled = false;
+        meshCollider.isTrigger = true;
+        particle.SetActive(true);
+    }
     private void Raycasting()
     {
         view.RPC(nameof(Effect), RpcTarget.All);
-        RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, 0.5f, Vector3.up, 0, 1 << LayerMask.NameToLayer("Destroyable"));
+        RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, raycastingRange, Vector3.up, 0, 1 << LayerMask.NameToLayer("Destroyable"));
         bool _onDamage = false;
         foreach (RaycastHit hit in raycastHits)
         {
@@ -74,15 +81,10 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
     }
-    [PunRPC]
-    private void Effect()
-    {
-        isCollison = true;
-        rigid.isKinematic = true;
-        meshRenderer.enabled = false;
-        meshCollider.isTrigger = true;
-        particle.SetActive(true);
-    }
+    #endregion
+
+    //문제 발견
+    #region 바닥 파괴
     [PunRPC]
     private void FloorDestroy(string hitName,string hitParentName)
     {

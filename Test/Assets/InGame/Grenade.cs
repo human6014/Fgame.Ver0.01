@@ -7,31 +7,26 @@ public class Grenade : MonoBehaviourPunCallbacks
     private bool isCollison;
     private AllTileMap allTileMap;
 
-    public GameObject particle;
-    public Rigidbody rigid;
-    public MeshCollider meshCollider;
-    public MeshRenderer meshRenderer;
-    public MeshRenderer childMeshRenderer;
-    public PhotonView view;
-    public float raycastingRange;
-    public int damage;
-    public int speed;
-    public float livingTime;
-    private void Start()
+    [SerializeField] GameObject particle;
+    [SerializeField] MeshCollider meshCollider;
+    [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] MeshRenderer childMeshRenderer;
+    [SerializeField] Rigidbody rigid;
+    [SerializeField] PhotonView view;
+    [SerializeField] float raycastingRange;
+    [SerializeField] int damage;
+    [SerializeField] int speed;
+    [SerializeField] float livingTime;
+    [SerializeField] bool isAttachable;
+    private IEnumerator Start()
     {
         allTileMap = FindObjectOfType<AllTileMap>();
         rigid.AddForce(-transform.forward * speed + Vector3.up * 10);
-        StartCoroutine("BallisticFall");
-    }
-    #region 총알 궤적 설정
-    IEnumerator BallisticFall()
-    {
         yield return new WaitForSeconds(livingTime);
         Raycasting();
         yield return new WaitForSeconds(1f);
         Destroy(gameObject);
     }
-    #endregion
     #region 탄두 충돌 검사
     private void OnCollisionEnter(Collision collision)
     {
@@ -41,32 +36,20 @@ public class Grenade : MonoBehaviourPunCallbacks
         if (other.CompareTag("Player") && !other.GetComponent<PhotonView>().IsMine && photonView.IsMine)
         {
             isCollison = true;
-            rigid.velocity = Vector3.zero;
-            rigid.angularVelocity = Vector3.zero;
-            transform.position += other.transform.position;
+            if (isAttachable)
+            {
+                rigid.velocity = Vector3.zero;
+                rigid.angularVelocity = Vector3.zero;
+            }
         }
         else if ((other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner")))
         {
             isCollison = true; //이렇게 안하면 rpc 반응 속도때문에 Raycasting이 여러번 호출될 수 있음
-            rigid.velocity = Vector3.zero;
-            rigid.angularVelocity = Vector3.zero;
+            if (isAttachable) rigid.velocity /= 2;
         }
-        /*
-        if (isCollison || view.IsMine) return;
-        GameObject other = collision.gameObject;
-        if (other.CompareTag("Player") && other.GetComponent<PhotonView>().IsMine)
-        {
-            other.transform.GetComponent<Player>().Hit(damage);
-            isCollison = true;
-            Raycasting();
-        }
-        else if ((other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner")))
-        {
-            isCollison = true; //이렇게 안하면 rpc 반응 속도때문에 Raycasting이 여러번 호출될 수 있음
-            Raycasting();
-        }
-        */ //수류탄 기능 보류
     }
+    #endregion
+    #region 레이케스트와 이펙트
     [PunRPC]
     void Effect()
     {
@@ -95,6 +78,10 @@ public class Grenade : MonoBehaviourPunCallbacks
             }
         }
     }
+    #endregion
+
+    //문제 발견
+    #region 바닥 파괴
     [PunRPC]
     void FloorDestroy(string hitName, string hitParentName)
     {

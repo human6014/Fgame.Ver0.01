@@ -187,13 +187,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
-    m_Alignment: 1
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\uCD95\uD558\uD569\uB2C8\uB2E4"
+  m_Text: 
 --- !u!222 &58967127
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -960,7 +960,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: -0.00029032485}
+  m_AnchoredPosition: {x: 0, y: -0.00056941394}
   m_SizeDelta: {x: 183, y: 256.13}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &354655516
@@ -3724,8 +3724,9 @@ MonoBehaviour:
   generalManager: {fileID: 888231541}
   tileCount: {fileID: 1449297143}
   startTimer: {fileID: 717560876}
+  gameOverText: {fileID: 145238501}
   informationText: {fileID: 1936030189}
-  explainText: {fileID: 0}
+  explainText: {fileID: 58967126}
   hasTileCount: {fileID: 188158839}
   i: 0
   j: 0
@@ -4399,7 +4400,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1123263016}
   m_Direction: 2
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.9999905
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

@@ -35,10 +35,12 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public bool GetIsCreatePlayer() => isCreatePlayer;
     public bool GetIsChatOn() => isChatOn;
     public bool GetIsGameEnd() => isGameEnd;
+    public int GetWinnerPlayerIndex() => winnerPlayerIndex;
     [PunRPC]
-    public int SetWinnerPlayerIndex()
+    public void SetWinnerPlayerIndex(int _winnerPlayerIndex)
     {
-        return winnerPlayerIndex;
+        isGameEnd = true;
+        winnerPlayerIndex = _winnerPlayerIndex;
     }
     [PunRPC]
     private void SetPunRemainPlayerCount() => remainPlayerCount--;
@@ -54,10 +56,11 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         view = photonView;
         PhotonNetwork.LocalPlayer.NickName = GameManager.Instance().GetPlayerName();
         PhotonNetwork.LocalPlayer.SetPlayerNumber(PhotonNetwork.PlayerList.Length);
-        myPlayerIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
+        
         stateIndex = GameManager.Instance().GetStateIndex();
         roomCode = GameManager.Instance().GetRoomCode();
         playerName = GameManager.Instance().GetPlayerName();
+        
 
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
         OnMasterChatting("입장");
@@ -65,6 +68,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     public void CreatePlayer()
     {
+        myPlayerIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
         GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
         player.name = "Player" + PhotonNetwork.LocalPlayer.GetPlayerNumber();
     }
@@ -75,7 +79,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
-        SetRemainPlayerCount();
+        if (isRoomFull) SetPunRemainPlayerCount();
         OnMasterChatting(" 님이 퇴장하였습니다", otherPlayer.NickName);
     }
     [PunRPC]
@@ -97,7 +101,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private void OnApplicationQuit()
     {
         Debug.Log("GeneralManager");
-        SetRemainPlayerCount();
+        if (isRoomFull) SetPunRemainPlayerCount();
     }
     #region 블럭 동기화
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -111,17 +115,10 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
                 allTileMap.SetPersonTileRadius(i, (float)stream.ReceiveNext());
     }
     #endregion
-    #region 채팅
+    #region 채팅 && 게임 끝 여부 관리
     private void Update()
     {
-        //Debug.Log("remainPlayerCounts : " + remainPlayerCount);
-        //Debug.Log("isGameEnd : " + isGameEnd);
-        if (remainPlayerCount == 1 && allTileMap.GetIsOutPlayer(myPlayerIndex - 1))
-        {
-            //Debug.Log("Winner is " + winnerPlayerIndex);
-            winnerPlayerIndex = myPlayerIndex;
-            isGameEnd = true;
-        }
+        if (!GetIsRoomFull()) return;
         if (Input.GetKeyDown(KeyCode.Return))
         {
             isChatOn = !isChatOn;
@@ -131,6 +128,16 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
             if (isChatOn) image.fillAmount = 1;
             else image.fillAmount = 0;
         }
+        if (remainPlayerCount == 1 && !allTileMap.GetIsOutPlayer(myPlayerIndex - 1) && !isGameEnd)
+        {
+            Debug.Log(myPlayerIndex);
+            Debug.Log(PhotonNetwork.LocalPlayer.GetPlayerNumber());
+            winnerPlayerIndex = myPlayerIndex;
+            Debug.Log("Winner is " + winnerPlayerIndex);
+            view.RPC(nameof(SetWinnerPlayerIndex), RpcTarget.All, winnerPlayerIndex);
+            isGameEnd = true;
+        }
+
     }
     public void SetChatClear() => inputField.text = string.Empty;
     [PunRPC]
@@ -149,6 +156,5 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
             inputField.text = "";
         }
     }
-
     #endregion
 }

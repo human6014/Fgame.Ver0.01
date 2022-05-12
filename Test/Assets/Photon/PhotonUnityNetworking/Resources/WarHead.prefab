@@ -155,12 +155,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cc218df81dc1b14298fb0fa38951b96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshCollider: {fileID: 2471796145831816719}
   particle: {fileID: 5983625810265099829}
   meshRenderer: {fileID: 3695152839577550584}
+  meshCollider: {fileID: 2471796145831816719}
   rigid: {fileID: -7132164367401193483}
   view: {fileID: 4481283625299849482}
+  raycastingRange: 0.5
   damage: 10
+  crashDamage: 25
   speed: 100
 --- !u!96 &2119786325277975174
 TrailRenderer:

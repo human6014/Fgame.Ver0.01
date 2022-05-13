@@ -10,7 +10,6 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     private bool isCollison;
     private AllTileMap allTileMap;
 
-    
     [SerializeField] GameObject particle;
     [SerializeField] MeshRenderer meshRenderer;
     [SerializeField] MeshCollider meshCollider;

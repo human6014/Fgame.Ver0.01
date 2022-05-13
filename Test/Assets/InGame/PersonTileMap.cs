@@ -71,17 +71,12 @@ public class PersonTileMap : MonoBehaviour
             for (int i = 0; i < 2; i++) Destroy(allTileMap.GetPortal(int.Parse(transform.name.Substring(13, 1)) - 1, i).gameObject);
             tryOnce = true;
         }
-        if (transform.childCount == 0) SetIsOutPlayer(); //임시
+        if (transform.childCount == 0) allTileMap.SetIsOutPlayer(true, myIndex - 1);
     }
-    private void SetIsOutPlayer()
-    {
-        allTileMap.SetIsOutPlayer(true, myIndex - 1);
-    }
-    //버그 있음
     #region 블럭 파괴
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag(tag)) //블럭 생성에서 버그 있음
+        if (other.CompareTag(tag))
         {
             if (!generalManager.GetIsCreatePlayer())Destroy(other.gameObject);
             else StartCoroutine(FallWaiting(other.gameObject));

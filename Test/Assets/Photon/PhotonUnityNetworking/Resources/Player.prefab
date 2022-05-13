@@ -689,9 +689,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  rate: 1.3
   damage: 0
-  rate: 1.2
-  speed: 0
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
@@ -1117,9 +1116,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  damage: 0
   rate: 2
-  speed: 1.5
+  damage: 0
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
@@ -1280,9 +1278,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  damage: 30
   rate: 1.5
-  speed: 0
+  damage: 30
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 861396524038333038}
   trailEffect: {fileID: 565202565905581600}
@@ -1739,9 +1736,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  damage: 15
   rate: 2
-  speed: 0
+  damage: 15
   playerTransform: {fileID: 2792768260377557250}
   meleeArea: {fileID: 5628065744898280205}
   trailEffect: {fileID: 888576379659894703}
@@ -2218,9 +2214,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  damage: 20
   rate: 2
-  speed: 0
+  damage: 20
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 3943663715368299939}
   trailEffect: {fileID: 1812394710965517017}
@@ -2542,9 +2537,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  damage: 0
   rate: 2
-  speed: 1.5
+  damage: 0
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
@@ -2916,9 +2910,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  damage: 10
   rate: 2
-  speed: 1
+  damage: 0
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
@@ -4106,9 +4099,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  damage: 0
   rate: 0.15
-  speed: 0
+  damage: 0
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}
@@ -4286,9 +4278,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  rate: 1.5
   damage: 0
-  rate: 1
-  speed: 0
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
   trailEffect: {fileID: 0}

@@ -5,9 +5,10 @@ using Photon.Pun;
 public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
 {
     public enum WeaponsType { Melee, Range, Throwing };
-    public WeaponsType type;
-    public int damage;
-    public float rate, speed;
+
+    [SerializeField] WeaponsType type;
+    [SerializeField] float rate;
+    [SerializeField] int damage;
     [SerializeField] Transform playerTransform;
     [SerializeField] BoxCollider meleeArea;
     [SerializeField] TrailRenderer trailEffect;
@@ -17,10 +18,9 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Transform bulletCasePos;
     private AllTileMap allTileMap;
     private int curEquip;
-    private void Start()
-    {
-        allTileMap = FindObjectOfType<AllTileMap>();
-    }
+    public float GetRate() => rate;
+    public WeaponsType GetWeaponsType() => type;
+    private void Start() => allTileMap = FindObjectOfType<AllTileMap>();
     #region 사용 무기 판별
     public void UseWeapons(int _curEquip)
     {
@@ -88,7 +88,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         if (other.CompareTag("Player"))
         {
             Player player = other.GetComponent<Player>();
-            if (player.Hit(damage) && photonView.IsMine) allTileMap.SetKillCount(); //근접은 킬 수 잘 올라감
+            if (player.Hit(damage) && photonView.IsMine) allTileMap.SetKillCount();
             meleeArea.enabled = false;
 
             if (curEquip == 1) player.KnockBack(playerTransform.position.x, playerTransform.position.z);

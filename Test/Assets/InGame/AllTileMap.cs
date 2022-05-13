@@ -26,7 +26,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private int[] childTileCount = new int[6];
     private int[] hasTileNum = new int[6];
     private bool[] isOutPlayer = new bool[6];
-    private int[] weapon = new int[3] { 0, 3, 6 };
+    
     private bool isLose,
                  isGameEnd;
 
@@ -50,7 +50,6 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetKillCount() => killCount++;
     public void SetDieCount() => dieCount++;
     public void SetDestroyCount() => destroyCount++;
-    public void SetWeapon(int index) => weapon[index / 3] = index; //Button에서 호출함!
     public Transform GetPortal(int i, int j) => childPortal[i, j];
     public Transform GetSpawner(int i) => childSpawner[i];
     public float GetPersonTileRadius(int i) => childSphereColliders[i].radius;
@@ -60,8 +59,6 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         if (i < 0 || i > 6) return false;
         return isOutPlayer[i];
     }
-    public int[] GetWeapon() => weapon;
-    public int GetMeleeIndex() => weapon[0];
     #endregion
 
     private IEnumerator Start()
@@ -69,7 +66,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         yield return new WaitUntil(() => generalManager.GetIsRoomFull());
         CreatePersonTile();
         generalManager.SetIsCreateTile(true);
-        for (int i = 3; i >= 1; i--)
+        for (int i = 5; i >= 1; i--)
         {
             startTimer.text = i.ToString();
             yield return new WaitForSeconds(1);

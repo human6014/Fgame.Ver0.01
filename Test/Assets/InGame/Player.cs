@@ -9,26 +9,28 @@ using System;
 
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
-    int curEquip,
-        myIndex;
-    float xMove,
-          zMove,
-          attackDelay;
-    bool isWalk,
-         isJump,
-         isDodge,
-         isAttack,
-         isAttackReady,
-         isJumping,
-         isDodging,
-         isDying,
-         isEnd,
-         isStun;
+    private int curEquip,
+                 myIndex;
+    private float xMove,
+                  zMove,
+                  attackDelay;
+    private bool isWalk,
+                 isJump,
+                 isDodge,
+                 isAttack,
+                 isAttackReady,
+                 isJumping,
+                 isDodging,
+                 isDying,
+                 isEnd,
+                 isStun;
+
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
         KeyCode.Alpha3
     };
+
     [SerializeField] float speed;
     [SerializeField] GameObject[] allWeapons;
     [SerializeField] bool[] hasWeapons;
@@ -39,12 +41,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] PhotonView view;
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
+
     private GameObject[] weapons = new GameObject[3]; //최적화 대기
-    GameObject players;
-    AllTileMap allTileMap;
-    GeneralManager generalManager;
-    Weapon equipWeapon;
-    int timer;
+    private GameObject players;
+    private GeneralManager generalManager;
+    private AllTileMap allTileMap;
+    private Weapon equipWeapon;
+    private int timer;
 
     private void Awake() => players = GameObject.Find("PlayersPool");
     private void Start()
@@ -57,7 +60,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             allTileMap = FindObjectOfType<AllTileMap>();
             generalManager = FindObjectOfType<GeneralManager>();
 
-            view.RPC(nameof(EquipWeapon), RpcTarget.All, allTileMap.GetWeapon());
+            view.RPC(nameof(EquipWeapon), RpcTarget.All, generalManager.GetWeapon());
         }
         else
         {
@@ -70,11 +73,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     Vector3 moveVec;
     private void Update()
     {
-        if (photonView.IsMine && !isEnd)
+        if (isEnd) return;
+        if (photonView.IsMine)
         {
             if (myIndex != -1 && allTileMap.GetIsOutPlayer(myIndex - 1))
             {
-                allTileMap.SetIsOutPlayer(true, myIndex - 1);
                 generalManager.SetRemainPlayerCount();
                 isEnd = true;
                 PhotonNetwork.Destroy(gameObject);
@@ -84,7 +87,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             KeyInput();
             if (xMove + zMove != 1 && xMove + zMove != -1) xMove /= 2; zMove *= 0.866f;
             moveVec = new Vector3(xMove, 0, zMove);
-            if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward); //변경 고민중
+            if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward);
 
             if (!isJumping && !isDodging)
                 if (isWalk || (moveVec == Vector3.zero)) MP.fillAmount += 0.3f * Time.deltaTime;
@@ -93,7 +96,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             anim.SetBool("isRun", moveVec != Vector3.zero);
             anim.SetBool("isWalk", isWalk);
             timer++;
-            if (timer % 8 == 0)
+            if (timer % 12 == 0)
             {
                 transform.LookAt(transform.position + moveVec);
                 timer = 0;
@@ -129,24 +132,26 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 공격 
-    private void Attack() //오브젝트 폴링 활용할 것
+    private void Attack()
     {
         attackDelay += Time.deltaTime;
-        if (isAttack && equipWeapon.rate < attackDelay && !isDodging && !isDying)
+        if (isAttack && equipWeapon.GetRate() < attackDelay && !isDodging && !isDying)
         {
-            if (equipWeapon.type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
-            else if (equipWeapon.type == Weapon.WeaponsType.Range) anim.SetBool("isShot", true);
-            else if (equipWeapon.type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", true);
-            equipWeapon.UseWeapons(allTileMap.GetMeleeIndex());
+            Weapon.WeaponsType type = equipWeapon.GetWeaponsType();
+            if (type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
+            else if (type == Weapon.WeaponsType.Range) anim.SetBool("isShot", true);
+            else if (type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", true);
+            equipWeapon.UseWeapons(generalManager.GetMeleeIndex());
             attackDelay = 0;
             Invoke(nameof(SetAttackAnim), 0.1f);
         }
     }
     private void SetAttackAnim()
     {
-        if (equipWeapon.type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", false);
-        else if (equipWeapon.type == Weapon.WeaponsType.Range) anim.SetBool("isShot", false);
-        else if (equipWeapon.type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", false);
+        Weapon.WeaponsType type = equipWeapon.GetWeaponsType();
+        if (type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", false);
+        else if (type == Weapon.WeaponsType.Range) anim.SetBool("isShot", false);
+        else if (type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", false);
     }
     #endregion
     #region 점프
@@ -208,7 +213,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         HP.fillAmount -= damage / 100f;
         HP.fillAmount = (float)Math.Round(HP.fillAmount,2);
-        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn));
+        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn),false);
     }
     #endregion
     #region 근접무기 cc
@@ -283,20 +288,19 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount = 0;
         MP.fillAmount = 0;
     }
-    IEnumerator Respawn()//FallRespawn 통합 예정
+    IEnumerator Respawn(bool _isFall)//FallRespawn 통합 예정
     {
-        if (isEnd || !photonView.IsMine) yield break;
+        if (isEnd || !photonView.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
         isDying = true;
         allTileMap.SetDieCount();
         view.RPC(nameof(UnRecovery), RpcTarget.All);
         rigid.velocity = Vector3.zero;
         rigid.angularVelocity = Vector3.zero;
+        if(_isFall) transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
         transform.eulerAngles = new Vector3(-90, 180, 0);
 
-        Debug.Log("Respawn중");
-
         yield return new WaitForSeconds(5f);
-        transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
+        if(!_isFall) transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
         transform.eulerAngles = new Vector3(0, 180, 0);
         view.RPC(nameof(Recovery), RpcTarget.All);
         isDying = false;
@@ -305,23 +309,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 낙사
     private void OnTriggerEnter(Collider other)
     {
-        if (!isEnd && other.gameObject.CompareTag("GameController")) StartCoroutine(nameof(FallRespawn));
-    }
-    IEnumerator FallRespawn()
-    {
-        if (!photonView.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
-        allTileMap.SetDieCount();
-        isDying = true;
-        view.RPC(nameof(UnRecovery), RpcTarget.All);
-        rigid.velocity = Vector3.zero;
-        rigid.angularVelocity = Vector3.zero;
-        transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
-        transform.eulerAngles = new Vector3(-90, 180, 0);
-
-        yield return new WaitForSeconds(5f);
-        transform.eulerAngles = new Vector3(0, 180, 0);
-        view.RPC(nameof(Recovery), RpcTarget.All);
-        isDying = false;
+        if (!isEnd && other.gameObject.CompareTag("GameController")) StartCoroutine(nameof(Respawn), true);
     }
     #endregion
     #region 포탈 이동

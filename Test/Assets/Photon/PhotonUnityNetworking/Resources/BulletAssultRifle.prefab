@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 9
-  speed: 80
+  speed: 90
   view: {fileID: -5344443154850734816}
 --- !u!54 &-5253330926067549335
 Rigidbody:

@@ -12,6 +12,8 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private int remainPlayerCount;
     private int myPlayerIndex;
     private int winnerPlayerIndex = -1;
+    private int[] weapon = new int[3] { 0, 3, 6 };
+
     private string roomCode = string.Empty;
     private string playerName = string.Empty;
 
@@ -28,14 +30,22 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] InputField inputField;
     [SerializeField] RectTransform rectTransform;
     [SerializeField] AllTileMap allTileMap;
-    [SerializeField] Transform players;
     PhotonView view;
+    public int[] GetWeapon() => weapon;
+    public int GetMeleeIndex() => weapon[0];
     public bool GetIsRoomFull() => isRoomFull;
     public bool GetIsCreateTile() => isCreateTile;
     public bool GetIsCreatePlayer() => isCreatePlayer;
     public bool GetIsChatOn() => isChatOn;
     public bool GetIsGameEnd() => isGameEnd;
     public int GetWinnerPlayerIndex() => winnerPlayerIndex;
+    public void SetIsCreateTile(bool _isCreateTile) => isCreateTile = _isCreateTile;
+    public void SetIsCreatePlayer(bool _isCreatePlayer) => isCreatePlayer = _isCreatePlayer;
+    public void SetWeapon(int index) => weapon[index / 3] = index; //Button에서 호출함!
+    public void SetRemainPlayerCount()
+    {
+        if (isRoomFull) view.RPC(nameof(SetPunRemainPlayerCount), RpcTarget.All);
+    }
     [PunRPC]
     public void SetWinnerPlayerIndex(int _winnerPlayerIndex)
     {
@@ -44,12 +54,6 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     [PunRPC]
     private void SetPunRemainPlayerCount() => remainPlayerCount--;
-    public void SetRemainPlayerCount()
-    {
-        if (isRoomFull) view.RPC(nameof(SetPunRemainPlayerCount), RpcTarget.All);
-    }
-    public void SetIsCreateTile(bool _isCreateTile) => isCreateTile = _isCreateTile;
-    public void SetIsCreatePlayer(bool _isCreatePlayer) => isCreatePlayer = _isCreatePlayer;
 
     private void Start()
     {
@@ -79,7 +83,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
-        if (isRoomFull) SetPunRemainPlayerCount();
+        if (isRoomFull && !allTileMap.GetIsOutPlayer(otherPlayer.GetPlayerNumber() - 1)) SetPunRemainPlayerCount();
         OnMasterChatting(" 님이 퇴장하였습니다", otherPlayer.NickName);
     }
     [PunRPC]
@@ -97,11 +101,6 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag.Substring(0, 5) == "Floor") Destroy(other.gameObject);
-    }
-    private void OnApplicationQuit()
-    {
-        Debug.Log("GeneralManager");
-        if (isRoomFull) SetPunRemainPlayerCount();
     }
     #region 블럭 동기화
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

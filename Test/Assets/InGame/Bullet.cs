@@ -8,7 +8,6 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
     private AllTileMap allTileMap;
     [SerializeField] int damage;
     [SerializeField] int speed;
-    public PhotonView view;
     private IEnumerator Start()
     {
         rigid = GetComponent<Rigidbody>();

@@ -10,7 +10,8 @@ using System;
 public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
     private int curEquip,
-                 myIndex;
+                 myIndex,
+                 timer;
     private float xMove,
                   zMove,
                   attackDelay;
@@ -23,8 +24,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                  isDodging,
                  isDying,
                  isEnd,
-                 isStun;
-
+                 isStun,
+                 isTab,
+                 isInPortal;
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
@@ -32,8 +34,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     };
 
     [SerializeField] float speed;
-    [SerializeField] GameObject[] allWeapons;
     [SerializeField] bool[] hasWeapons;
+    [SerializeField] GameObject[] allWeapons;
     [SerializeField] GameObject child;
     [SerializeField] Image HP;
     [SerializeField] Image MP;
@@ -47,7 +49,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     private GeneralManager generalManager;
     private AllTileMap allTileMap;
     private Weapon equipWeapon;
-    private int timer;
 
     private void Awake() => players = GameObject.Find("PlayersPool");
     private void Start()
@@ -96,7 +97,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             anim.SetBool("isRun", moveVec != Vector3.zero);
             anim.SetBool("isWalk", isWalk);
             timer++;
-            if (timer % 12 == 0)
+            if (timer % 5 == 0)
             {
                 transform.LookAt(transform.position + moveVec);
                 timer = 0;
@@ -110,16 +111,22 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
     #region 키 입력
+    bool isTele;
     private void KeyInput()
     {
-        if (isStun||generalManager.GetIsChatOn())return;
+        if (isStun || generalManager.GetIsChatOn())return;
         xMove = Input.GetAxisRaw("Horizontal");
         zMove = Input.GetAxisRaw("Vertical");
         isWalk = Input.GetButton("Walk");
         isJump = Input.GetButtonDown("Jump");
         isDodge = Input.GetButtonDown("Dodge");
         isAttack = Input.GetButtonDown("Attack");
-        
+        if (isInPortal)
+        {
+            isTab = Input.GetKeyDown(KeyCode.Tab);
+            if (isTab) isTele = true;
+        }
+
         for (int i = 0; i < keyCodes.Length; i++)
         {
             if (Input.GetKeyDown(keyCodes[i]))
@@ -128,7 +135,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 break;
             }
         }
-        
     }
     #endregion
     #region 공격 
@@ -313,10 +319,23 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 포탈 이동
+    
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag("Portal") && Input.GetKeyDown(KeyCode.Tab))
-            other.gameObject.GetComponent<Portal>().PlayerEntry(gameObject);
+        if (other.gameObject.CompareTag("Portal"))
+        {
+            isInPortal = true;
+            if (isTele)
+            {
+                other.gameObject.GetComponent<Portal>().PlayerEntry(gameObject);
+                isTele = false;
+            }
+        }   
+    }
+    
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Portal")) isInPortal = false;
     }
     #endregion
     #region 위치,MP 동기화

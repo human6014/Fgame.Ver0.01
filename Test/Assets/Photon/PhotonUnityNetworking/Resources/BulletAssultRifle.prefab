@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4063707326992394977}
   - component: {fileID: 1395948108606642010}
   - component: {fileID: 3681151937083633423}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,8 @@ GameObject:
   - component: {fileID: 4453993604519405548}
   - component: {fileID: 7284263033059251862}
   - component: {fileID: -5253330926067549335}
-  m_Layer: 0
+  - component: {fileID: 2625012097563554305}
+  m_Layer: 8
   m_Name: BulletAssultRifle
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -261,6 +262,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 4453993604519405548}
   - {fileID: 7284263033059251862}
+  - {fileID: 2625012097563554305}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -292,9 +294,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 028d58228ecc98d449ef9ff68136a3f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rigid: {fileID: -5253330926067549335}
+  meshRenderer: {fileID: 3681151937083633423}
+  trailRenderer: {fileID: 8592462005021533128}
   damage: 9
   speed: 90
-  view: {fileID: -5344443154850734816}
 --- !u!54 &-5253330926067549335
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -311,3 +315,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 4
   m_CollisionDetection: 1
+--- !u!114 &2625012097563554305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8592462005021533135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3

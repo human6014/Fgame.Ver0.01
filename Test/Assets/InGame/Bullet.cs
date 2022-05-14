@@ -4,8 +4,11 @@ using Photon.Pun;
 public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
 {
     private bool isCollison;
-    private Rigidbody rigid;
+    
     private AllTileMap allTileMap;
+    [SerializeField] Rigidbody rigid;
+    [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] TrailRenderer trailRenderer;
     [SerializeField] int damage;
     [SerializeField] int speed;
     private IEnumerator Start()
@@ -26,15 +29,25 @@ public class Bullet : MonoBehaviourPunCallbacks, IPunObservable
 
         if (other.CompareTag("Player") && !other.GetComponent<PhotonView>().IsMine && photonView.IsMine)
         {
-            if(other.GetComponent<Player>().Hit(damage)) allTileMap.SetKillCount();
-            isCollison = true;
             Destroy(gameObject);
+            isCollison = true;
+            photonView.RPC(nameof(OnCollisionBullet),RpcTarget.All);
+            if (other.GetComponent<Player>().Hit(damage)) allTileMap.SetKillCount();
         }
-        if (other.tag.Substring(0, 5) == "Floor")
+        else if (other.tag.Substring(0, 5) == "Floor")
         {
-            isCollison = true;
             Destroy(gameObject);
+            isCollison = true;
+            rigid.isKinematic = true;
+            photonView.RPC(nameof(OnCollisionBullet), RpcTarget.All);
         }
+    }
+    [PunRPC]
+    private void OnCollisionBullet()
+    {
+        trailRenderer.enabled = false;
+        meshRenderer.enabled = false;
+        rigid.isKinematic = true;
     }
     #endregion
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }

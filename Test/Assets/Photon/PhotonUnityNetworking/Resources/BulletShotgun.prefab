@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8639686090567324706}
   - component: {fileID: 1766350921793636642}
   - component: {fileID: 8470437878629125899}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -294,9 +294,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 028d58228ecc98d449ef9ff68136a3f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rigid: {fileID: 8243928852377001469}
+  meshRenderer: {fileID: 8470437878629125899}
+  trailRenderer: {fileID: 9055555001861701320}
   damage: 3
   speed: 60
-  view: {fileID: 2177125116880142373}
 --- !u!54 &8243928852377001469
 Rigidbody:
   m_ObjectHideFlags: 0

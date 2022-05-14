@@ -39,8 +39,8 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         if (other.CompareTag("Player") && !other.GetComponent<PhotonView>().IsMine && photonView.IsMine)
         {
             isCollison = true;
-            if (other.GetComponent<Player>().Hit(crashDamage)) allTileMap.SetKillCount();
             rigid.isKinematic = true;
+            if (other.GetComponent<Player>().Hit(crashDamage)) allTileMap.SetKillCount();
             Raycasting();
         }
         

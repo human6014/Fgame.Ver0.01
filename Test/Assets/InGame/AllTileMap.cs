@@ -33,6 +33,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private int dieCount,
                 killCount,
                 destroyCount;
+
     private float suviveTime;
 
     public int i, j, tempTop = 5, tempBottom = 0;

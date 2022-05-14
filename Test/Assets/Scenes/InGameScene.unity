@@ -960,7 +960,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: -0.0005733975}
+  m_AnchoredPosition: {x: 0, y: -0.0005456353}
   m_SizeDelta: {x: 183, y: 256.13}
   m_Pivot: {x: 0, y: 0}
 --- !u!1 &354655516
@@ -6593,6 +6593,14 @@ PrefabInstance:
       propertyPath: allTileMap
       value: 
       objectReference: {fileID: 1299624831}
+    - target: {fileID: 0}
+      propertyPath: m_Height
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7045079946383495686, guid: 806ab50a74c74ab449466e4851fc1ead, type: 3}
       propertyPath: m_RootOrder
       value: 7

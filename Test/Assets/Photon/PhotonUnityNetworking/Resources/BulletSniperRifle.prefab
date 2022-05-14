@@ -15,7 +15,8 @@ GameObject:
   - component: {fileID: 1598402694235335704}
   - component: {fileID: -5561453274122037874}
   - component: {fileID: -3939461500394170793}
-  m_Layer: 0
+  - component: {fileID: 707173768032371241}
+  m_Layer: 8
   m_Name: BulletSniperRifle
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -179,6 +180,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 1598402694235335704}
   - {fileID: -5561453274122037874}
+  - {fileID: 707173768032371241}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -210,9 +212,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 028d58228ecc98d449ef9ff68136a3f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rigid: {fileID: -3939461500394170793}
+  meshRenderer: {fileID: 5670422672330720417}
+  trailRenderer: {fileID: 5086712924862526818}
   damage: 45
   speed: 130
-  view: {fileID: 2669186511984069519}
 --- !u!54 &-3939461500394170793
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -229,6 +233,22 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 4
   m_CollisionDetection: 1
+--- !u!114 &707173768032371241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5086712924862526819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8209104898410953762
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,7 +260,7 @@ GameObject:
   - component: {fileID: 5537806340594720648}
   - component: {fileID: 2575847819740594824}
   - component: {fileID: 5670422672330720417}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}

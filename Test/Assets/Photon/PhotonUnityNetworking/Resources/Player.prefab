@@ -3507,8 +3507,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 4.5, y: 4.8, z: 3.5}
-  m_Center: {x: 0, y: 2, z: 0}
+  m_Size: {x: 3.8739123, y: 4.8, z: 2.4582171}
+  m_Center: {x: 0.0057704747, y: 1.9999999, z: -0.040642023}
 --- !u!54 &4387864344120677047
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3579,6 +3579,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1
+  hasWeapons: 010000
   allWeapons:
   - {fileID: 565202565905581605}
   - {fileID: 888576379659894674}
@@ -3589,7 +3590,6 @@ MonoBehaviour:
   - {fileID: 2611032261824405314}
   - {fileID: 3326517048465712092}
   - {fileID: 364364828977250284}
-  hasWeapons: 010000
   child: {fileID: 5168173898441154768}
   HP: {fileID: 800992798285252588}
   MP: {fileID: 9210114136766482009}

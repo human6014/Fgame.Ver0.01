@@ -19,6 +19,7 @@ TagManager:
   - Floor7
   - Portal
   - Destroyer
+  - Fog
   layers:
   - Default
   - TransparentFX

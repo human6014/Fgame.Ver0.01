@@ -10,8 +10,8 @@ public class PersonTileMap : MonoBehaviour
     [SerializeField] AllTileMap allTileMap;
     [SerializeField]
     GameObject HexTilePrefab,
-                            PortalPrefab,
-                            CastlePrefab;
+               PortalPrefab,
+               CastlePrefab;
     [SerializeField]
     int mapWidth,  //22 
         mapHeight;
@@ -52,10 +52,7 @@ public class PersonTileMap : MonoBehaviour
         {
             if (generalManager.GetIsCreatePlayer())
             {
-                if (allTileMap.GetHasTileNum(myIndex - 1) > 0)
-                {
-                    allTileMap.SetMinusHasTileNum(myIndex - 1);
-                }
+                if (allTileMap.GetHasTileNum(myIndex - 1) > 0) allTileMap.SetMinusHasTileNum(myIndex - 1);
                 else sphereCollider.radius -= 0.0015f;
                 //else sphereCollider.radius -= tileSpeed;
             }
@@ -78,7 +75,7 @@ public class PersonTileMap : MonoBehaviour
     {
         if (other.CompareTag(tag))
         {
-            if (!generalManager.GetIsCreatePlayer())Destroy(other.gameObject);
+            if (!generalManager.GetIsCreatePlayer()) Destroy(other.gameObject);
             else StartCoroutine(FallWaiting(other.gameObject));
         }
     }

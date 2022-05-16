@@ -5,6 +5,7 @@ using UnityEngine;
 public class CloudManager : MonoBehaviour
 {
     [SerializeField] Transform fog;
+    [SerializeField] GeneralManager generalManager;
     [SerializeField] GameObject[] cloud = new GameObject[6];
 
     const int numOfCloud = 20;
@@ -15,7 +16,7 @@ public class CloudManager : MonoBehaviour
     public float GetFogEndPositionX() => endX;
     public int GetRandomY() => Random.Range(startY, endY);
     public int GetRandomZ() => Random.Range(startZ, endZ);
-    void Start()
+    private IEnumerator Start()
     {
         startX = (int)fog.position.x - (int)fog.localScale.x * 5;
         startY = (int)fog.position.y - (int)fog.localScale.y / 2 + 5;
@@ -31,8 +32,8 @@ public class CloudManager : MonoBehaviour
 
         int cloudIndex;
         int randomX, randomY, randomZ;
-
-        for(int i = 0; i < numOfCloud; i++)
+        yield return new WaitUntil(() => generalManager.GetIsRoomFull());
+        for (int i = 0; i < numOfCloud; i++)
         {
             cloudIndex = Random.Range(0,6);
             randomX = Random.Range(startX, endX);

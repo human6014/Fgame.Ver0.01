@@ -16,6 +16,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] GameObject bulletCase;
     [SerializeField] Transform bulletPos;
     [SerializeField] Transform bulletCasePos;
+    [SerializeField] AudioSource audioSource;
     private AllTileMap allTileMap;
     private int curEquip;
     public float GetRate() => rate;
@@ -47,6 +48,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     {
         GameObject _bullet;
         Rigidbody _bulletRigid;
+        audioSource.Play();
         for (int i = 0; i < 12; i++)
         {
             _bullet = PhotonNetwork.Instantiate(bullet.name, bulletPos.position, bulletPos.rotation);

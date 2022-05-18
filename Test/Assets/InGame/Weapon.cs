@@ -48,7 +48,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     {
         GameObject _bullet;
         Rigidbody _bulletRigid;
-        audioSource.Play();
+        if(audioSource) photonView.RPC(nameof(PlaySound), RpcTarget.All);
         for (int i = 0; i < 12; i++)
         {
             _bullet = PhotonNetwork.Instantiate(bullet.name, bulletPos.position, bulletPos.rotation);
@@ -79,7 +79,8 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         yield return new WaitForSeconds(0.1f);
         meleeArea.enabled = true;
         trailEffect.enabled = true;
-
+        yield return new WaitForSeconds(0.15f);
+        photonView.RPC(nameof(PlaySound),RpcTarget.All);
         yield return new WaitForSeconds(0.5f);
         meleeArea.enabled = false;
         trailEffect.enabled = false;
@@ -98,5 +99,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     #endregion
+    [PunRPC]
+    private void PlaySound() => audioSource.Play();
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }
 }

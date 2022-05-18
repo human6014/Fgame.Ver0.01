@@ -15,10 +15,12 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] MeshCollider meshCollider;
     [SerializeField] Rigidbody rigid;
     [SerializeField] PhotonView view;
+    [SerializeField] AudioSource audioSource;
     [SerializeField] float raycastingRange;
     [SerializeField] int damage;
     [SerializeField] int crashDamage;
     [SerializeField] int speed;
+    
     private void Awake() => transform.rotation *= Quaternion.Euler(0, 180, 0);
     private IEnumerator Start()
     {
@@ -57,6 +59,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     private void Effect()
     {
         isCollison = true;
+        audioSource.Play();
         rigid.isKinematic = true;
         meshRenderer.enabled = false;
         meshCollider.isTrigger = true;

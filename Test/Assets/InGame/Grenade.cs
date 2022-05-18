@@ -13,18 +13,20 @@ public class Grenade : MonoBehaviourPunCallbacks
     [SerializeField] MeshRenderer childMeshRenderer;
     [SerializeField] Rigidbody rigid;
     [SerializeField] PhotonView view;
+    [SerializeField] AudioSource audioSource;
     [SerializeField] float raycastingRange;
+    [SerializeField] float livingTime;
     [SerializeField] int damage;
     [SerializeField] int speed;
-    [SerializeField] float livingTime;
     [SerializeField] bool isAttachable;
+    
     private IEnumerator Start()
     {
         allTileMap = FindObjectOfType<AllTileMap>();
         rigid.AddForce(-transform.forward * speed + Vector3.up * 10);
         yield return new WaitForSeconds(livingTime);
         Raycasting();
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1.5f);
         Destroy(gameObject);
     }
     #region 탄두 충돌 검사
@@ -54,6 +56,7 @@ public class Grenade : MonoBehaviourPunCallbacks
     void Effect()
     {
         isCollison = true;
+        audioSource.Play();
         rigid.isKinematic = true;
         meshRenderer.enabled = false;
         childMeshRenderer.enabled = false;

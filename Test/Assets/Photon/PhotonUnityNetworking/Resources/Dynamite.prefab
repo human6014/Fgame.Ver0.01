@@ -9933,9 +9933,9 @@ MonoBehaviour:
   view: {fileID: 5518677305093557995}
   audioSource: {fileID: -1741093250199725752}
   raycastingRange: 0.6
+  livingTime: 3
   damage: 35
   speed: 30
-  livingTime: 3
   isAttachable: 1
 --- !u!54 &3012065219018881753
 Rigidbody:
@@ -9979,7 +9979,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 01f6d67e53b59074ea4b76a059c9e83d, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.8
   m_Pitch: 1
   Loop: 0
   Mute: 0

@@ -4,21 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
+using System.Text.RegularExpressions;
 
 public class CreateRoom : MonoBehaviour
 {
+    [SerializeField] LobbyManager lobbyManager;
+
     [SerializeField] Text playerName;
     [SerializeField] Text roomName;
     [SerializeField] Text maxPlayer;
     public void OnClicked()
     {
-        if (string.IsNullOrEmpty(playerName.text) ||
-            string.IsNullOrEmpty(roomName.text) ||
-            string.IsNullOrEmpty(maxPlayer.text)) return;
+        if (!lobbyManager.IsValidate(3)) return;
         string tempPlayerName = playerName.text,
                tempRoomCode = roomName.text;
         int tempMaxPlayer = int.Parse(maxPlayer.text);
-        if (tempMaxPlayer < 2 || tempMaxPlayer > 6) return;
         GameManager.Instance().OnStartGame(1, tempPlayerName, tempRoomCode, tempMaxPlayer);
     }
 }

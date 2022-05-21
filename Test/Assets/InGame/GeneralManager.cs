@@ -22,6 +22,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private bool isCreatePlayer = false;
     private bool isChatOn = false;
     private bool isGameEnd = false;
+    private bool isClosedEnd = false;
 
     [SerializeField] Text roomCountDisplay;
     [SerializeField] Text outputText;
@@ -38,7 +39,9 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public bool GetIsCreatePlayer() => isCreatePlayer;
     public bool GetIsChatOn() => isChatOn;
     public bool GetIsGameEnd() => isGameEnd;
+    public bool GetIsCloseEnd() => isClosedEnd;
     public int GetWinnerPlayerIndex() => winnerPlayerIndex;
+    public void SetIsClosedEnd() => isClosedEnd = true;
     public void SetIsCreateTile(bool _isCreateTile) => isCreateTile = _isCreateTile;
     public void SetIsCreatePlayer(bool _isCreatePlayer) => isCreatePlayer = _isCreatePlayer;
     public void SetWeapon(int index) => weapon[index / 3] = index; //Button에서 호출함!

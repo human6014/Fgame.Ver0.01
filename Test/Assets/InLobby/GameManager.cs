@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
+
 public class GameManager : MonoBehaviourPunCallbacks
 {
     private string playerName = "Default";
@@ -12,6 +13,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private int stateIndex = -1;
     private const byte MAXPLAYER = 1;
 
+    [SerializeField] LobbyManager lobbyManager;
     RoomOptions roomOptions;
     #region 싱글톤
     static GameManager _instance = null;
@@ -33,9 +35,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         roomCode = "Default";
         stateIndex = -1;
     }
-    //public void SetPlayerName(string pn) => playerName = pn;
-    //public void SetRoomCode(string rc) => roomCode = rc;
-    //public void SetStateIndex(int si) => stateIndex = si;
     public string GetPlayerName() => playerName;
     public string GetRoomCode() => roomCode;
     public int GetStateIndex() => stateIndex;
@@ -77,7 +76,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom() => PhotonNetwork.LoadLevel("InGameScene");
     public override void OnCreateRoomFailed(short returnCode, string message) => Debug.Log("OnCreateRoomFailed");
     public override void OnJoinRandomFailed(short returnCode, string message) => PhotonNetwork.CreateRoom(null, roomOptions = new RoomOptions { MaxPlayers = MAXPLAYER });
-    public override void OnJoinRoomFailed(short returnCode, string message) => Debug.Log("OnJoinRoomFailed");
+    public override void OnJoinRoomFailed(short returnCode, string message) => StartCoroutine(lobbyManager.TextDown(null, "방 코드가 잘못되었습니다"));
     public override void OnLeftRoom()
     {
         SetDefaultInformation();

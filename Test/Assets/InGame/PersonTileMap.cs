@@ -20,7 +20,7 @@ public class PersonTileMap : MonoBehaviour
     private new Rigidbody rigidbody;
     private new Renderer renderer;
     private bool tryOnce;
-
+    private bool isClosedEnd;
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f,
                         tileRadius = 8.5f,
@@ -41,12 +41,9 @@ public class PersonTileMap : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (generalManager.GetIsGameEnd())
-        {
-            //게임끝
-            return;
-        }
+        if (generalManager.GetIsGameEnd()) return;
         if (gameObject.CompareTag("Floor0") || gameObject.name == "Sample") return;
+
         allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
         if (sphereCollider.radius >= 0)
         {
@@ -56,8 +53,13 @@ public class PersonTileMap : MonoBehaviour
                 else sphereCollider.radius -= 0.0015f;
                 //else sphereCollider.radius -= tileSpeed;
             }
-        }
-        else if (!tryOnce)
+            if (!isClosedEnd && sphereCollider.radius <= 4)
+            {
+                isClosedEnd = true;
+                generalManager.SetIsClosedEnd(); //버그 있음
+            }
+            }
+            else if (!tryOnce)
         {
             Transform[] _child = GetComponentsInChildren<Transform>();
 

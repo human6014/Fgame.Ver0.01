@@ -42,6 +42,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] PhotonView view;
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] MeshRenderer meshRenderer;
 
     private GameObject[] weapons = new GameObject[3]; //최적화 대기
     private GameObject players;
@@ -93,8 +95,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 if (isWalk || (moveVec == Vector3.zero)) MP.fillAmount += 0.3f * Time.deltaTime;
                 else MP.fillAmount += 0.2f * Time.deltaTime;
 
+            anim.SetBool("isWalk", isWalk && moveVec != Vector3.zero);
             anim.SetBool("isRun", moveVec != Vector3.zero);
-            anim.SetBool("isWalk", isWalk);
+            
             timer++;
             if (timer % 5 == 0)
             {
@@ -218,7 +221,20 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         HP.fillAmount -= damage / 100f;
         HP.fillAmount = (float)Math.Round(HP.fillAmount,2);
-        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn),false);
+        StartCoroutine(nameof(HitDisplay));
+        audioSource.Play();
+        if (HP.fillAmount <= 0)
+        {
+            anim.SetTrigger("isDie");
+            StartCoroutine(nameof(Respawn), false);
+        }
+    }
+    IEnumerator HitDisplay()
+    {
+        Debug.Log("HitDisplay");
+        meshRenderer.material.color = Color.red;
+        yield return new WaitForSeconds(5f);
+        meshRenderer.material.color = Color.white;
     }
     #endregion
     #region 근접무기 cc
@@ -277,12 +293,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         weapons[curEquip].SetActive(false);
         weapons[index].SetActive(true);
         equipWeapon = weapons[index].GetComponent<Weapon>();
-        curEquip = index;
-
-        if (equipWeapon.GetWeaponsType() == Weapon.WeaponsType.Range) anim.SetBool("isEquipMelee", false);
-        else anim.SetBool("isEquipMelee", true);
-
-        
+        curEquip = index;  
     }
     #endregion
     #region 죽음,리스폰
@@ -307,11 +318,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         rigid.velocity = Vector3.zero;
         rigid.angularVelocity = Vector3.zero;
         if(_isFall) transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
-        transform.eulerAngles = new Vector3(-90, 180, 0);
 
         yield return new WaitForSeconds(5f);
         if(!_isFall) transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
-        transform.eulerAngles = new Vector3(0, 180, 0);
         view.RPC(nameof(Recovery), RpcTarget.All);
         isDying = false;
     }

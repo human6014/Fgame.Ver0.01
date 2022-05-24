@@ -76,7 +76,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public void CreatePlayer()
     {
         myPlayerIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
-        GameObject player = PhotonNetwork.Instantiate("TestPlayer", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
+        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
         player.name = "Player" + PhotonNetwork.LocalPlayer.GetPlayerNumber();
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)

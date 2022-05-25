@@ -43,6 +43,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr; //¿©±â
     public void SetSpawner(Transform tr, int i) => childSpawner[i] = tr;
     public void SetPersonTileRadius(int i, float _radius) => childSphereColliders[i].radius = _radius;
+    //Error¶ä
     public void SetChildTileCount(int i,int _count) => childTileCount[i] = _count;
     public void SetHasTileNum(int i, int j) => hasTileNum[i] = j * 1000;
     public void SetPlusHasTileNum(int i) => hasTileNum[i] += 1000;
@@ -161,8 +162,11 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         informationText.text = "Å³ : " + killCount + " Á×À½ : " + dieCount + " ÆÄ±«ÇÑ ¶¥ : " + destroyCount + " »ýÁ¸½Ã°£ : " + Math.Truncate(suviveTime * 100)/100;
         if (isGameEnd)
         {
-            if(PhotonNetwork.LocalPlayer.GetPlayerNumber() == generalManager.GetWinnerPlayerIndex()) gameOverText.text = "Winner Winner";
-            explainText.text = generalManager.GetWinnerPlayerIndex() + " ¹ø´ÔÀÌ ½Â¸®ÇÏ¿´½À´Ï´Ù";
+            int winnerIndex = generalManager.GetWinnerPlayerIndex();
+            if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == winnerIndex) gameOverText.text = "Winner Winner";
+            Debug.Log(winnerIndex);
+            explainText.text = generalManager.GetPlayerName(winnerIndex - 1) + " ´ÔÀÌ ½Â¸®ÇÏ¿´½À´Ï´Ù";
+            //¹ö±× ÀÖÀ½
         }
         gameOverPanel.SetActive(true);
     }

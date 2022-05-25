@@ -14,6 +14,11 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] Text maxPlayerAlert;
     public bool IsValidate(int level)
     {
+        if(level == 0)
+        {
+            StartCoroutine(TextDown(roomNameAlert, "방 코드가 잘못되었습니다"));
+            return false;
+        }
         if (string.IsNullOrEmpty(playerName.text))
         {
             StartCoroutine(TextDown(nickNameAlert, "닉네임을 설정해주세요"));
@@ -60,6 +65,7 @@ public class LobbyManager : MonoBehaviour
         if (alert == null) alert = roomNameAlert;
         alert.text = text;
         yield return new WaitForSeconds(3);
+        if (alert == null) yield break;
         alert.text = "";
     }
 }

@@ -43,9 +43,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
     [SerializeField] AudioSource audioSource;
-    [SerializeField] MeshRenderer meshRenderer;
-
-    private GameObject[] weapons = new GameObject[3]; //최적화 대기
+    
+    private MeshRenderer[] meshRenderer;
+    private GameObject[] weapons = new GameObject[3];
     private GameObject players;
     private GeneralManager generalManager;
     private AllTileMap allTileMap;
@@ -54,6 +54,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     private void Awake() => players = GameObject.Find("PlayersPool");
     private void Start()
     {
+        meshRenderer = GetComponentsInChildren<MeshRenderer>();
         if (photonView.IsMine)
         {
             Camera.main.GetComponent<MainCamera>().SetTarget(transform);
@@ -111,6 +112,10 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
+    }
+    public void FixedUpdate()
+    {
+        
     }
     #region 키 입력
     bool isTele;
@@ -223,18 +228,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount = (float)Math.Round(HP.fillAmount,2);
         StartCoroutine(nameof(HitDisplay));
         audioSource.Play();
-        if (HP.fillAmount <= 0)
-        {
-            anim.SetTrigger("isDie");
-            StartCoroutine(nameof(Respawn), false);
-        }
+        if (HP.fillAmount <= 0) StartCoroutine(nameof(Respawn), false);
     }
     IEnumerator HitDisplay()
     {
-        Debug.Log("HitDisplay");
-        meshRenderer.material.color = Color.red;
-        yield return new WaitForSeconds(5f);
-        meshRenderer.material.color = Color.white;
+        foreach (MeshRenderer mesh in meshRenderer) mesh.material.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        foreach (MeshRenderer mesh in meshRenderer) mesh.material.color = Color.white;
     }
     #endregion
     #region 근접무기 cc
@@ -279,10 +279,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void EquipWeapon(int[] _weapons)
     {
-        for (int i = 0; i < 3; i++)
-        {
-            weapons[i] = allWeapons[_weapons[i]];
-        }
+        for (int i = 0; i < 3; i++) weapons[i] = allWeapons[_weapons[i]];
         curEquip = 0;
         weapons[0].SetActive(true);
         equipWeapon = weapons[0].GetComponent<Weapon>();
@@ -312,6 +309,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Respawn(bool _isFall)//FallRespawn 통합 예정
     {
         if (isEnd || !photonView.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
+        anim.SetTrigger("isDie");
         isDying = true;
         allTileMap.SetDieCount();
         view.RPC(nameof(UnRecovery), RpcTarget.All);
@@ -320,7 +318,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if(_isFall) transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
 
         yield return new WaitForSeconds(5f);
-        if(!_isFall) transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
+        if(!_isFall)transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
         view.RPC(nameof(Recovery), RpcTarget.All);
         isDying = false;
     }

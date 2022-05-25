@@ -13,7 +13,6 @@ public class MainCamera : MonoBehaviour
     Vector3 offset = new Vector3(0,4,-2);
 
     private bool start;
-    private int myNum;
     private int maxPlayer;
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
@@ -28,7 +27,6 @@ public class MainCamera : MonoBehaviour
     {
         allTileMap = FindObjectOfType<AllTileMap>();
         maxPlayer = PhotonNetwork.CurrentRoom.MaxPlayers;
-        myNum = PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1;
     }
     public void SetPlayers()
     {

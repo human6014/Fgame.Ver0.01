@@ -16,6 +16,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
 
     private string roomCode = string.Empty;
     private string playerName = string.Empty;
+    private string[] playersName = new string[6];
 
     private bool isRoomFull = false;
     private bool isCreateTile = false;
@@ -41,6 +42,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public bool GetIsGameEnd() => isGameEnd;
     public bool GetIsCloseEnd() => isClosedEnd;
     public int GetWinnerPlayerIndex() => winnerPlayerIndex;
+    public string GetPlayerName(int i) => playersName[i];
     public void SetIsClosedEnd() => isClosedEnd = true;
     public void SetIsCreateTile(bool _isCreateTile) => isCreateTile = _isCreateTile;
     public void SetIsCreatePlayer(bool _isCreatePlayer) => isCreatePlayer = _isCreatePlayer;
@@ -76,7 +78,9 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public void CreatePlayer()
     {
         myPlayerIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
-        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
+        if (myPlayerIndex == -1) return;
+        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(myPlayerIndex - 1).position + Vector3.up, Quaternion.identity);
+        //로딩 1초때 나가기 누르면 에러 뜸
         player.name = "Player" + PhotonNetwork.LocalPlayer.GetPlayerNumber();
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
@@ -118,6 +122,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 채팅 && 게임 끝 여부 관리
+    bool tryOnce = true;
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return))
@@ -130,12 +135,21 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
             else image.fillAmount = 0;
         }
         if (!GetIsRoomFull()) return;
+        if (tryOnce)
+        {
+            tryOnce = false;
+            int index = 0;
+            foreach (Photon.Realtime.Player netPlayer in PhotonNetwork.PlayerList)
+                playersName[index++] = netPlayer.NickName;
+
+            for(int i = 0; i < 6; i++)
+            {
+                Debug.Log("player"+i+" = " +playersName[i]);
+            }
+        }
         if (remainPlayerCount == 1 && !allTileMap.GetIsOutPlayer(myPlayerIndex - 1) && !isGameEnd)
         {
-            Debug.Log(myPlayerIndex);
-            Debug.Log(PhotonNetwork.LocalPlayer.GetPlayerNumber());
             winnerPlayerIndex = myPlayerIndex;
-            Debug.Log("Winner is " + winnerPlayerIndex);
             view.RPC(nameof(SetWinnerPlayerIndex), RpcTarget.All, winnerPlayerIndex);
             isGameEnd = true;
         }

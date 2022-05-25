@@ -13,8 +13,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     private int stateIndex = -1;
     private const byte MAXPLAYER = 1;
 
-    [SerializeField] LobbyManager lobbyManager;
     RoomOptions roomOptions;
+    //싱글톤 필요 없을듯?
     #region 싱글톤
     static GameManager _instance = null;
     public static GameManager Instance() => _instance;
@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom() => PhotonNetwork.LoadLevel("InGameScene");
     public override void OnCreateRoomFailed(short returnCode, string message) => Debug.Log("OnCreateRoomFailed");
     public override void OnJoinRandomFailed(short returnCode, string message) => PhotonNetwork.CreateRoom(null, roomOptions = new RoomOptions { MaxPlayers = MAXPLAYER });
-    public override void OnJoinRoomFailed(short returnCode, string message) => StartCoroutine(lobbyManager.TextDown(null, "방 코드가 잘못되었습니다"));
+    public override void OnJoinRoomFailed(short returnCode, string message) => FindObjectOfType<LobbyManager>().IsValidate(0);
     public override void OnLeftRoom()
     {
         SetDefaultInformation();

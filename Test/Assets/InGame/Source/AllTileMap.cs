@@ -163,10 +163,14 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         if (isGameEnd)
         {
             int winnerIndex = generalManager.GetWinnerPlayerIndex();
+            Debug.Log("winnner : "+winnerIndex);
+            if (!PhotonNetwork.InRoom) return;
             if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == winnerIndex) gameOverText.text = "Winner Winner";
-            Debug.Log(winnerIndex);
-            explainText.text = generalManager.GetPlayerName(winnerIndex - 1) + " 님이 승리하였습니다";
-            //버그 있음
+            if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
+                gameOverText.text = "Winner Winner";
+                explainText.text = PhotonNetwork.LocalPlayer.NickName + " 님이 승리하였습니다";
+            }
+            else explainText.text = generalManager.GetPlayerName(winnerIndex - 1) + " 님이 승리하였습니다";
         }
         gameOverPanel.SetActive(true);
     }

@@ -50,7 +50,7 @@ public class PersonTileMap : MonoBehaviour
             if (generalManager.GetIsCreatePlayer())
             {
                 if (allTileMap.GetHasTileNum(myIndex - 1) > 0) allTileMap.SetMinusHasTileNum(myIndex - 1);
-                else sphereCollider.radius -= 0.0015f;
+                else sphereCollider.radius -= 0.003f;
                 //else sphereCollider.radius -= tileSpeed;
             }
             if (!isClosedEnd && sphereCollider.radius <= 4)

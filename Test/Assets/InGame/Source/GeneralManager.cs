@@ -70,18 +70,18 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         roomCode = GameManager.Instance().GetRoomCode();
         playerName = GameManager.Instance().GetPlayerName();
         
-
         view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
         OnMasterChatting("입장");
         view.RPC(nameof(OnMasterChatting), RpcTarget.Others, " 님이 입장하였습니다", playerName);
     }
     public void CreatePlayer()
     {
-        myPlayerIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
-        if (myPlayerIndex == -1) return;
-        GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(myPlayerIndex - 1).position + Vector3.up, Quaternion.identity);
-        //로딩 1초때 나가기 누르면 에러 뜸
-        player.name = "Player" + PhotonNetwork.LocalPlayer.GetPlayerNumber();
+        if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == -1) return;
+        if (PhotonNetwork.InRoom)
+        {
+            GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
+            player.name = "Player" + PhotonNetwork.LocalPlayer.GetPlayerNumber();
+        }
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
@@ -89,7 +89,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
+        if(!isRoomFull) view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);
         if (isRoomFull && !allTileMap.GetIsOutPlayer(otherPlayer.GetPlayerNumber() - 1)) SetPunRemainPlayerCount();
         OnMasterChatting(" 님이 퇴장하였습니다", otherPlayer.NickName);
     }
@@ -102,6 +102,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
             PhotonNetwork.CurrentRoom.IsOpen = false;
             PhotonNetwork.CurrentRoom.IsVisible = false;
             remainPlayerCount = PhotonNetwork.CurrentRoom.MaxPlayers;
+            myPlayerIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
             isRoomFull = true;
         }
     }
@@ -141,15 +142,10 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
             int index = 0;
             foreach (Photon.Realtime.Player netPlayer in PhotonNetwork.PlayerList)
                 playersName[index++] = netPlayer.NickName;
-
-            for(int i = 0; i < 6; i++)
-            {
-                Debug.Log("player"+i+" = " +playersName[i]);
-            }
         }
-        if (remainPlayerCount == 1 && !allTileMap.GetIsOutPlayer(myPlayerIndex - 1) && !isGameEnd)
+        if (remainPlayerCount == 1 && !allTileMap.GetIsOutPlayer(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1) && !isGameEnd)
         {
-            winnerPlayerIndex = myPlayerIndex;
+            winnerPlayerIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
             view.RPC(nameof(SetWinnerPlayerIndex), RpcTarget.All, winnerPlayerIndex);
             isGameEnd = true;
         }

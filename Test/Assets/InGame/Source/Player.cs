@@ -23,6 +23,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                  isJumping,
                  isDodging,
                  isDying,
+                 isSwaping,
                  isEnd,
                  isStun,
                  isTab,
@@ -43,7 +44,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
     [SerializeField] AudioSource audioSource;
-    
+
     private MeshRenderer[] meshRenderer;
     private GameObject[] weapons = new GameObject[3];
     private GameObject players;
@@ -91,6 +92,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             if (xMove + zMove != 1 && xMove + zMove != -1) xMove /= 2; zMove *= 0.866f;
             moveVec = new Vector3(xMove, 0, zMove);
             if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward);
+            //if (moveVec != Vector3.zero) transform.Translate(moveVec * Time.deltaTime);
 
             if (!isJumping && !isDodging)
                 if (isWalk || (moveVec == Vector3.zero)) MP.fillAmount += 0.3f * Time.deltaTime;
@@ -148,7 +150,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     private void Attack()
     {
         attackDelay += Time.deltaTime;
-        if (isAttack && equipWeapon.GetRate() < attackDelay && !isDodging && !isDying)
+        if (isAttack && equipWeapon.GetRate() < attackDelay && !isDodging && !isDying && !isSwaping)
         {
             Weapon.WeaponsType type = equipWeapon.GetWeaponsType();
             if (type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
@@ -287,10 +289,20 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void ChangeWeapon(int index)
     {
+        anim.SetBool("isSwap", true);
+        isSwaping = true;
         weapons[curEquip].SetActive(false);
         weapons[index].SetActive(true);
         equipWeapon = weapons[index].GetComponent<Weapon>();
-        curEquip = index;  
+        curEquip = index;
+        StartCoroutine(nameof(EndChangeAnim));
+    }
+    IEnumerator EndChangeAnim()
+    {
+        yield return new WaitForSeconds(0.1f);
+        anim.SetBool("isSwap", false);
+        yield return new WaitForSeconds(0.2f);
+        isSwaping = false;
     }
     #endregion
     #region Á×À½,¸®½ºÆù

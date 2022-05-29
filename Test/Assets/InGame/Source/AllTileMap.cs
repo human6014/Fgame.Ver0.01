@@ -133,8 +133,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     }
     private void FixedUpdate()
     {
-        tileCount.text = "남은 타일\n";
-        hasTileCount.text = "가진 타일\n";
+        tileCount.text = "남은 땅\n";
         if (!generalManager.GetIsCreatePlayer() || isGameEnd) return;
         if (generalManager.GetIsGameEnd())
         {
@@ -154,8 +153,8 @@ public class AllTileMap : MonoBehaviourPunCallbacks
                 isLose = true;
                 SetGameOverPanel();
             }
-            hasTileCount.text += player.NickName + " : " + hasTileNum[player.GetPlayerNumber() - 1] + "\n";
         }
+        hasTileCount.text = "X "+ Math.Ceiling(((float)hasTileNum[PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1])/1000) + "\n";
     }
     private void SetGameOverPanel()
     {

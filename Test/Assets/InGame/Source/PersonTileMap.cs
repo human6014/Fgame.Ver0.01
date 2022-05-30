@@ -25,8 +25,8 @@ public class PersonTileMap : MonoBehaviour
                         tileZOffset = 0.87f,
                         tileRadius = 8.5f,
                         tileSpeed = 0.0005f; //0.0005f == 분당 radius 1.5줄음
-    int myIndex;
-    int count = 1;
+    private int myIndex;
+    private int count = 1;
     private void Start()
     {
         if (gameObject.name == "Sample") return;
@@ -35,8 +35,7 @@ public class PersonTileMap : MonoBehaviour
         else
         {
             myIndex = int.Parse(transform.tag.Substring(5));
-            if(myIndex == 1) sphereCollider.radius = 5; //temp
-            else sphereCollider.radius = tileRadius;//allTileMap.myField[allTileMap.playerNum++];
+            sphereCollider.radius = tileRadius;
         }
     }
     private void FixedUpdate()
@@ -50,16 +49,16 @@ public class PersonTileMap : MonoBehaviour
             if (generalManager.GetIsCreatePlayer())
             {
                 if (allTileMap.GetHasTileNum(myIndex - 1) > 0) allTileMap.SetMinusHasTileNum(myIndex - 1);
-                else sphereCollider.radius -= 0.003f;
-                //else sphereCollider.radius -= tileSpeed;
+                //else sphereCollider.radius -= 0.003f;
+                else sphereCollider.radius -= tileSpeed;
             }
             if (!isClosedEnd && sphereCollider.radius <= 4)
             {
                 isClosedEnd = true;
                 generalManager.SetIsClosedEnd(); //버그 있음
             }
-            }
-            else if (!tryOnce)
+        }
+        else if (!tryOnce)
         {
             Transform[] _child = GetComponentsInChildren<Transform>();
 

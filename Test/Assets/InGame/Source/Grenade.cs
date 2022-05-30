@@ -26,7 +26,7 @@ public class Grenade : MonoBehaviourPunCallbacks
         rigid.AddForce(-transform.forward * speed + Vector3.up * 10);
         yield return new WaitForSeconds(livingTime);
         Raycasting();
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2);
         Destroy(gameObject);
     }
     #region 탄두 충돌 검사

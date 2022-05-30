@@ -780,31 +780,31 @@ AudioSource:
       inWeight: 0.33333334
       outWeight: 1
     - serializedVersion: 3
-      time: 0.28810477
-      value: 0.8308854
-      inSlope: -3.0067885
-      outSlope: -3.0067885
+      time: 0.41773582
+      value: 0.78988886
+      inSlope: -1.8780544
+      outSlope: -1.8780544
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.44032958
-      outWeight: 0.7411368
+      outWeight: 1
     - serializedVersion: 3
-      time: 0.38533965
-      value: 0.40552998
-      inSlope: -2.464831
-      outSlope: -2.464831
+      time: 0.56589687
+      value: 0.45335865
+      inSlope: -1.935159
+      outSlope: -1.935159
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.51945585
+      inWeight: 1
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.6084317
-      value: 0.110808454
-      inSlope: -0.6206533
-      outSlope: -0.6206533
+      time: 0.7426938
+      value: 0.19279394
+      inSlope: -1.0851778
+      outSlope: -1.0851778
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.75818914
+      inWeight: 0.9537483
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
@@ -1250,7 +1250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  rate: 2
+  rate: 3
   damage: 0
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
@@ -3021,7 +3021,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  rate: 2
+  rate: 3
   damage: 0
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
@@ -3527,7 +3527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  rate: 2
+  rate: 3
   damage: 0
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}
@@ -4216,6 +4216,7 @@ MonoBehaviour:
   rigid: {fileID: 4387864344120677047}
   anim: {fileID: 657295896382219536}
   audioSource: {fileID: 898163172953517678}
+  transform: {fileID: 2792768260377557250}
 --- !u!82 &898163172953517678
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4228,7 +4229,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 99ee216d39a6e8e4492e343df77a7619, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.8
+  m_Volume: 0.9
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -4237,7 +4238,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 6
+  MaxDistance: 8
   Pan2D: 0
   rolloffMode: 2
   BypassEffects: 0
@@ -4256,14 +4257,14 @@ AudioSource:
       inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.39391446
-      value: 0.82625604
-      inSlope: -1.4019523
-      outSlope: -1.4019523
+      time: 0.5976193
+      value: 0.65544534
+      inSlope: -1.3920403
+      outSlope: -1.3920403
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.6354643
-      outWeight: 0.25224754
+      outWeight: 0.3926772
     - serializedVersion: 3
       time: 1
       value: 0
@@ -4669,7 +4670,7 @@ MonoBehaviour:
     SynchronizeType: 2
     Name: isThrow
   - Type: 4
-    SynchronizeType: 1
+    SynchronizeType: 2
     Name: isDie
   - Type: 4
     SynchronizeType: 0
@@ -4929,31 +4930,31 @@ AudioSource:
       inWeight: 0.33333334
       outWeight: 1
     - serializedVersion: 3
-      time: 0.28810477
-      value: 0.8308854
-      inSlope: -3.0067885
-      outSlope: -3.0067885
+      time: 0.41773582
+      value: 0.78988886
+      inSlope: -1.8780544
+      outSlope: -1.8780544
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.44032958
-      outWeight: 0.7411368
+      outWeight: 1
     - serializedVersion: 3
-      time: 0.38533965
-      value: 0.40552998
-      inSlope: -2.464831
-      outSlope: -2.464831
+      time: 0.56589687
+      value: 0.45335865
+      inSlope: -1.935159
+      outSlope: -1.935159
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.51945585
+      inWeight: 1
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.6084317
-      value: 0.110808454
-      inSlope: -0.6206533
-      outSlope: -0.6206533
+      time: 0.7426938
+      value: 0.19279394
+      inSlope: -1.0851778
+      outSlope: -1.0851778
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.75818914
+      inWeight: 0.9537483
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
@@ -5242,31 +5243,31 @@ AudioSource:
       inWeight: 0.33333334
       outWeight: 1
     - serializedVersion: 3
-      time: 0.28810477
-      value: 0.8308854
-      inSlope: -3.0067885
-      outSlope: -3.0067885
+      time: 0.41773582
+      value: 0.78988886
+      inSlope: -1.8780544
+      outSlope: -1.8780544
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.44032958
-      outWeight: 0.7411368
+      outWeight: 1
     - serializedVersion: 3
-      time: 0.38533965
-      value: 0.40552998
-      inSlope: -2.464831
-      outSlope: -2.464831
+      time: 0.56589687
+      value: 0.45335865
+      inSlope: -1.935159
+      outSlope: -1.935159
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.51945585
+      inWeight: 1
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.6084317
-      value: 0.110808454
-      inSlope: -0.6206533
-      outSlope: -0.6206533
+      time: 0.7426938
+      value: 0.19279394
+      inSlope: -1.0851778
+      outSlope: -1.0851778
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.75818914
+      inWeight: 0.9537483
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1

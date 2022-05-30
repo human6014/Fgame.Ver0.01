@@ -165,7 +165,7 @@ MonoBehaviour:
   raycastingRange: 0.5
   damage: 10
   crashDamage: 25
-  speed: 100
+  speed: 75
 --- !u!96 &2119786325277975174
 TrailRenderer:
   serializedVersion: 2

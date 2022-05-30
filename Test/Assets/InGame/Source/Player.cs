@@ -27,12 +27,16 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                  isEnd,
                  isStun,
                  isTab,
+                 isTele,
                  isInPortal;
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
         KeyCode.Alpha3
     };
+
+    Vector3 curPos;
+    Vector3 moveVec;
 
     [SerializeField] float speed;
     [SerializeField] bool[] hasWeapons;
@@ -44,6 +48,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
     [SerializeField] AudioSource audioSource;
+    [SerializeField] new Transform transform;
 
     private MeshRenderer[] meshRenderer;
     private GameObject[] weapons = new GameObject[3];
@@ -73,8 +78,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         }
         transform.SetParent(players.transform);
     }
-    Vector3 curPos;
-    Vector3 moveVec;
+
     private void Update()
     {
         if (isEnd) return;
@@ -91,8 +95,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             KeyInput();
             if (xMove + zMove != 1 && xMove + zMove != -1) xMove /= 2; zMove *= 0.866f;
             moveVec = new Vector3(xMove, 0, zMove);
-            if (moveVec != Vector3.zero) transform.Translate((isWalk ? 1f : 1.5f) * speed * Time.deltaTime * Vector3.forward);
-            //if (moveVec != Vector3.zero) transform.Translate(moveVec * Time.deltaTime);
+            if (moveVec != Vector3.zero) transform.Translate((isWalk ? 0.8f : 1.2f) * speed * Time.deltaTime * Vector3.forward.normalized);
 
             if (!isJumping && !isDodging)
                 if (isWalk || (moveVec == Vector3.zero)) MP.fillAmount += 0.3f * Time.deltaTime;
@@ -100,7 +103,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
             anim.SetBool("isWalk", isWalk && moveVec != Vector3.zero);
             anim.SetBool("isRun", moveVec != Vector3.zero);
-            
+
             timer++;
             if (timer % 5 == 0)
             {
@@ -115,12 +118,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
-    public void FixedUpdate()
-    {
-        
-    }
-    #region 키 입력
-    bool isTele;
+    #region 키 입력  
     private void KeyInput()
     {
         if (isStun || generalManager.GetIsChatOn())return;
@@ -327,11 +325,13 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         view.RPC(nameof(UnRecovery), RpcTarget.All);
         rigid.velocity = Vector3.zero;
         rigid.angularVelocity = Vector3.zero;
+        rigid.isKinematic = true;
         if(_isFall) transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
 
         yield return new WaitForSeconds(5f);
         if(!_isFall)transform.position = allTileMap.GetSpawner(myIndex - 1).position + Vector3.up;
         view.RPC(nameof(Recovery), RpcTarget.All);
+        rigid.isKinematic = false;
         isDying = false;
     }
     #endregion

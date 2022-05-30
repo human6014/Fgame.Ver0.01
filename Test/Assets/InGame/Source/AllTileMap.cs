@@ -133,8 +133,9 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     }
     private void FixedUpdate()
     {
-        tileCount.text = "³²Àº ¶¥\n";
+        if (!PhotonNetwork.InRoom) return;
         if (!generalManager.GetIsCreatePlayer() || isGameEnd) return;
+        tileCount.text = "³²Àº ¶¥\n";
         if (generalManager.GetIsGameEnd())
         {
             isGameEnd = true;
@@ -145,8 +146,9 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
             if (player.GetPlayerNumber() == -1) return;
-            tileCount.text += (player.IsLocal ? "<color=red>" : "<color=black>") + player.NickName + "</color> : ";
-            tileCount.text += (isOutPlayer[player.GetPlayerNumber() - 1] ? "OUT" : childTileCount[player.GetPlayerNumber() - 1].ToString()) + "\n";
+            tileCount.text += player.NickName + " : ";
+            tileCount.text += (isOutPlayer[player.GetPlayerNumber() - 1] ? "OUT" : childTileCount[player.GetPlayerNumber() - 1].ToString())
+                + (player.IsLocal ? "<color=red> ME</color>" : "") + "\n";
 
             if (!isLose && isOutPlayer[PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1])
             {

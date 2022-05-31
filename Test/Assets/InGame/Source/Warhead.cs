@@ -77,7 +77,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
                 _onDamage = true;
                 if(hit.transform.GetComponent<Player>().Hit(damage)) allTileMap.SetKillCount();
             }
-            if(!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && hit.transform.tag.StartsWith("Floor"))
+            if(!hit.transform.tag.EndsWith(view.Owner.GetPlayerNumber().ToString()) && hit.transform.tag.StartsWith("Floor") && !hit.transform.name.StartsWith("Spawner"))
             {
                 view.RPC(nameof(FloorDestroy),RpcTarget.AllViaServer, hit.transform.name, hit.transform.parent.name);
             }

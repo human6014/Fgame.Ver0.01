@@ -36,7 +36,7 @@ public class AudioManager : MonoBehaviour
     {
         if (!audioSource.isPlaying)
         {
-            if (generalManager.GetIsCloseEnd()) audioSource.clip = endSound; //버그 있음
+            if (generalManager.GetIsCloseEnd()) audioSource.clip = endSound;
             else audioSource.clip = simpleSound[Random.Range(0, simpleSound.Length)];
             StartCoroutine(nameof(SoundUp), audioSource);
         }

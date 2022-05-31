@@ -96,6 +96,7 @@ MonoBehaviour:
   - PunJump
   - DodgeOut
   - PunDodge
+  - PunRespawn
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

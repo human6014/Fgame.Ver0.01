@@ -28,7 +28,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                  isStun,
                  isTab,
                  isTele,
-                 isInPortal;
+                 isInPortal,
+                 isCrash;
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
@@ -92,10 +93,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 return;
             }
             if (isDying) return;
+            
             KeyInput();
             if (xMove + zMove != 1 && xMove + zMove != -1) xMove /= 2; zMove *= 0.866f;
             moveVec = new Vector3(xMove, 0, zMove);
-            if (moveVec != Vector3.zero) transform.Translate((isWalk ? 0.8f : 1.2f) * speed * Time.deltaTime * Vector3.forward.normalized);
+            if (moveVec != Vector3.zero && !isCrash) transform.Translate((isWalk ? 0.8f : 1.2f) * speed * Time.deltaTime * Vector3.forward.normalized);
 
             if (!isJumping && !isDodging)
                 if (isWalk || (moveVec == Vector3.zero)) MP.fillAmount += 0.3f * Time.deltaTime;
@@ -118,6 +120,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
+    private void FixedUpdate() => isCrash = Physics.Raycast(transform.position, transform.forward, 0.25f, LayerMask.GetMask("Destroyable"));
     #region 키 입력  
     private void KeyInput()
     {
@@ -209,8 +212,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 피격
     public bool Hit(int damage)
     {
-        if (isDying) return false;
-
         view.RPC(nameof(PunHit), RpcTarget.All, damage);
         if (HP.fillAmount <= 0)
         {
@@ -224,6 +225,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     private void PunHit(int damage)
     {
+        if (isDying) return;
+
         HP.fillAmount -= damage / 100f;
         HP.fillAmount = (float)Math.Round(HP.fillAmount,2);
         StartCoroutine(nameof(HitDisplay));
@@ -262,14 +265,20 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator Slow()//Knife ,1
     {
+        if (isDying) yield break;
         view.RPC(nameof(SpeedDown), RpcTarget.All);
         yield return new WaitForSeconds(3);
         view.RPC(nameof(SpeedUp), RpcTarget.All);
     }
-    public void KnockBack(float x,float z) => view.RPC(nameof(KnockBackUp), RpcTarget.All, x, z); //Bat ,2
+    public void KnockBack(float x, float z)
+    {
+        if (isDying) return;
+        view.RPC(nameof(KnockBackUp), RpcTarget.All, x, z); //Bat ,2
+    }
     
     IEnumerator Stun()//Hammer ,3
     {
+        if (isDying) yield break;
         view.RPC(nameof(StunUp), RpcTarget.All);
         yield return new WaitForSeconds(0.5f);
         view.RPC(nameof(StunDown), RpcTarget.All);
@@ -303,6 +312,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         isSwaping = false;
     }
     #endregion
+    //낙사 시 피격 판정 들어감 why??!!
     #region 죽음,리스폰
     [PunRPC]
     void Recovery()
@@ -319,8 +329,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Respawn(bool _isFall)//FallRespawn 통합 예정
     {
         if (isEnd || !photonView.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
-        anim.SetTrigger("isDie");
         isDying = true;
+        anim.SetTrigger("isDie");
         allTileMap.SetDieCount();
         view.RPC(nameof(UnRecovery), RpcTarget.All);
         rigid.velocity = Vector3.zero;

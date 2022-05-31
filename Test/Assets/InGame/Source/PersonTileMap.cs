@@ -55,7 +55,7 @@ public class PersonTileMap : MonoBehaviour
             if (!isClosedEnd && sphereCollider.radius <= 4)
             {
                 isClosedEnd = true;
-                generalManager.SetIsClosedEnd(); //버그 있음
+                generalManager.SetIsClosedEnd();
             }
         }
         else if (!tryOnce)

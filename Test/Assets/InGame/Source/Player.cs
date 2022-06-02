@@ -175,7 +175,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (isJump && !isJumping && !isDodging && MP.fillAmount >= 0.2f && !isDying)
         {
-            rigid.velocity = Vector3.up * 4.5f;
+            rigid.velocity = Vector3.up * 5;
             anim.SetBool("isJump", true);
             MP.fillAmount -= 0.15f;
             isJumping = true;
@@ -259,7 +259,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC] private void SpeedDown() => speed -= 0.3f;
     [PunRPC] private void SpeedUp() => speed = 1;
     [PunRPC] private void KnockBackUp(float x, float z) => 
-        rigid.AddForce(new Vector3((transform.localPosition.x - x) * 7, 2.5f, (transform.localPosition.z - z) * 7), ForceMode.Impulse);
+        rigid.AddForce(new Vector3((transform.localPosition.x - x) * 25, 10, (transform.localPosition.z - z) * 25), ForceMode.Impulse);
     [PunRPC] private void StunUp() => isStun = true;
     [PunRPC] private void StunDown() => isStun = false;
 
@@ -329,6 +329,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Respawn(bool _isFall)//FallRespawn 통합 예정
     {
         if (isEnd || !photonView.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
+        anim.SetBool("isJump", false);
+        isJumping = false;
         isDying = true;
         anim.SetTrigger("isDie");
         allTileMap.SetDieCount();

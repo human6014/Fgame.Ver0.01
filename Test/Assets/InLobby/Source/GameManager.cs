@@ -7,8 +7,8 @@ using Photon.Realtime;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    private string playerName = "Default";
-    private string roomCode = "Default";
+    private string playerName = "";
+    private string roomCode = "";
     private int maxPlayer = -1;
     private int stateIndex = -1;
     private const byte MAXPLAYER = 1;
@@ -70,8 +70,6 @@ public class GameManager : MonoBehaviourPunCallbacks
                 break;
         }
     }
-    public override void OnJoinedLobby() => Debug.Log("OnJoinedLobby");
-    public override void OnLeftLobby() => Debug.Log("OnLeftLobby");
     public override void OnCreatedRoom(){ if (stateIndex == 1) PhotonNetwork.CurrentRoom.IsVisible = false; }
     public override void OnJoinedRoom() => PhotonNetwork.LoadLevel("InGameScene");
     public override void OnCreateRoomFailed(short returnCode, string message) => Debug.Log("OnCreateRoomFailed");

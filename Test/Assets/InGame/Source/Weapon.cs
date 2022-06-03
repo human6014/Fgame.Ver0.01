@@ -35,7 +35,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
                 Shot();
                 break;
             case WeaponsType.Throwing:
-                Invoke(nameof(Throw), 0.2f);
+                Invoke(nameof(Throw), 0.15f);
                 break;
             default:
                 Debug.LogError("NonUseWeapons");
@@ -81,7 +81,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         trailEffect.enabled = true;
         yield return new WaitForSeconds(0.15f);
         photonView.RPC(nameof(PlaySound),RpcTarget.All);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.55f);
         meleeArea.enabled = false;
         trailEffect.enabled = false;
     }

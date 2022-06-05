@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player_Canvas : MonoBehaviour
 {
-    private Camera main_camera;
-    void Start() => main_camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-    void LateUpdate() => transform.LookAt(transform.position + main_camera.transform.rotation * Vector3.back, main_camera.transform.rotation * Vector3.up);
+    private Camera mainCamera;
+    void Start() => mainCamera = Camera.main;
+    void LateUpdate() => transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.back, mainCamera.transform.rotation * Vector3.up);
 }

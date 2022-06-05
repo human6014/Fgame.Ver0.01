@@ -48,7 +48,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         
         else if (other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner"))
         {
-            isCollison = true; //이렇게 안하면 rpc 반응 속도때문에(아마) Raycasting이 여러번 호출될 수 있음
+            isCollison = true;
             rigid.isKinematic = true;
             Raycasting();
         }
@@ -84,8 +84,6 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     #endregion
-
-    //문제 발견
     #region 바닥 파괴
     [PunRPC]
     private void FloorDestroy(string hitName,string hitParentName)

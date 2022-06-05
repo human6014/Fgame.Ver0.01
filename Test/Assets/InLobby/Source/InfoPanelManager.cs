@@ -8,7 +8,7 @@ public class InfoPanelManager : MonoBehaviour
     [SerializeField] GameObject explainPanel1;
     [SerializeField] GameObject explainPanel2;
     bool isOnKeyManual;
-    bool isFirstPage;
+    bool isFirstPage = true;
     public void OnKeyManual()
     {
         isOnKeyManual = !isOnKeyManual;

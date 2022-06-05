@@ -164,7 +164,6 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         if (isGameEnd)
         {
             int winnerIndex = generalManager.GetWinnerPlayerIndex();
-            Debug.Log("winnner : "+winnerIndex);
             if (!PhotonNetwork.InRoom) return;
             if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == winnerIndex) gameOverText.text = "Winner Winner";
             if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {

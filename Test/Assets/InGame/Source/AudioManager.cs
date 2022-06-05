@@ -48,19 +48,7 @@ public class AudioManager : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             audio.volume = (startSound += 0.04f);
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.4f);
         }
     }
-    
-    public IEnumerator SoundDown(AudioSource audio)
-    {
-        float startSound = audio.volume;
-        for (int i = 0; i < 10; i++)
-        {
-            audio.volume = (startSound -= 0.04f);
-            yield return new WaitForSeconds(0.3f);
-        }
-        audio.Stop();
-    }
-    
 }

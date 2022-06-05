@@ -23,8 +23,9 @@ public class PersonTileMap : MonoBehaviour
     private bool isClosedEnd;
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f,
-                        tileRadius = 8.5f,
-                        tileSpeed = 0.0005f; //0.0005f == 분당 radius 1.5줄음
+                        //tileRadius = 8.5f;
+                        tileRadius = 3;
+    private float tileSpeed = 0.0005f; //0.0005f == 분당 radius 1.5줄음
     private int myIndex;
     private int count = 1;
     private void Start()
@@ -43,13 +44,12 @@ public class PersonTileMap : MonoBehaviour
         if (generalManager.GetIsGameEnd()) return;
         if (gameObject.CompareTag("Floor0") || gameObject.name == "Sample") return;
 
-        allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount); //위치 수정 보류
+        allTileMap.SetChildTileCount(int.Parse(name.Substring(13, 1)) - 1, transform.childCount);
         if (sphereCollider.radius >= 0)
         {
             if (generalManager.GetIsCreatePlayer())
             {
                 if (allTileMap.GetHasTileNum(myIndex - 1) > 0) allTileMap.SetMinusHasTileNum(myIndex - 1);
-                //else sphereCollider.radius -= 0.003f;
                 else sphereCollider.radius -= tileSpeed;
             }
             if (!isClosedEnd && sphereCollider.radius <= 4)
@@ -57,6 +57,7 @@ public class PersonTileMap : MonoBehaviour
                 isClosedEnd = true;
                 generalManager.SetIsClosedEnd();
             }
+            if (!isClosedEnd && sphereCollider.radius <= 1.5f) tileSpeed *= 2;
         }
         else if (!tryOnce)
         {
@@ -86,7 +87,7 @@ public class PersonTileMap : MonoBehaviour
     {
         renderer = other.GetComponent<Renderer>();
         renderer.material.color = new Color(255 / 255f, 25 / 255f, 25 / 255f);
-        yield return new WaitForSeconds(3f); //밑에 순서 중요함
+        yield return new WaitForSeconds(3f);
         if (!other) yield break;
         meshCollider = other.GetComponent<MeshCollider>();
         meshCollider.convex = true;

@@ -83,10 +83,6 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
             player.name = "Player" + PhotonNetwork.LocalPlayer.GetPlayerNumber();
         }
     }
-    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
-    {
-        //OnMasterChatting("님이 입장하였습니다", newPlayer.NickName);
-    }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
         if(!isRoomFull) view.RPC(nameof(PunUpdate), RpcTarget.AllBuffered);

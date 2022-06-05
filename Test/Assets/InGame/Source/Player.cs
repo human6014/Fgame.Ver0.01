@@ -14,7 +14,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                  timer;
     private float xMove,
                   zMove,
-                  attackDelay;
+                  attackDelay,
+                  teleDelay;
     private bool isWalk,
                  isJump,
                  isDodge,
@@ -106,6 +107,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             anim.SetBool("isWalk", isWalk && moveVec != Vector3.zero);
             anim.SetBool("isRun", moveVec != Vector3.zero);
 
+            teleDelay += Time.deltaTime;
             timer++;
             if (timer % 5 == 0)
             {
@@ -134,7 +136,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (isInPortal)
         {
             isTab = Input.GetKeyDown(KeyCode.Tab);
-            if (isTab) isTele = true;
+            if (isTab && teleDelay >= 0.5f)
+            {
+                teleDelay = 0;
+                isTele = true;
+            }
         }
 
         for (int i = 0; i < keyCodes.Length; i++)

@@ -26,7 +26,7 @@ public class LobbyManager : MonoBehaviour
         }
         if (!Regex.IsMatch(playerName.text, "^[0-9a-zA-Z°¡-ÆR]*$"))
         {
-            StartCoroutine(TextDown(nickNameAlert, "¼ýÀÚ ¿µ¹® ÇÑ±Û¸¸ ÀÔ·ÂÇØÁÖ¼¼¿ä"));
+            StartCoroutine(TextDown(nickNameAlert, "¿Ã¹Ù¸¥ ¼ýÀÚ ¿µ¹® ÇÑ±Û¸¸ ÀÔ·ÂÇØÁÖ¼¼¿ä"));
             return false;
         }
 
@@ -39,7 +39,7 @@ public class LobbyManager : MonoBehaviour
         }
         if (!Regex.IsMatch(roomName.text, "^[0-9a-zA-Z°¡-ÆR]*$"))
         {
-            StartCoroutine(TextDown(roomNameAlert, "¼ýÀÚ ¿µ¹® ÇÑ±Û¸¸ ÀÔ·ÂÇØÁÖ¼¼¿ä"));
+            StartCoroutine(TextDown(roomNameAlert, "¿Ã¹Ù¸¥ ¼ýÀÚ ¿µ¹® ÇÑ±Û¸¸ ÀÔ·ÂÇØÁÖ¼¼¿ä"));
             return false;
         }
 
@@ -62,10 +62,10 @@ public class LobbyManager : MonoBehaviour
     }
     public IEnumerator TextDown(Text alert,string text)
     {
-        if (alert == null) alert = roomNameAlert;
+//if (alert == null) alert = roomNameAlert;
         alert.text = text;
         yield return new WaitForSeconds(3);
-        if (alert == null) yield break;
+        //if (alert == null) yield break;
         alert.text = "";
     }
 }

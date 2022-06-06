@@ -12,6 +12,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     private int remainPlayerCount;
     private int myPlayerIndex;
     private int winnerPlayerIndex = -1;
+    private int playerRoation = 90; 
     private int[] weapon = new int[3] { 0, 3, 6 };
 
     private string roomCode = string.Empty;
@@ -74,12 +75,13 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         OnMasterChatting("입장");
         view.RPC(nameof(OnMasterChatting), RpcTarget.Others, " 님이 입장하였습니다", playerName);
     }
+    // 30, 330, 270, 210, 150, 90
     public void CreatePlayer()
     {
         if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == -1) return;
         if (PhotonNetwork.InRoom)
         {
-            GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.identity);
+            GameObject player = PhotonNetwork.Instantiate("Player", allTileMap.GetSpawner(PhotonNetwork.LocalPlayer.GetPlayerNumber() - 1).position + Vector3.up, Quaternion.Euler(0, playerRoation - (60 * PhotonNetwork.LocalPlayer.GetPlayerNumber()), 0));
             player.name = "Player" + PhotonNetwork.LocalPlayer.GetPlayerNumber();
         }
     }
@@ -99,6 +101,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
             PhotonNetwork.CurrentRoom.IsVisible = false;
             remainPlayerCount = PhotonNetwork.CurrentRoom.MaxPlayers;
             myPlayerIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
+            roomCountDisplay.enabled = false;
             isRoomFull = true;
         }
     }

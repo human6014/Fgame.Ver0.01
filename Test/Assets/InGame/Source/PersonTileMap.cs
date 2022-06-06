@@ -23,8 +23,8 @@ public class PersonTileMap : MonoBehaviour
     private bool isClosedEnd;
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f,
-                        //tileRadius = 8.5f;
-                        tileRadius = 3;
+                        tileRadius = 8.5f;
+                        //tileRadius = 3;
     private float tileSpeed = 0.0005f; //0.0005f == 분당 radius 1.5줄음
     private int myIndex;
     private int count = 1;
@@ -68,6 +68,7 @@ public class PersonTileMap : MonoBehaviour
                 if (iter != transform) StartCoroutine(FallWaiting(iter.gameObject));
             }
             for (int i = 0; i < 2; i++) Destroy(allTileMap.GetPortal(int.Parse(transform.name.Substring(13, 1)) - 1, i).gameObject);
+            //버그 발생
             tryOnce = true;
         }
         if (transform.childCount == 0) allTileMap.SetIsOutPlayer(true, myIndex - 1);

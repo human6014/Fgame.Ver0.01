@@ -182,6 +182,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (isJump && !isJumping && !isDodging && MP.fillAmount >= 0.2f && !isDying)
         {
             rigid.velocity = Vector3.up * 5;
+            anim.SetTrigger("doJump");
             anim.SetBool("isJump", true);
             MP.fillAmount -= 0.15f;
             isJumping = true;

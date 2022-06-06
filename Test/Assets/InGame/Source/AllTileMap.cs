@@ -40,10 +40,9 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public int spawnerRotation = 90;
 
     #region Getter + Setter
-    public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr; //¿©±â
+    public void SetPortal(Transform tr, int i, int j) => childPortal[i, j] = tr;
     public void SetSpawner(Transform tr, int i) => childSpawner[i] = tr;
     public void SetPersonTileRadius(int i, float _radius) => childSphereColliders[i].radius = _radius;
-    //Error¶ä
     public void SetChildTileCount(int i,int _count) => childTileCount[i] = _count;
     public void SetHasTileNum(int i, int j) => hasTileNum[i] = j * 1000;
     public void SetPlusHasTileNum(int i) => hasTileNum[i] += 1000;

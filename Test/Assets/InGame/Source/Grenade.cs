@@ -44,7 +44,7 @@ public class Grenade : MonoBehaviourPunCallbacks
                 rigid.angularVelocity = Vector3.zero;
             }
         }
-        else if ((other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner")))
+        else if (other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner"))
         {
             isCollison = true;
             if (isAttachable) rigid.velocity /= 2;
@@ -65,6 +65,7 @@ public class Grenade : MonoBehaviourPunCallbacks
     }
     void Raycasting()
     {
+        if (!view.IsMine) return;
         view.RPC(nameof(Effect), RpcTarget.All);
         RaycastHit[] raycastHits = Physics.SphereCastAll(transform.position, raycastingRange, Vector3.up, 0, 1 << LayerMask.NameToLayer("Destroyable"));
         bool _onDamage = false;
@@ -87,6 +88,7 @@ public class Grenade : MonoBehaviourPunCallbacks
     void FloorDestroy(string hitName, string hitParentName)
     {
         Transform parentObject = allTileMap.transform.Find(hitParentName);
+        if (!parentObject) return;
         Transform hitObject = parentObject.Find(hitName);
         if (hitObject == null) return;
 

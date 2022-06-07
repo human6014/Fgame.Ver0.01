@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Pun.UtilityScripts;
-using UnityEngine.UI;
 
 public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -35,17 +34,16 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     #region 탄두 충돌 검사
     private void OnCollisionEnter(Collision collision)
     {
-        if (isCollison) return;
+        if (isCollison || !view.IsMine) return;
         GameObject other = collision.gameObject;
         
-        if (other.CompareTag("Player") && !other.GetComponent<PhotonView>().IsMine && photonView.IsMine)
+        if (other.CompareTag("Player") && !other.GetComponent<PhotonView>().IsMine)
         {
             isCollison = true;
             rigid.isKinematic = true;
             if (other.GetComponent<Player>().Hit(crashDamage)) allTileMap.SetKillCount();
             Raycasting();
         }
-        
         else if (other.tag.StartsWith("Floor") || other.name.StartsWith("Spawner"))
         {
             isCollison = true;
@@ -89,6 +87,7 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
     private void FloorDestroy(string hitName,string hitParentName)
     {
         Transform parentObject = allTileMap.transform.Find(hitParentName);
+        if(!parentObject) return;
         Transform hitObject = parentObject.Find(hitName);
         if (!hitObject) return;
         

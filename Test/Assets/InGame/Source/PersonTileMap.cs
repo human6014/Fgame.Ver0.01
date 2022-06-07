@@ -20,11 +20,11 @@ public class PersonTileMap : MonoBehaviour
     private new Rigidbody rigidbody;
     private new Renderer renderer;
     private bool tryOnce;
+    private bool isNoFloor;
     private bool isClosedEnd;
     private const float tileXOffset = 1.00725f,
                         tileZOffset = 0.87f,
                         tileRadius = 8.5f;
-                        //tileRadius = 3;
     private float tileSpeed = 0.0005f; //0.0005f == 분당 radius 1.5줄음
     private int myIndex;
     private int count = 1;
@@ -58,6 +58,11 @@ public class PersonTileMap : MonoBehaviour
                 generalManager.SetIsClosedEnd();
             }
             if (!isClosedEnd && sphereCollider.radius <= 1.5f) tileSpeed *= 2;
+            if (transform.childCount <= mapWidth / 2 + 1 && !isNoFloor)
+            {
+                isNoFloor = true;
+                sphereCollider.radius = 0.25f;
+            }
         }
         else if (!tryOnce)
         {

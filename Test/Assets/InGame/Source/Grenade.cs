@@ -10,6 +10,7 @@ public class Grenade : MonoBehaviourPunCallbacks
     [SerializeField] GameObject particle;
     [SerializeField] MeshCollider meshCollider;
     [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] MeshCollider childMeshCollider;
     [SerializeField] MeshRenderer childMeshRenderer;
     [SerializeField] Rigidbody rigid;
     [SerializeField] PhotonView view;
@@ -19,11 +20,18 @@ public class Grenade : MonoBehaviourPunCallbacks
     [SerializeField] int damage;
     [SerializeField] int speed;
     [SerializeField] bool isAttachable;
-    
+
+    float tempSpeed;
+    private void SetPower(float power)
+    {
+        Debug.Log(power);
+        tempSpeed = power * 5;
+    }
     private IEnumerator Start()
     {
         allTileMap = FindObjectOfType<AllTileMap>();
-        rigid.AddForce(-transform.forward * speed + Vector3.up * 10);
+        //rigid.AddForce(-transform.forward * speed + Vector3.up * (speed / 2));
+        rigid.AddForce(-transform.forward * tempSpeed + Vector3.up * (tempSpeed / 2));
         yield return new WaitForSeconds(livingTime);
         Raycasting();
         yield return new WaitForSeconds(2);
@@ -58,10 +66,11 @@ public class Grenade : MonoBehaviourPunCallbacks
         isCollison = true;
         audioSource.Play();
         rigid.isKinematic = true;
-        meshRenderer.enabled = false;
-        childMeshRenderer.enabled = false;
-        meshCollider.isTrigger = true;
         particle.SetActive(true);
+        meshRenderer.enabled = false;
+        meshCollider.isTrigger = true;
+        if (childMeshCollider) childMeshCollider.isTrigger = false;
+        if (childMeshRenderer) childMeshRenderer.enabled = false;
     }
     void Raycasting()
     {

@@ -7,7 +7,7 @@ using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using System;
 
-public class Player : MonoBehaviourPunCallbacks, IPunObservable
+public class Player : MonoBehaviourPunCallbacks, IPunObservable 
 {
     private int curEquip,
                  myIndex,
@@ -15,7 +15,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     private float xMove,
                   zMove,
                   attackDelay,
-                  teleDelay;
+                  teleDelay,
+                  chargingTime;
     private bool isWalk,
                  isJump,
                  isDodge,
@@ -30,13 +31,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                  isTab,
                  isTele,
                  isInPortal,
-                 isCrash;
+                 isCrash,
+                 isCharging,
+                 isChargingOff;
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
         KeyCode.Alpha3
     };
-
+    Weapon.WeaponsType type;
     Vector3 curPos;
     Vector3 moveVec;
 
@@ -114,16 +117,31 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 transform.LookAt(transform.position + moveVec);
                 timer = 0;
             }
-            
+
+
             Attack();
             Jump();
             Dodge(moveVec);
+            if (equipWeapon.GetWeaponsType() == Weapon.WeaponsType.Throwing)
+            {
+                if (isCharging)
+                {
+                    if (chargingTime <= 3) chargingTime += Time.deltaTime;
+                }
+                else chargingTime = 0;
+                //Debug.Log(chargingTime);
+                //Debug.Log("isCharingOff : " + isChargingOff);
+            }
         }
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
-    private void FixedUpdate() => isCrash = Physics.Raycast(transform.position, transform.forward, 0.25f, LayerMask.GetMask("Destroyable"));
-    #region 키 입력  
+    private void FixedUpdate()
+    {
+        isCrash = Physics.Raycast(transform.position, transform.forward, 0.3f, LayerMask.GetMask("Destroyable"));
+
+    }
+    #region 키 입력
     private void KeyInput()
     {
         if (isStun || generalManager.GetIsChatOn())return;
@@ -133,6 +151,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         isJump = Input.GetButtonDown("Jump");
         isDodge = Input.GetButtonDown("Dodge");
         isAttack = Input.GetButtonDown("Attack");
+        isCharging = Input.GetKey(KeyCode.Z);
+        isChargingOff = Input.GetKeyUp(KeyCode.Z);
         if (isInPortal)
         {
             isTab = Input.GetKeyDown(KeyCode.Tab);
@@ -154,18 +174,58 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 공격 
+    /*
     private void Attack()
     {
         attackDelay += Time.deltaTime;
         if (isAttack && equipWeapon.GetRate() < attackDelay && !isDodging && !isDying && !isSwaping)
         {
             Weapon.WeaponsType type = equipWeapon.GetWeaponsType();
+
             if (type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
             else if (type == Weapon.WeaponsType.Range) anim.SetBool("isShot", true);
             else if (type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", true);
-            equipWeapon.UseWeapons(generalManager.GetMeleeIndex());
-            attackDelay = 0;
             Invoke(nameof(SetAttackAnim), 0.1f);
+            equipWeapon.UseWeapons(generalManager.GetMeleeIndex(), chargingTime);
+            attackDelay = 0;
+        }
+    }
+    */
+    private void Attack()
+    {
+        attackDelay += Time.deltaTime;
+        if (equipWeapon.GetRate() < attackDelay && !isDodging && !isDying && !isSwaping)
+        {
+
+            //Z누를때 한번 땔때 한번 수정해야함
+            if (type == Weapon.WeaponsType.Throwing)
+            {
+                Debug.Log("isCharging : " + isCharging);
+                Debug.Log("isChargingOff : " + isChargingOff);
+                if (!isCharging && isChargingOff && chargingTime != 0)
+                {
+                    anim.SetBool("isThrow", true);
+                    Invoke(nameof(SetAttackAnim), 0.1f);
+                    equipWeapon.UseWeapons(generalManager.GetMeleeIndex(), chargingTime);
+                    Debug.Log("Charging");
+                }
+            }
+            else if (isAttack)
+            {
+                if (type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
+                else if (type == Weapon.WeaponsType.Range) anim.SetBool("isShot", true);
+                Invoke(nameof(SetAttackAnim), 0.1f);
+                equipWeapon.UseWeapons(generalManager.GetMeleeIndex(), chargingTime);
+            }
+            attackDelay = 0;
+        }
+    }
+    private void ThrowAttack()
+    {
+        //여기에 새로 만들자!
+        if(type == Weapon.WeaponsType.Throwing)
+        {
+
         }
     }
     private void SetAttackAnim()
@@ -219,6 +279,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 피격
     public bool Hit(int damage)
     {
+        if (isDying) return false;
         view.RPC(nameof(PunHit), RpcTarget.All, damage);
         if (HP.fillAmount <= 0)
         {
@@ -299,6 +360,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         curEquip = 0;
         weapons[0].SetActive(true);
         equipWeapon = weapons[0].GetComponent<Weapon>();
+        type = equipWeapon.GetWeaponsType();
     }
     [PunRPC]
     void ChangeWeapon(int index)
@@ -308,6 +370,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         weapons[curEquip].SetActive(false);
         weapons[index].SetActive(true);
         equipWeapon = weapons[index].GetComponent<Weapon>();
+        type = equipWeapon.GetWeaponsType();
         curEquip = index;
         StartCoroutine(nameof(EndChangeAnim));
     }
@@ -333,7 +396,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         HP.fillAmount = 0;
         MP.fillAmount = 0;
     }
-    IEnumerator Respawn(bool _isFall)//FallRespawn 통합 예정
+    IEnumerator Respawn(bool _isFall)
     {
         if (isEnd || !photonView.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
         anim.SetBool("isJump", false);

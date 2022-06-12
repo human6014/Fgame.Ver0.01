@@ -9928,7 +9928,7 @@ MonoBehaviour:
   particle: {fileID: 2753868241840729004}
   meshCollider: {fileID: 4132455182931308728}
   meshRenderer: {fileID: 143658455510423857}
-  childMeshRenderer: {fileID: 143658455510423857}
+  childMeshRenderer: {fileID: 0}
   rigid: {fileID: 3012065219018881753}
   view: {fileID: 5518677305093557995}
   audioSource: {fileID: -1741093250199725752}

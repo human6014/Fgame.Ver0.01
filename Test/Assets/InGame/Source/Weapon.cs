@@ -19,11 +19,12 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] AudioSource audioSource;
     private AllTileMap allTileMap;
     private int curEquip;
+    private float chargingTime;
     public float GetRate() => rate;
     public WeaponsType GetWeaponsType() => type;
     private void Start() => allTileMap = FindObjectOfType<AllTileMap>();
     #region 사용 무기 판별
-    public void UseWeapons(int _curEquip)
+    public void UseWeapons(int _curEquip, float _chargingTime)
     {
         switch (type)
         {
@@ -35,6 +36,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
                 Shot();
                 break;
             case WeaponsType.Throwing:
+                chargingTime = _chargingTime;
                 Invoke(nameof(Throw), 0.15f);
                 break;
             default:
@@ -60,7 +62,8 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     }
     private void Throw()
     {
-        PhotonNetwork.Instantiate(bullet.name, bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
+        GameObject temp = PhotonNetwork.Instantiate(bullet.name, bulletPos.position, bulletPos.rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
+        temp.SendMessage("SetPower", chargingTime, SendMessageOptions.DontRequireReceiver);
         CreateCase();
     }
     private void CreateCase()

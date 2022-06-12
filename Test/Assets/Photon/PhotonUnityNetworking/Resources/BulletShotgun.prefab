@@ -297,7 +297,7 @@ MonoBehaviour:
   rigid: {fileID: 8243928852377001469}
   meshRenderer: {fileID: 8470437878629125899}
   trailRenderer: {fileID: 9055555001861701320}
-  damage: 3
+  damage: 4
   speed: 60
 --- !u!54 &8243928852377001469
 Rigidbody:

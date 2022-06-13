@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine;
 public class Grenade : MonoBehaviourPunCallbacks
 {
+    const int baseSpeed = 3;
     private bool isCollison;
     private AllTileMap allTileMap;
 
@@ -18,20 +19,18 @@ public class Grenade : MonoBehaviourPunCallbacks
     [SerializeField] float raycastingRange;
     [SerializeField] float livingTime;
     [SerializeField] int damage;
-    [SerializeField] int speed;
     [SerializeField] bool isAttachable;
 
-    float tempSpeed;
-    private void SetPower(float power)
+    float power;
+    private void SetPower(float _power)
     {
+        power = _power * 6 + baseSpeed;
         Debug.Log(power);
-        tempSpeed = power * 5;
     }
     private IEnumerator Start()
     {
         allTileMap = FindObjectOfType<AllTileMap>();
-        //rigid.AddForce(-transform.forward * speed + Vector3.up * (speed / 2));
-        rigid.AddForce(-transform.forward * tempSpeed + Vector3.up * (tempSpeed / 2));
+        rigid.AddForce(-transform.forward * power + Vector3.up * (power / 2));
         yield return new WaitForSeconds(livingTime);
         Raycasting();
         yield return new WaitForSeconds(2);
@@ -69,8 +68,8 @@ public class Grenade : MonoBehaviourPunCallbacks
         particle.SetActive(true);
         meshRenderer.enabled = false;
         meshCollider.isTrigger = true;
-        if (childMeshCollider) childMeshCollider.isTrigger = false;
         if (childMeshRenderer) childMeshRenderer.enabled = false;
+        if (childMeshCollider) childMeshCollider.isTrigger = true;
     }
     void Raycasting()
     {

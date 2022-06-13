@@ -53,7 +53,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
     [SerializeField] AudioSource audioSource;
+    [SerializeField] LineRenderer lineRenderer;
     [SerializeField] new Transform transform;
+    [SerializeField] Transform bulletPosTransform;
 
     private MeshRenderer[] meshRenderer;
     private GameObject[] weapons = new GameObject[3];
@@ -118,28 +120,50 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 timer = 0;
             }
 
-
-            Attack();
-            Jump();
-            Dodge(moveVec);
+            attackDelay += Time.deltaTime;
             if (equipWeapon.GetWeaponsType() == Weapon.WeaponsType.Throwing)
             {
                 if (isCharging)
                 {
-                    if (chargingTime <= 3) chargingTime += Time.deltaTime;
+                    if (chargingTime <= 3)
+                    {
+                        chargingTime += Time.deltaTime;
+                        if (Attackable())DrawTrajectory();
+                    }
                 }
-                else chargingTime = 0;
-                //Debug.Log(chargingTime);
-                //Debug.Log("isCharingOff : " + isChargingOff);
+                if (isChargingOff && chargingTime > 0) ThrowAttack();
+                if (!isCharging) chargingTime = 0;
             }
+            else Attack();
+            Jump();
+            Dodge(moveVec);
         }
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
-    private void FixedUpdate()
-    {
-        isCrash = Physics.Raycast(transform.position, transform.forward, 0.3f, LayerMask.GetMask("Destroyable"));
+    private void FixedUpdate() => isCrash = Physics.Raycast(transform.position, transform.forward, 0.3f, LayerMask.GetMask("Destroyable"));
+    
+    //public float timeResolution = 0.02f;
+    public float timeResolution = 0.02f;
+    public float maxTime = 10;
 
+    [Obsolete]
+    private void DrawTrajectory()
+    {
+        //수정 필요함
+        lineRenderer.enabled = true;
+        float power = chargingTime * 5;
+        Vector3 velocityVector = bulletPosTransform.forward * power + Vector3.up * (power / 2);
+        lineRenderer.SetVertexCount((int)(maxTime / Time.deltaTime));
+        int index = 0; 
+        Vector3 currentPosition = bulletPosTransform.position;
+        for (float t = 0.0f; t < maxTime; t += Time.deltaTime) 
+        {
+            lineRenderer.SetPosition(index, currentPosition);
+            currentPosition += velocityVector * Time.deltaTime; 
+            velocityVector += Physics.gravity * Time.deltaTime;
+            index++; 
+        }
     }
     #region 키 입력
     private void KeyInput()
@@ -174,58 +198,27 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 공격 
-    /*
+    bool Attackable() => (equipWeapon.GetRate() < attackDelay && !isDodging && !isDying && !isSwaping);
     private void Attack()
     {
-        attackDelay += Time.deltaTime;
-        if (isAttack && equipWeapon.GetRate() < attackDelay && !isDodging && !isDying && !isSwaping)
+        if (isAttack && Attackable())
         {
-            Weapon.WeaponsType type = equipWeapon.GetWeaponsType();
-
             if (type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
             else if (type == Weapon.WeaponsType.Range) anim.SetBool("isShot", true);
-            else if (type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", true);
             Invoke(nameof(SetAttackAnim), 0.1f);
             equipWeapon.UseWeapons(generalManager.GetMeleeIndex(), chargingTime);
             attackDelay = 0;
         }
     }
-    */
-    private void Attack()
-    {
-        attackDelay += Time.deltaTime;
-        if (equipWeapon.GetRate() < attackDelay && !isDodging && !isDying && !isSwaping)
-        {
-
-            //Z누를때 한번 땔때 한번 수정해야함
-            if (type == Weapon.WeaponsType.Throwing)
-            {
-                Debug.Log("isCharging : " + isCharging);
-                Debug.Log("isChargingOff : " + isChargingOff);
-                if (!isCharging && isChargingOff && chargingTime != 0)
-                {
-                    anim.SetBool("isThrow", true);
-                    Invoke(nameof(SetAttackAnim), 0.1f);
-                    equipWeapon.UseWeapons(generalManager.GetMeleeIndex(), chargingTime);
-                    Debug.Log("Charging");
-                }
-            }
-            else if (isAttack)
-            {
-                if (type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", true);
-                else if (type == Weapon.WeaponsType.Range) anim.SetBool("isShot", true);
-                Invoke(nameof(SetAttackAnim), 0.1f);
-                equipWeapon.UseWeapons(generalManager.GetMeleeIndex(), chargingTime);
-            }
-            attackDelay = 0;
-        }
-    }
     private void ThrowAttack()
     {
-        //여기에 새로 만들자!
-        if(type == Weapon.WeaponsType.Throwing)
+        if (Attackable())
         {
-
+            anim.SetBool("isThrow", true);
+            Invoke(nameof(SetAttackAnim), 0.1f);
+            equipWeapon.UseWeapons(generalManager.GetMeleeIndex(), chargingTime);
+            attackDelay = 0;
+            lineRenderer.enabled = false;
         }
     }
     private void SetAttackAnim()

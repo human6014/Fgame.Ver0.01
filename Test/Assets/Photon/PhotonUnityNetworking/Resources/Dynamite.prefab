@@ -9928,6 +9928,7 @@ MonoBehaviour:
   particle: {fileID: 2753868241840729004}
   meshCollider: {fileID: 4132455182931308728}
   meshRenderer: {fileID: 143658455510423857}
+  childMeshCollider: {fileID: 0}
   childMeshRenderer: {fileID: 0}
   rigid: {fileID: 3012065219018881753}
   view: {fileID: 5518677305093557995}
@@ -9935,7 +9936,7 @@ MonoBehaviour:
   raycastingRange: 0.6
   livingTime: 3
   damage: 35
-  speed: 20
+  baseSpeed: 2
   isAttachable: 1
 --- !u!54 &3012065219018881753
 Rigidbody:

@@ -128,7 +128,6 @@ MonoBehaviour:
   raycastingRange: 0.5
   livingTime: 1.5
   damage: 20
-  speed: 20
   isAttachable: 0
 --- !u!114 &47218996927194562
 MonoBehaviour:

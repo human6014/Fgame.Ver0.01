@@ -27,9 +27,12 @@ public class Warhead : MonoBehaviourPunCallbacks, IPunObservable
         rigid.AddForce(-transform.forward * speed);
         yield return new WaitForSeconds(0.1f);
         rigid.constraints = RigidbodyConstraints.None;
-        rigid.AddTorque(-transform.right * 0.2f);
         yield return new WaitForSeconds(2.9f);
         Destroy(gameObject);
+    }
+    private void Update()
+    {
+        if(!isCollison) transform.forward = -rigid.velocity;
     }
     #region 탄두 충돌 검사
     private void OnCollisionEnter(Collision collision)

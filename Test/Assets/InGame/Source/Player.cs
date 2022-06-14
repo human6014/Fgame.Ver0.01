@@ -33,7 +33,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                  isInPortal,
                  isCrash,
                  isCharging,
-                 isChargingOff;
+                 isChargingOff,
+                 animFlag;
     KeyCode[] keyCodes = {
         KeyCode.Alpha1,
         KeyCode.Alpha2,
@@ -53,18 +54,18 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Rigidbody rigid;
     [SerializeField] Animator anim;
     [SerializeField] AudioSource audioSource;
-    [SerializeField] LineRenderer lineRenderer;
     [SerializeField] new Transform transform;
     [SerializeField] Transform bulletPosTransform;
+    [SerializeField] PlayerTrajectory playerTrajectory;
 
     private MeshRenderer[] meshRenderer;
     private GameObject[] weapons = new GameObject[3];
-    private GameObject players;
+    private GameObject playersPool;
     private GeneralManager generalManager;
     private AllTileMap allTileMap;
     private Weapon equipWeapon;
 
-    private void Awake() => players = GameObject.Find("PlayersPool");
+    private void Awake() => playersPool = GameObject.Find("PlayersPool");
     private void Start()
     {
         meshRenderer = GetComponentsInChildren<MeshRenderer>();
@@ -83,9 +84,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             Name.text = view.Owner.NickName;
             gameObject.name = "Player" + view.Owner.GetPlayerNumber();
         }
-        transform.SetParent(players.transform);
+        transform.SetParent(playersPool.transform);
     }
-
+    
     private void Update()
     {
         if (isEnd) return;
@@ -99,7 +100,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                 return;
             }
             if (isDying) return;
-            
+                        
             KeyInput();
             if (xMove + zMove != 1 && xMove + zMove != -1) xMove /= 2; zMove *= 0.866f;
             moveVec = new Vector3(xMove, 0, zMove);
@@ -123,16 +124,25 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             attackDelay += Time.deltaTime;
             if (equipWeapon.GetWeaponsType() == Weapon.WeaponsType.Throwing)
             {
-                if (isCharging)
+                if (isCharging && Attackable())
                 {
                     if (chargingTime <= 3)
                     {
+                        anim.SetBool("isThrow", true);
+                        if (!animFlag)
+                        {
+                            animFlag = true;
+                            Invoke(nameof(StopAnim), 0.1f);
+                        }
                         chargingTime += Time.deltaTime;
-                        if (Attackable())DrawTrajectory();
                     }
                 }
                 if (isChargingOff && chargingTime > 0) ThrowAttack();
-                if (!isCharging) chargingTime = 0;
+                if (!isCharging || isDodge || isDying)
+                {
+                    playerTrajectory.RenderOff();
+                    chargingTime = 0;
+                }
             }
             else Attack();
             Jump();
@@ -141,30 +151,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
         else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime * 10);
     }
-    private void FixedUpdate() => isCrash = Physics.Raycast(transform.position, transform.forward, 0.3f, LayerMask.GetMask("Destroyable"));
-    
-    //public float timeResolution = 0.02f;
-    public float timeResolution = 0.02f;
-    public float maxTime = 10;
-
-    [Obsolete]
-    private void DrawTrajectory()
+    private void FixedUpdate()
     {
-        //수정 필요함
-        lineRenderer.enabled = true;
-        float power = chargingTime * 5;
-        Vector3 velocityVector = bulletPosTransform.forward * power + Vector3.up * (power / 2);
-        lineRenderer.SetVertexCount((int)(maxTime / Time.deltaTime));
-        int index = 0; 
-        Vector3 currentPosition = bulletPosTransform.position;
-        for (float t = 0.0f; t < maxTime; t += Time.deltaTime) 
-        {
-            lineRenderer.SetPosition(index, currentPosition);
-            currentPosition += velocityVector * Time.deltaTime; 
-            velocityVector += Physics.gravity * Time.deltaTime;
-            index++; 
-        }
+        isCrash = Physics.Raycast(transform.position, transform.forward, 0.3f, LayerMask.GetMask("Destroyable"));
+        if (isCharging && Attackable()) playerTrajectory.DrawTrajectory(chargingTime);
     }
+    
     #region 키 입력
     private void KeyInput()
     {
@@ -191,6 +183,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (Input.GetKeyDown(keyCodes[i]))
             {
+                playerTrajectory.RenderOff();
                 view.RPC(nameof(ChangeWeapon), RpcTarget.All, i);
                 break;
             }
@@ -198,6 +191,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     #endregion
     #region 공격 
+    private void StopAnim() => anim.speed = 0;
     bool Attackable() => (equipWeapon.GetRate() < attackDelay && !isDodging && !isDying && !isSwaping);
     private void Attack()
     {
@@ -214,16 +208,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (Attackable())
         {
-            anim.SetBool("isThrow", true);
+            anim.speed = 1;
             Invoke(nameof(SetAttackAnim), 0.1f);
             equipWeapon.UseWeapons(generalManager.GetMeleeIndex(), chargingTime);
             attackDelay = 0;
-            lineRenderer.enabled = false;
+            playerTrajectory.RenderOff();
         }
     }
     private void SetAttackAnim()
     {
-        Weapon.WeaponsType type = equipWeapon.GetWeaponsType();
         if (type == Weapon.WeaponsType.Melee) anim.SetBool("isSwing", false);
         else if (type == Weapon.WeaponsType.Range) anim.SetBool("isShot", false);
         else if (type == Weapon.WeaponsType.Throwing) anim.SetBool("isThrow", false);
@@ -358,6 +351,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void ChangeWeapon(int index)
     {
+        anim.SetBool("isThrow", false);
+        anim.speed = 1;
         anim.SetBool("isSwap", true);
         isSwaping = true;
         weapons[curEquip].SetActive(false);
@@ -392,6 +387,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Respawn(bool _isFall)
     {
         if (isEnd || !photonView.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
+        anim.speed = 1;
+        anim.SetBool("isThrow", false);
         anim.SetBool("isJump", false);
         isJumping = false;
         isDying = true;

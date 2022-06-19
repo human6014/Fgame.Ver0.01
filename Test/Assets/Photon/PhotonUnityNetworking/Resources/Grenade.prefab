@@ -125,7 +125,7 @@ MonoBehaviour:
   rigid: {fileID: 5474289246926580892}
   view: {fileID: 47218996927194562}
   audioSource: {fileID: -7202625219576281464}
-  raycastingRange: 0.5
+  raycastingRange: 0.4
   livingTime: 1.5
   damage: 20
   isAttachable: 0

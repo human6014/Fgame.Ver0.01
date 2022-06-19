@@ -122,7 +122,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             }
 
             attackDelay += Time.deltaTime;
-            if (equipWeapon.GetWeaponsType() == Weapon.WeaponsType.Throwing)
+            if (type == Weapon.WeaponsType.Throwing)
             {
                 if (isCharging && Attackable())
                 {
@@ -138,7 +138,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                     }
                 }
                 if (isChargingOff && chargingTime > 0) ThrowAttack();
-                if (!isCharging || isDodge || isDying)
+                if (!isCharging || isDodge || isDying || isSwaping)
                 {
                     playerTrajectory.RenderOff();
                     chargingTime = 0;
@@ -154,7 +154,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     private void FixedUpdate()
     {
         isCrash = Physics.Raycast(transform.position, transform.forward, 0.3f, LayerMask.GetMask("Destroyable"));
-        if (isCharging && Attackable()) playerTrajectory.DrawTrajectory(chargingTime);
+        if (isCharging && Attackable() && chargingTime != 0) playerTrajectory.DrawTrajectory(chargingTime);
     }
     
     #region 키 입력
@@ -297,6 +297,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 근접무기 cc
     public void CrowdControl(int _ccIndex)
     {
+        if (isDying) return;
         switch (_ccIndex)
         {
             case 0:
@@ -319,7 +320,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator Slow()//Knife ,1
     {
-        if (isDying) yield break;
         view.RPC(nameof(SpeedDown), RpcTarget.All);
         yield return new WaitForSeconds(3);
         view.RPC(nameof(SpeedUp), RpcTarget.All);
@@ -329,14 +329,23 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         if (isDying) return;
         view.RPC(nameof(KnockBackUp), RpcTarget.All, x, z); //Bat ,2
     }
-    
     IEnumerator Stun()//Hammer ,3
     {
-        if (isDying) yield break;
         view.RPC(nameof(StunUp), RpcTarget.All);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
         view.RPC(nameof(StunDown), RpcTarget.All);
     }
+    public void ChargingCancel()
+    {
+        if (type != Weapon.WeaponsType.Throwing) return;
+        view.RPC(nameof(PunCharingCancel), RpcTarget.All);
+    }
+    [PunRPC]
+    public void PunCharingCancel()
+    {
+        chargingTime = 0;
+    }
+
     #endregion
     #region 무기 장착,교체
     [PunRPC]
@@ -360,6 +369,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         equipWeapon = weapons[index].GetComponent<Weapon>();
         type = equipWeapon.GetWeaponsType();
         curEquip = index;
+        chargingTime = 0;
         StartCoroutine(nameof(EndChangeAnim));
     }
     IEnumerator EndChangeAnim()

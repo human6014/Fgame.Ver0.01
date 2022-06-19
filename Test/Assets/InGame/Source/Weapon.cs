@@ -37,7 +37,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
                 break;
             case WeaponsType.Throwing:
                 chargingTime = _chargingTime;
-                Invoke(nameof(Throw), 0.15f);
+                Invoke(nameof(Throw), 0.1f);
                 break;
             default:
                 Debug.LogError("NonUseWeapons");
@@ -50,7 +50,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
     {
         GameObject _bullet;
         Rigidbody _bulletRigid;
-        if(audioSource) photonView.RPC(nameof(PlaySound), RpcTarget.All);
+        photonView.RPC(nameof(PlaySound), RpcTarget.All);
         for (int i = 0; i < 12; i++)
         {
             _bullet = PhotonNetwork.Instantiate(bullet.name, bulletPos.position, bulletPos.rotation);
@@ -94,6 +94,7 @@ public class Weapon : MonoBehaviourPunCallbacks, IPunObservable
         if (other.CompareTag("Player"))
         {
             Player player = other.GetComponent<Player>();
+            player.ChargingCancel();
             if (player.Hit(damage) && photonView.IsMine) allTileMap.SetKillCount();
             meleeArea.enabled = false;
 

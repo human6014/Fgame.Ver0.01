@@ -11,10 +11,11 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
 {
     private int curEquip,
                  myIndex,
-                 timer;
+                 rotateTimer;
     private float xMove,
                   zMove,
                   attackDelay,
+                  changeAttackDelay,
                   teleDelay,
                   chargingTime;
     private bool isWalk,
@@ -114,14 +115,15 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             anim.SetBool("isRun", moveVec != Vector3.zero);
 
             teleDelay += Time.deltaTime;
-            timer++;
-            if (timer % 5 == 0)
+            rotateTimer++;
+            if (rotateTimer % 5 == 0)
             {
                 transform.LookAt(transform.position + moveVec);
-                timer = 0;
+                rotateTimer = 0;
             }
 
             attackDelay += Time.deltaTime;
+            if (changeAttackDelay < 10) changeAttackDelay += Time.deltaTime;
             if (type == Weapon.WeaponsType.Throwing)
             {
                 if (isCharging && Attackable())
@@ -362,12 +364,19 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     {
         anim.SetBool("isThrow", false);
         anim.speed = 1;
+        anim.SetBool("isShot", false);
         anim.SetBool("isSwap", true);
         isSwaping = true;
         weapons[curEquip].SetActive(false);
         weapons[index].SetActive(true);
         equipWeapon = weapons[index].GetComponent<Weapon>();
         type = equipWeapon.GetWeaponsType();
+        if (type == Weapon.WeaponsType.Melee && changeAttackDelay > equipWeapon.GetRate())
+        {
+            changeAttackDelay = 0;
+            attackDelay = 5;
+        }
+        else attackDelay = 0;
         curEquip = index;
         chargingTime = 0;
         StartCoroutine(nameof(EndChangeAnim));
@@ -380,7 +389,6 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         isSwaping = false;
     }
     #endregion
-    //낙사 시 피격 판정 들어감 why??!!
     #region 죽음,리스폰
     [PunRPC]
     void Recovery()

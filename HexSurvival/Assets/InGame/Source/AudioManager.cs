@@ -9,8 +9,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioClip readySound;
     [SerializeField] AudioClip []simpleSound;
     [SerializeField] AudioClip endSound;
-    
-    bool isClosedEnd;
+    readonly bool isClosedEnd;
     public IEnumerator Start()
     {
         float sound = 0;
@@ -34,12 +33,10 @@ public class AudioManager : MonoBehaviour
     }
     public void Update()
     {
-        if (!audioSource.isPlaying)
-        {
-            if (generalManager.GetIsCloseEnd()) audioSource.clip = endSound;
-            else audioSource.clip = simpleSound[Random.Range(0, simpleSound.Length)];
-            StartCoroutine(nameof(SoundUp), audioSource);
-        }
+        if (audioSource.isPlaying) return;
+        if (generalManager.GetIsCloseEnd()) audioSource.clip = endSound;
+        else audioSource.clip = simpleSound[Random.Range(0, simpleSound.Length)];
+        StartCoroutine(nameof(SoundUp), audioSource);
     }
     public IEnumerator SoundUp(AudioSource audio)
     {

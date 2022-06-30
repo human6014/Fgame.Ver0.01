@@ -37,7 +37,6 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     public int[] GetWeapon() => weapon;
     public int GetMeleeIndex() => weapon[0];
     public bool GetIsRoomFull() => isRoomFull;
-    public bool GetIsCreateTile() => isCreateTile;
     public bool GetIsCreatePlayer() => isCreatePlayer;
     public bool GetIsChatOn() => isChatOn;
     public bool GetIsGameEnd() => isGameEnd;
@@ -75,7 +74,6 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
         OnMasterChatting("입장");
         view.RPC(nameof(OnMasterChatting), RpcTarget.Others, " 님이 입장하였습니다", playerName);
     }
-    // 30, 330, 270, 210, 150, 90
     public void CreatePlayer()
     {
         if (PhotonNetwork.LocalPlayer.GetPlayerNumber() == -1) return;

@@ -30,6 +30,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     private bool isLose,
                  isGameEnd;
 
+    private const int startTime = 10;
     private int dieCount,
                 killCount,
                 destroyCount;
@@ -44,7 +45,6 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     public void SetSpawner(Transform tr, int i) => childSpawner[i] = tr;
     public void SetPersonTileRadius(int i, float _radius) => childSphereColliders[i].radius = _radius;
     public void SetChildTileCount(int i,int _count) => childTileCount[i] = _count;
-    public void SetHasTileNum(int i, int j) => hasTileNum[i] = j * 1000;
     public void SetPlusHasTileNum(int i) => hasTileNum[i] += 1000;
     public void SetMinusHasTileNum(int i) => hasTileNum[i] -= 10;
     public void SetIsOutPlayer(bool _isOutPlayer, int i) => isOutPlayer[i] = _isOutPlayer;
@@ -67,7 +67,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
         yield return new WaitUntil(() => generalManager.GetIsRoomFull());
         CreatePersonTile();
         generalManager.SetIsCreateTile(true);
-        for (int i = 5; i >= 1; i--)
+        for (int i = startTime; i >= 1; i--)
         {
             startTimer.text = i.ToString();
             yield return new WaitForSeconds(1);

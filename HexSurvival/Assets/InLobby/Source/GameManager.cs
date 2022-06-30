@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private string roomCode = "";
     private int maxPlayer = -1;
     private int stateIndex = -1;
-    private const byte MAXPLAYER = 1;
+    private const byte MAXPLAYER = 6;
 
     LobbyManager lobbyManager;
     RoomOptions roomOptions;
@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.AutomaticallySyncScene = false;
-        PhotonNetwork.GameVersion = "1.0";
+        PhotonNetwork.GameVersion = "2.0";
     }
     public void OnStartGame(int _stateIndex, string _playerName, string _roomCode, int _maxPlayer)
     {

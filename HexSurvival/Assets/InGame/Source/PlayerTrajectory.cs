@@ -11,7 +11,6 @@ public class PlayerTrajectory : MonoBehaviour
     public void RenderOn() => lineRenderer.enabled = true;
     
     public void RenderOff() => lineRenderer.enabled = false;
-    
 
     public void DrawTrajectory(float chargingTime)
     {

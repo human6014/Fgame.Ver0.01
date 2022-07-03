@@ -158,7 +158,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     private void FixedUpdate()
     {
         if (isEnd || isDying) return;
-        if (view.IsMine&&isInMyBlock) view.RPC(nameof(SlowRecovery),RpcTarget.All);
+        if (view.IsMine && isInMyBlock) view.RPC(nameof(SlowRecovery),RpcTarget.All);
         isCrash = Physics.Raycast(transform.position, transform.forward, 0.3f, LayerMask.GetMask("Destroyable"));
         if (isCharging && Attackable() && chargingTime != 0) playerTrajectory.DrawTrajectory(chargingTime);
     }

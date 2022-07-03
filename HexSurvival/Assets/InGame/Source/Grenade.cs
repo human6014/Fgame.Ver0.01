@@ -2,7 +2,7 @@ using Photon.Pun;
 using Photon.Pun.UtilityScripts;
 using System.Collections;
 using UnityEngine;
-public class Grenade : MonoBehaviourPunCallbacks
+public class Grenade : MonoBehaviourPunCallbacks, IPunObservable
 {
     const int baseSpeed = 3;
     private bool isCollison;
@@ -21,20 +21,25 @@ public class Grenade : MonoBehaviourPunCallbacks
     [SerializeField] int damage;
     [SerializeField] bool isAttachable;
 
+    Vector3 curPos;
     float power;
-    private void SetPower(float _power)
-    {
-        power = _power * 6 + baseSpeed;
-        Debug.Log(power);
-    }
+    private void SetPower(float _power) => power = _power * 6 + baseSpeed;
+    
     private IEnumerator Start()
     {
+        curPos = transform.position;
         allTileMap = FindObjectOfType<AllTileMap>();
         rigid.AddForce(-transform.forward * power + Vector3.up * (power / 2));
         yield return new WaitForSeconds(livingTime);
         Raycasting();
         yield return new WaitForSeconds(2);
         Destroy(gameObject);
+    }
+    private void Update()
+    {
+        if (view.IsMine) return;
+        else if ((transform.position - curPos).sqrMagnitude >= 100) transform.position = curPos;
+        else transform.position = Vector3.Lerp(transform.position, curPos, Time.deltaTime);
     }
     #region 탄두 충돌 검사
     private void OnCollisionEnter(Collision collision)
@@ -105,5 +110,9 @@ public class Grenade : MonoBehaviourPunCallbacks
         allTileMap.SetPlusHasTileNum(view.Owner.GetPlayerNumber() - 1);
     }
     #endregion
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) { }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting) stream.SendNext(transform.position);
+        else curPos = (Vector3)stream.ReceiveNext();
+    }
 }

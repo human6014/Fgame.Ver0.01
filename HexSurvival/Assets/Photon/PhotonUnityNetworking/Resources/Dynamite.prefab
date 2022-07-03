@@ -9894,6 +9894,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 5518677305093557996}
+  - {fileID: 4776803040231139172}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -9936,7 +9937,6 @@ MonoBehaviour:
   raycastingRange: 0.6
   livingTime: 3
   damage: 35
-  baseSpeed: 2
   isAttachable: 1
 --- !u!54 &3012065219018881753
 Rigidbody:

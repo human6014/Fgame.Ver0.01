@@ -18,7 +18,7 @@ public class AudioManager : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             audioSource.volume = (sound += 0.04f);
-            yield return new WaitForSeconds(0.45f);
+            yield return new WaitForSeconds(0.5f);
         }
         
         yield return new WaitUntil(() => generalManager.GetIsRoomFull());
@@ -26,14 +26,14 @@ public class AudioManager : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             audioSource.volume = (sound -= 0.04f);
-            yield return new WaitForSeconds(0.4f);
+            yield return new WaitForSeconds(0.5f);
         }
         audioSource.loop = false;
         audioSource.Stop();
     }
     public void Update()
     {
-        if (audioSource.isPlaying) return;
+        if (audioSource.isPlaying || !generalManager.GetIsRoomFull()) return;
         if (generalManager.GetIsCloseEnd()) audioSource.clip = endSound;
         else audioSource.clip = simpleSound[Random.Range(0, simpleSound.Length)];
         StartCoroutine(nameof(SoundUp), audioSource);
@@ -45,7 +45,7 @@ public class AudioManager : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             audio.volume = (startSound += 0.04f);
-            yield return new WaitForSeconds(0.45f);
+            yield return new WaitForSeconds(0.5f);
         }
     }
 }

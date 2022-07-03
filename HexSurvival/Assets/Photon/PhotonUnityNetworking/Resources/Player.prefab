@@ -4687,7 +4687,7 @@ MonoBehaviour:
     SynchronizeType: 0
     Name: isSwap
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 2
     Name: doJump
   m_SynchronizeLayers:
   - SynchronizeType: 0

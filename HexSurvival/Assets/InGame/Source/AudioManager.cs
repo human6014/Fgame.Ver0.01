@@ -18,7 +18,7 @@ public class AudioManager : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             audioSource.volume = (sound += 0.04f);
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.45f);
         }
         
         yield return new WaitUntil(() => generalManager.GetIsRoomFull());
@@ -26,7 +26,7 @@ public class AudioManager : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             audioSource.volume = (sound -= 0.04f);
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.4f);
         }
         audioSource.loop = false;
         audioSource.Stop();
@@ -45,7 +45,7 @@ public class AudioManager : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             audio.volume = (startSound += 0.04f);
-            yield return new WaitForSeconds(0.4f);
+            yield return new WaitForSeconds(0.45f);
         }
     }
 }

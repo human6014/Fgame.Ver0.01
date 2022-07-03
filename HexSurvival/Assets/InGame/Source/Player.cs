@@ -32,6 +32,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
                  isTab,
                  isTele,
                  isInPortal,
+                 isInMyBlock,
                  isCrash,
                  isCharging,
                  isChargingOff,
@@ -69,8 +70,9 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     private void Awake() => playersPool = GameObject.Find("PlayersPool");
     private void Start()
     {
+        isInMyBlock = true;
         meshRenderer = GetComponentsInChildren<MeshRenderer>();
-        if (photonView.IsMine)
+        if (view.IsMine)
         {
             Camera.main.GetComponent<MainCamera>().SetTarget(transform);
             myIndex = PhotonNetwork.LocalPlayer.GetPlayerNumber();
@@ -91,7 +93,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     private void Update()
     {
         if (isEnd) return;
-        if (photonView.IsMine)
+        if (view.IsMine)
         {
             if (myIndex != -1 && allTileMap.GetIsOutPlayer(myIndex - 1))
             {
@@ -105,12 +107,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
             KeyInput();
             if (xMove + zMove != 1 && xMove + zMove != -1) xMove /= 2; zMove *= 0.866f;
             moveVec = new Vector3(xMove, 0, zMove);
-            if (moveVec != Vector3.zero && !isCrash) transform.Translate((isWalk ? 0.8f : 1.2f) * speed * Time.deltaTime * Vector3.forward.normalized);
+            if (moveVec != Vector3.zero && !isCrash) transform.Translate((isWalk ? 0.8f : 1.2f) * (isInMyBlock ? speed + 0.3f : speed) * Time.deltaTime * Vector3.forward.normalized);
 
             if (!isJumping && !isDodging)
                 if (isWalk || (moveVec == Vector3.zero)) MP.fillAmount += 0.3f * Time.deltaTime;
                 else MP.fillAmount += 0.2f * Time.deltaTime;
-
+            
             anim.SetBool("isWalk", isWalk && moveVec != Vector3.zero);
             anim.SetBool("isRun", moveVec != Vector3.zero);
 
@@ -155,10 +157,17 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     private void FixedUpdate()
     {
+        if (isEnd || isDying) return;
+        if (view.IsMine&&isInMyBlock) view.RPC(nameof(SlowRecovery),RpcTarget.All);
         isCrash = Physics.Raycast(transform.position, transform.forward, 0.3f, LayerMask.GetMask("Destroyable"));
         if (isCharging && Attackable() && chargingTime != 0) playerTrajectory.DrawTrajectory(chargingTime);
     }
     
+    [PunRPC]
+    void SlowRecovery()
+    {
+        if (HP.fillAmount <= 1) HP.fillAmount += 0.001f;
+    }
     #region 키 입력
     private void KeyInput()
     {
@@ -271,8 +280,8 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         view.RPC(nameof(PunHit), RpcTarget.All, damage);
         if (HP.fillAmount <= 0)
         {
-            isDying = true; //샷건 때문에 이렇게 함
-            Invoke(nameof(SetIsDying), 5); //여기까지
+            isDying = true;
+            Invoke(nameof(SetIsDying), 5);
             return true;
         }
         return false;
@@ -314,7 +323,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
     [PunRPC] private void SpeedDown() => speed -= 0.3f;
-    [PunRPC] private void SpeedUp() => speed = 1;
+    [PunRPC] private void SpeedUp() => speed += 0.3f;
     [PunRPC] private void KnockBackUp(float x, float z) => 
         rigid.AddForce(new Vector3((transform.localPosition.x - x) * 25, 10, (transform.localPosition.z - z) * 25), ForceMode.Impulse);
     [PunRPC] private void StunUp() => isStun = true;
@@ -404,7 +413,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     }
     IEnumerator Respawn(bool _isFall)
     {
-        if (isEnd || !photonView.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
+        if (isEnd || !view.IsMine || !allTileMap.GetSpawner(myIndex - 1)) yield break;
         anim.speed = 1;
         anim.SetBool("isThrow", false);
         anim.SetBool("isJump", false);
@@ -428,6 +437,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region 낙사
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.tag.EndsWith(myIndex.ToString())) isInMyBlock = true;
         if (!isEnd && other.gameObject.CompareTag("GameController")) StartCoroutine(nameof(Respawn), true);
     }
     #endregion
@@ -448,6 +458,7 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     
     private void OnTriggerExit(Collider other)
     {
+        if (other.gameObject.tag.EndsWith(myIndex.ToString())) isInMyBlock = false;
         if (other.gameObject.CompareTag("Portal")) isInPortal = false;
     }
     #endregion

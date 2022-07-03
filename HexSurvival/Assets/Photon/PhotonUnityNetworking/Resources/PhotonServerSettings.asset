@@ -98,6 +98,7 @@ MonoBehaviour:
   - PunDodge
   - PunRespawn
   - PunCharingCancel
+  - SlowRecovery
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

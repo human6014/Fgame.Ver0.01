@@ -73,7 +73,6 @@ public class PersonTileMap : MonoBehaviour
                 if (iter != transform) StartCoroutine(FallWaiting(iter.gameObject));
             }
             for (int i = 0; i < 2; i++) Destroy(allTileMap.GetPortal(int.Parse(transform.name.Substring(13, 1)) - 1, i).gameObject);
-            //버그 발생
             tryOnce = true;
         }
         if (transform.childCount == 0) allTileMap.SetIsOutPlayer(true, myIndex - 1);

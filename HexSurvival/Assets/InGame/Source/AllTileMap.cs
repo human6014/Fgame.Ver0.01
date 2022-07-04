@@ -17,7 +17,7 @@ public class AllTileMap : MonoBehaviourPunCallbacks
     [SerializeField] Text gameOverText;
     [SerializeField] Text informationText;
     [SerializeField] Text explainText;
-    [SerializeField] Text hasTileCount; //temp
+    [SerializeField] Text hasTileCount;
 
     private Transform[,] childPortal = new Transform[6, 2];
     private Transform[] childSpawner = new Transform[6];

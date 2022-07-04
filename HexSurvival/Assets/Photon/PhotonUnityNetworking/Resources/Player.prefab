@@ -1394,8 +1394,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 565202565905581605}
   m_LocalRotation: {x: 0, y: 0.5, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: -0, y: 12.52, z: -0}
-  m_LocalScale: {x: 8, y: 9, z: 8}
+  m_LocalPosition: {x: -0, y: 13.99, z: -0}
+  m_LocalScale: {x: 8, y: 10.557899, z: 8}
   m_Children:
   - {fileID: 6155671719191333809}
   m_Father: {fileID: 4863490270549815028}
@@ -1583,8 +1583,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.59031165, y: 2.3658748, z: 0.7263625}
-  m_Center: {x: -0.03597899, y: -0.19141836, z: -0.039009508}
+  m_Size: {x: 0.59031165, y: 2.4046352, z: 0.7263625}
+  m_Center: {x: -0.03597913, y: -0.17203812, z: -0.03900952}
 --- !u!82 &4747728571152015765
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1977,8 +1977,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 888576379659894674}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 13.97, z: -0}
-  m_LocalScale: {x: 8, y: 7, z: 8}
+  m_LocalPosition: {x: -0, y: 17.61, z: -0}
+  m_LocalScale: {x: 8, y: 9.13771, z: 8}
   m_Children:
   - {fileID: 567811663939865885}
   m_Father: {fileID: 4863490270549815028}
@@ -2166,8 +2166,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.72784096, y: 3.880194, z: 0.7553337}
-  m_Center: {x: -0.022802934, y: -0.11602806, z: -0.001868675}
+  m_Size: {x: 0.72784096, y: 3.9498315, z: 0.7553337}
+  m_Center: {x: -0.022802934, y: -0.08120949, z: -0.0018686766}
 --- !u!82 &4307047971821265611
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2571,8 +2571,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1812394710965517020}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 20.51, z: -0}
-  m_LocalScale: {x: 8, y: 7, z: 8}
+  m_LocalPosition: {x: -0, y: 23.1, z: -0}
+  m_LocalScale: {x: 8, y: 7.5600004, z: 8}
   m_Children:
   - {fileID: 7079815951175293082}
   m_Father: {fileID: 4863490270549815028}
@@ -2760,8 +2760,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 0
   serializedVersion: 2
-  m_Size: {x: 0.69363534, y: 4.3072557, z: 1.4420791}
-  m_Center: {x: 0.012538205, y: -0.8656629, z: 0.021638922}
+  m_Size: {x: 0.69363534, y: 4.412789, z: 1.4420791}
+  m_Center: {x: 0.012538209, y: -0.8128957, z: 0.021638915}
 --- !u!82 &5919916999387644283
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4238,9 +4238,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 99ee216d39a6e8e4492e343df77a7619, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 18e4717276d9700489161a9b00188dce, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.9
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -5282,7 +5282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  rate: 1.5
+  rate: 2
   damage: 0
   playerTransform: {fileID: 0}
   meleeArea: {fileID: 0}

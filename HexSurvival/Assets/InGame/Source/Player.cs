@@ -171,7 +171,12 @@ public class Player : MonoBehaviourPunCallbacks, IPunObservable
     #region Å° ÀÔ·Â
     private void KeyInput()
     {
-        if (isStun || generalManager.GetIsChatOn())return;
+        if (isStun || generalManager.GetIsChatOn())
+        {
+            xMove = 0;
+            zMove = 0;
+            return;
+        }
         xMove = Input.GetAxisRaw("Horizontal");
         zMove = Input.GetAxisRaw("Vertical");
         isWalk = Input.GetButton("Walk");

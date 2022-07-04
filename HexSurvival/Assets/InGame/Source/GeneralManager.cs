@@ -34,6 +34,8 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] RectTransform rectTransform;
     [SerializeField] AllTileMap allTileMap;
     PhotonView view;
+
+    #region Getter+Setter
     public int[] GetWeapon() => weapon;
     public int GetMeleeIndex() => weapon[0];
     public bool GetIsRoomFull() => isRoomFull;
@@ -59,6 +61,7 @@ public class GeneralManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     [PunRPC]
     private void SetPunRemainPlayerCount() => remainPlayerCount--;
+    #endregion
 
     private void Start()
     {
